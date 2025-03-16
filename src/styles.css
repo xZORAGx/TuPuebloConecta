@@ -1,1 +1,51 @@
-/* You can add global styles to this file, and also import other style files */
+/* 👉 TailwindCSS Directivas Base */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------ */
+/* ✅ Reset Básico (tu estilo original mejorado) */
+/* ------------------------------------------ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ------------------------------------------ */
+/* ✅ Estilos Globales para el sitio */
+/* ------------------------------------------ */
+body {
+  background-color: #121212; /* Fondo negro para el look dark */
+  color: white; /* Color de texto global blanco */
+  font-family: 'Roboto', sans-serif; /* Fuente más legible */
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Evitar el scroll horizontal por elementos desbordados */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Material Toolbar fix */
+mat-toolbar {
+  margin: 0;
+  padding: 0 16px;
+}
+
+/* ------------------------------------------ */
+/* ✅ Puedes añadir aquí tus utilidades personalizadas si necesitas */
+/* ------------------------------------------ */
