@@ -1,7 +1,13 @@
 <!-- Navbar superior -->
 <mat-toolbar color="primary" class="navbar">
   <span class="logo">Tu Pueblo Conecta</span>
-  <button mat-button color="accent" routerLink="/login" class="login-button">
+  <button
+    mat-button
+    color="accent"
+    type="button"
+    [routerLink]="'/login'"
+    class="login-button"
+  >
     Login
   </button>
 </mat-toolbar>
@@ -11,10 +17,16 @@
   <div class="hero-content">
     <div class="hero-text">
       <h1>Conecta tu pueblo con el futuro</h1>
-      <p>Gestiona la comunicación y los servicios municipales desde cualquier lugar.</p>
+      <p>
+        Gestiona la comunicación y los servicios municipales desde cualquier
+        lugar.
+      </p>
     </div>
     <div class="hero-image">
-      <img src="assets/images/fondo-pagina-web.jpg" alt="App Tu Pueblo Conecta" />
+      <img
+        src="assets/images/fondo-pagina-web.jpg"
+        alt="App Tu Pueblo Conecta"
+      />
     </div>
   </div>
 </section>
@@ -71,24 +83,23 @@
   </swiper-container>
 </section>
 
-
-
-
-
-
 <!-- Quiénes Somos -->
 <section class="section who">
   <h2>¿Quiénes somos?</h2>
   <p>
-    Somos un equipo dedicado a acercar los servicios municipales a la ciudadanía de una forma moderna, intuitiva y eficiente.
+    Somos un equipo dedicado a acercar los servicios municipales a la
+    ciudadanía de una forma moderna, intuitiva y eficiente.
   </p>
 </section>
 
 <!-- Contacto -->
 <section class="section contact">
   <h2>Contacto</h2>
-  <p>¿Quieres saber más? Escríbenos a:
-    <a href="mailto:contacto&#64;tupuebloconecta.com">contacto&#64;tupuebloconecta.com</a>
+  <p>
+    ¿Quieres saber más? Escríbenos a:
+    <a href="mailto:contacto&#64;tupuebloconecta.com"
+      >contacto&#64;tupuebloconecta.com</a
+    >
   </p>
 </section>
 

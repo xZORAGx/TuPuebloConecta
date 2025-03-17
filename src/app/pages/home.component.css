@@ -55,6 +55,8 @@ body {
 .hero-content {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 40px; /* Espacio entre imagen y texto en escritorio */
   flex-wrap: wrap;
   max-width: 1200px;
 }
@@ -75,6 +77,7 @@ body {
   font-size: 1.2rem;
   max-width: 600px;
   color: #cccccc;
+  margin: 0 auto;
 }
 
 .hero-image {
@@ -89,6 +92,7 @@ body {
   border-radius: 15px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
+
 
 /* ===========================
    SWIPER SECTION
@@ -204,13 +208,13 @@ swiper-slide p {
 =========================== */
 .who, .contact {
   text-align: center;
-  padding: 60px 20px; /* Antes 80px, ahora 60px */
+  padding: 60px 20px;
 }
 
 .who h2, .contact h2 {
-  color: #ffffff;
+  color: #4caf50;
   font-size: 2rem;
-  margin-bottom: 12px; /* Separación controlada (antes 20px) */
+  margin-bottom: 12px;
 }
 
 .who p, .contact p {
@@ -230,8 +234,6 @@ swiper-slide p {
   text-decoration: underline;
 }
 
-
-
 /* ===========================
    FOOTER
 =========================== */
@@ -247,25 +249,40 @@ swiper-slide p {
    RESPONSIVE
 =========================== */
 @media (max-width: 768px) {
+
+  .hero-section {
+    padding: 40px 10px; /* Reduce padding top/bottom en móviles */
+  }
+
   .hero-content {
-    flex-direction: column;
+    flex-direction: column; /* Stack elementos en columna */
+    align-items: center;
+    gap: 20px; /* Menos espacio entre elementos */
   }
 
-  .section,
-  .section.alternate {
-    flex-direction: column;
-  }
-
-  .text-container,
-  .image-container {
-    flex: 1 1 100%;
+  .hero-text {
+    padding: 0; /* Quitamos padding lateral en móvil */
+    margin-bottom: 10px; /* Menos separación con la imagen */
   }
 
   .hero-text h1 {
     font-size: 2.2rem;
+    margin-bottom: 12px;
   }
 
   .hero-text p {
     font-size: 1rem;
+    margin: 0 auto 10px;
+  }
+
+  .hero-image {
+    padding: 0;
+  }
+
+  .hero-image img {
+    width: 200px; /* Tamaño reducido para móvil */
+    max-width: 80%;
   }
 }
+
+

@@ -1,7 +1,6 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
-import { HomeComponent } from './app/pages/home.component'; 
+import { appConfig } from './app/app.config'; // ✅ Aquí ya tienes los providers
+import { AppComponent } from './app/app.component';
 
-bootstrapApplication(HomeComponent, appConfig)
-  .catch((err) => console.error(err));
-
+bootstrapApplication(AppComponent, appConfig)
+  .catch(err => console.error(err));

@@ -1,0 +1,78 @@
+/* Fondo completo */
+.login-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url('/assets/images/fondo-login.jpg') no-repeat center center/cover;
+}
+
+/* Contenedor del formulario */
+.login-container {
+  background-color: rgba(0, 0, 0, 0.85);
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Título */
+.login-container h2 {
+  color: #4caf50;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+/* Inputs */
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  color: #ffffff;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+}
+
+/* Botón */
+button {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #43a047;
+}
+
+button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+/* Mensajes de error */
+.error-message {
+  color: #ff5252;
+  font-size: 12px;
+}
+
+.error-text {
+  color: #ff5252;
+  margin-top: 10px;
+}

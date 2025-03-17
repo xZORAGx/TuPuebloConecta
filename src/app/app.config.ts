@@ -1,25 +1,29 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { HomeComponent } from './pages/home.component';
 
+// Componentes de tus páginas
+import { HomeComponent } from './pages/home.component';
+import { LoginComponent } from './login/login.component';
+// import { GestionComponent } from './pages/gestion/gestion.component'; // si existe
 
 // Firebase
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
-// Animations (Angular Material lo requiere)
+// Animaciones para Angular Material
 import { provideAnimations } from '@angular/platform-browser/animations';
 
-// Tu configuración de Firebase
+// Configuración de Firebase
 import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter([
       { path: '', component: HomeComponent },
-      // { path: 'login', component: LoginComponent }, ➡️ Después lo añadimos
-      // { path: 'dashboard', component: DashboardComponent }, ➡️ Después también
+      { path: 'login', component: LoginComponent },
+      // { path: 'gestion', component: GestionComponent }, // si existe
+      { path: '**', redirectTo: '' } // ruta por defecto
     ]),
 
     // Firebase
@@ -31,4 +35,3 @@ export const appConfig: ApplicationConfig = {
     provideAnimations()
   ]
 };
-
