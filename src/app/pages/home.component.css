@@ -41,47 +41,45 @@ body {
 }
 
 /* ===========================
-   HERO SECTION
+   HERO SECTION - AJUSTADO
 =========================== */
 .hero-section {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #121212; /* Fondo negro principal */
+  background-color: #121212;
   color: white;
   padding: 100px 20px;
 }
 
 .hero-content {
   display: flex;
+  justify-content: space-between; /* Texto a la izquierda, imagen a la derecha */
   align-items: center;
-  justify-content: center;
-  gap: 40px; /* Espacio entre imagen y texto en escritorio */
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Para que en móvil se apilen */
+  gap: 40px;
   max-width: 1200px;
+  width: 100%;
 }
 
 .hero-text {
-  flex: 1 1 500px;
-  text-align: center;
+  flex: 1 1 50%;
+  text-align: left;
   padding: 20px;
 }
 
 .hero-text h1 {
   font-size: 3rem;
   margin-bottom: 20px;
-  color: #ffffff;
 }
 
 .hero-text p {
   font-size: 1.2rem;
-  max-width: 600px;
   color: #cccccc;
-  margin: 0 auto;
 }
 
 .hero-image {
-  flex: 1 1 500px;
+  flex: 1 1 40%;
   text-align: center;
   padding: 20px;
 }
@@ -93,6 +91,30 @@ body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
+/* RESPONSIVE para móviles */
+@media (max-width: 768px) {
+  .hero-content {
+    flex-direction: column; /* Cambia a columna en móviles */
+    text-align: center;
+  }
+
+  .hero-text, .hero-image {
+    flex: 1 1 100%;
+    padding: 10px;
+  }
+
+  .hero-text h1 {
+    font-size: 2rem;
+  }
+
+  .hero-text p {
+    font-size: 1rem;
+  }
+
+  .hero-image img {
+    width: 250px;
+  }
+}
 
 /* ===========================
    SWIPER SECTION
@@ -251,18 +273,18 @@ swiper-slide p {
 @media (max-width: 768px) {
 
   .hero-section {
-    padding: 40px 10px; /* Reduce padding top/bottom en móviles */
+    padding: 60px 10px;
   }
 
   .hero-content {
-    flex-direction: column; /* Stack elementos en columna */
+    flex-direction: column; /* Cambia a columna en pantallas pequeñas */
     align-items: center;
-    gap: 20px; /* Menos espacio entre elementos */
+    gap: 20px;
   }
 
   .hero-text {
-    padding: 0; /* Quitamos padding lateral en móvil */
-    margin-bottom: 10px; /* Menos separación con la imagen */
+    padding: 0;
+    margin-bottom: 20px;
   }
 
   .hero-text h1 {
@@ -272,7 +294,6 @@ swiper-slide p {
 
   .hero-text p {
     font-size: 1rem;
-    margin: 0 auto 10px;
   }
 
   .hero-image {
@@ -280,9 +301,10 @@ swiper-slide p {
   }
 
   .hero-image img {
-    width: 200px; /* Tamaño reducido para móvil */
-    max-width: 80%;
+    width: 250px; /* Tamaño fijo más pequeño en móviles */
+    max-width: 90%;
   }
 }
+
 
 
