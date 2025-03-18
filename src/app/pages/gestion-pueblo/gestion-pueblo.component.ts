@@ -33,21 +33,34 @@ export class GestionPuebloComponent {
       titulo: 'Noticias',
       accion1: 'Crear noticias',
       accion2: 'Editar noticias',
-      accion3: 'Borrar noticias'
+      accion3: 'Eliminar noticias'
     },
     {
       titulo: 'Deportes',
-      accion1: 'Crear eventos',
-      accion2: 'Editar eventos',
-      accion3: 'Borrar eventos'
+      accion1: 'Crear eventos deportivos',
+      accion2: 'Editar eventos deportivos',
+      accion3: 'Eliminar eventos deportivos'
     },
     {
-      titulo: 'Bandos',
-      accion1: 'Publicar bandos',
-      accion2: 'Editar bandos',
-      accion3: 'Eliminar bandos'
+      titulo: 'Instalaciones',
+      accion1: 'Añadir instalaciones',
+      accion2: 'Editar instalaciones',
+      accion3: 'Eliminar instalaciones'
+    },
+    {
+      titulo: 'Fiestas',
+      accion1: 'Publicar fiestas',
+      accion2: 'Editar fiestas',
+      accion3: 'Eliminar fiestas'
+    },
+    {
+      titulo: 'Empleo',
+      accion1: 'Publicar ofertas de empleo',
+      accion2: 'Editar ofertas de empleo',
+      accion3: 'Eliminar ofertas de empleo'
     }
   ];
+  
 
   entrar(titulo: string): void {
     console.log(`Entrando en ${titulo}`);
