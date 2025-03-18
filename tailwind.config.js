@@ -4,7 +4,13 @@ module.exports = {
       "./src/**/*.{html,ts}"   // Asegura que revise todo tu código Angular
     ],
     theme: {
-      extend: {},
+      extend: { colors: {
+        green: {
+          500: '#4CAF50',
+          600: '#43A047'
+        }
+      }
+        },
     },
     plugins: [],
   }

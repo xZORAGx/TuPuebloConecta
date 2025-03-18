@@ -1,0 +1,72 @@
+:host {
+    display: block;
+    width: 100%;
+    background-color: #121212;
+    color: #ffffff;
+    min-height: 100vh;
+  }
+  
+  /* Contenedor principal flex (asegúrate de tenerlo si usas tailwind también) */
+  .flex {
+    overflow: visible; /* ✅ Para que las tarjetas puedan escalar sin cortes */
+  }
+  
+  /* Swiper ajustes */
+  swiper-container {
+    width: 100%;
+    height: auto;
+    overflow: visible; /* ✅ Evita el corte del hover arriba y abajo */
+    padding: 40px 0;    /* ✅ Más espacio para el efecto de escala */
+    position: relative; /* ✅ Control sobre los hijos */
+  }
+  
+  swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;  /* ✅ Asegura que la tarjeta no se corte en hover */
+    position: relative; /* ✅ Necesario para que el z-index de la card funcione */
+    z-index: 1;
+  }
+  
+  /* Tarjetas (MatCard) */
+  .gestion-card {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    width: 260px;        /* ✅ Un poco más anchas */
+    height: 400px;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;   /* ✅ Necesario para aplicar z-index */
+    z-index: 1;           /* Base */
+  }
+  
+  /* Animación hover */
+  .gestion-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 24px 12px rgba(0, 255, 0, 0.5);
+/* ✅ Luz verde más suave y grande */
+    z-index: 10; /* ✅ Hace que se eleve por encima del resto */
+  }
+  
+  /* Botón de Entrar */
+  .gestion-card button {
+    background-color: #00ff00;
+    color: #000;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .gestion-card button:hover {
+    background-color: #00cc00;
+    transform: translateY(-2px);
+  }
+  

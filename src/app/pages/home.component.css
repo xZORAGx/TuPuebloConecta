@@ -55,7 +55,7 @@ body {
 .hero-content {
   display: flex;
   justify-content: space-between; /* Texto a la izquierda, imagen a la derecha */
-  align-items: center;
+  align-items: center; 
   flex-wrap: wrap; /* Para que en móvil se apilen */
   gap: 40px;
   max-width: 1200px;

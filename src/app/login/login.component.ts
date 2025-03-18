@@ -69,5 +69,8 @@ export class LoginComponent {
       console.error('Error de login:', error);
       this.errorMessage = 'Correo o contraseña incorrectos';
     }
+    console.log('➡️ Redirigiendo a /gestion');
+this.router.navigate(['/gestion']);
+
   }
 }
