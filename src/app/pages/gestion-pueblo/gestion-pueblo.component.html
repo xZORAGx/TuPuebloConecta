@@ -13,47 +13,43 @@
 
   <!-- Carrusel con Swiper Web Component -->
   <swiper-container
-    slides-per-view="3"
-    space-between="10"
-    [loop]="true"
-    [navigation]="true"
-    [pagination]="false"
-    class="w-full max-w-6xl gestion-swiper overflow-visible"
-  >
-    <swiper-slide *ngFor="let item of gestionItems" class="overflow-visible">
-      <!-- Tarjeta MatCard -->
-      <mat-card
-        class="gestion-card transition duration-300 ease-in-out transform hover:scale-105"
-      >
-        <!-- Título de la tarjeta -->
-        <mat-card-title class="text-green-400 text-2xl font-semibold text-center mb-2">
-          {{ item.titulo }}
-        </mat-card-title>
+  #swiper
+  loop="true"
+  navigation="true"
+  pagination="false"
+  slides-per-view="3"
+  space-between="20"
+  class="w-full max-w-6xl gestion-swiper overflow-visible">
 
-        <!-- Separador visual -->
-        <div class="separator mb-4"></div>
+  <swiper-slide *ngFor="let item of gestionItems" class="overflow-visible">
+    <mat-card class="gestion-card transition duration-300 ease-in-out transform hover:scale-105">
+      <mat-card-title class="text-green-400 text-2xl font-semibold text-center mb-2">
+        {{ item.titulo }}
+      </mat-card-title>
 
-        <!-- Acciones disponibles -->
-        <mat-card-content>
-          <ul class="flex flex-col gap-3 text-gray-300 text-lg text-center">
-            <li>{{ item.accion1 }}</li>
-            <li>{{ item.accion2 }}</li>
-            <li>{{ item.accion3 }}</li>
-          </ul>
-        </mat-card-content>
+      <div class="separator mb-4"></div>
 
-        <!-- Botón de acción -->
-        <mat-card-actions class="flex justify-center mt-6">
-          <button
-            mat-raised-button
-            color="primary"
-            class="bg-green-500 text-white w-full py-2 rounded-md hover:bg-green-600 transition"
-            (click)="entrar(item.titulo)"
-          >
-            Entrar
-          </button>
-        </mat-card-actions>
-      </mat-card>
-    </swiper-slide>
-  </swiper-container>
+      <mat-card-content>
+        <ul class="flex flex-col gap-3 text-gray-300 text-lg text-center">
+          <li>{{ item.accion1 }}</li>
+          <li>{{ item.accion2 }}</li>
+          <li>{{ item.accion3 }}</li>
+        </ul>
+      </mat-card-content>
+
+      <mat-card-actions class="flex justify-center mt-6">
+        <button
+          mat-raised-button
+          color="primary"
+          class="bg-green-500 text-white w-full py-2 rounded-md hover:bg-green-600 transition"
+          (click)="entrar(item.titulo)">
+          Entrar
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </swiper-slide>
+
+</swiper-container>
+
+
 </div>
