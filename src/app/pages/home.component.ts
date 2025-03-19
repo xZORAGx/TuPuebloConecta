@@ -14,7 +14,6 @@ import { CommonModule } from '@angular/common';
 // Swiper Imports
 import { register } from 'swiper/element/bundle';
 register();
-// Activar los módulos de Swiper
 
 @Component({
   selector: 'app-home',
@@ -31,7 +30,6 @@ register();
 })
 export class HomeComponent implements AfterViewInit {
 
-  // REFERENCIA AL CANVAS
   @ViewChild('starsCanvas') starsCanvas!: ElementRef<HTMLCanvasElement>;
 
   private ctx!: CanvasRenderingContext2D;
@@ -40,21 +38,18 @@ export class HomeComponent implements AfterViewInit {
   private width!: number;
   private height!: number;
 
-  // CUANDO YA SE HA CARGADO LA VISTA
   ngAfterViewInit(): void {
     this.initCanvas();
     this.createStars();
     this.animateStars();
   }
 
-  // CUANDO SE CAMBIA EL TAMAÑO DE VENTANA
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.initCanvas();
     this.createStars();
   }
 
-  // INICIALIZAR EL CANVAS
   private initCanvas() {
     const canvas = this.starsCanvas.nativeElement;
     this.ctx = canvas.getContext('2d')!;
@@ -64,35 +59,38 @@ export class HomeComponent implements AfterViewInit {
     canvas.height = this.height;
   }
 
-  // CREAR LAS ESTRELLAS
   private createStars() {
     this.stars = [];
     for (let i = 0; i < this.starCount; i++) {
+      const depth = Math.random();
       this.stars.push({
         x: Math.random() * this.width,
         y: Math.random() * this.height,
-        radius: Math.random() * 1.5,
-        speed: Math.random() * 0.3 + 0.05
+        radius: depth * 1.5,
+        speed: depth * 0.3 + 0.05,
+        opacity: Math.random() * 0.5 + 0.5
       });
     }
   }
 
-  // ANIMAR LAS ESTRELLAS EN BUCLE
   private animateStars() {
     this.ctx.clearRect(0, 0, this.width, this.height);
 
     for (let star of this.stars) {
+      // Twinkle effect
+      star.opacity += (Math.random() - 0.5) * 0.05;
+      if (star.opacity > 1) star.opacity = 1;
+      if (star.opacity < 0.3) star.opacity = 0.3;
+
       this.ctx.beginPath();
       this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-      this.ctx.fillStyle = '#4caf50'; // Color verde principal
+      this.ctx.fillStyle = `rgba(76, 175, 80, ${star.opacity})`;
       this.ctx.shadowBlur = 10;
-      this.ctx.shadowColor = '#76ff03'; // Verde neón
+      this.ctx.shadowColor = 'rgba(118, 255, 3, 0.5)';
       this.ctx.fill();
 
-      // Mueve las estrellas hacia abajo
       star.y += star.speed;
 
-      // Si pasa el fondo, vuelve arriba
       if (star.y > this.height) {
         star.y = 0;
         star.x = Math.random() * this.width;

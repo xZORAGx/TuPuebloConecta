@@ -1,0 +1,77 @@
+:host {
+    display: block;
+    width: 100%;
+    background-color: #121212;
+    color: #ffffff;
+    min-height: 100vh;
+  }
+  
+  h1 {
+    color: #00ff00;
+  }
+  
+  mat-card {
+    background-color: #1e1e1e;
+    color: #ffffff;
+  }
+  
+  mat-card-title {
+    font-size: 1.5rem;
+  }
+  
+  mat-card-content p {
+    margin-bottom: 0.5rem;
+  }
+  /* Contenedor para alinear si quieres centrarla o moverla */
+  .buscador-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .buscador {
+    width: 600px;
+    max-width: 90%;
+  }
+  
+  mat-form-field {
+    width: 100%;
+  }
+  
+  /* Quitamos el fondo feo y lo dejamos limpio */
+  .mat-form-field-appearance-fill .mat-form-field-flex {
+    background-color: transparent; /* Elimina fondo negro raro */
+    border-radius: 8px; /* Bordes redondeados si quieres */
+  }
+  
+  /* El borde inferior */
+  .mat-form-field-appearance-fill .mat-form-field-underline {
+    display: none; /* ELIMINA la línea de debajo */
+  }
+  
+  /* Hover efecto (por si aparece uno por defecto) */
+  .mat-form-field-appearance-fill .mat-form-field-flex:hover {
+    background-color: #1e1e1e; /* Cambia al color que quieras o pon transparente */
+  }
+  
+  /* Cuando haces focus */
+  .mat-form-field-appearance-fill.mat-focused .mat-form-field-flex {
+    background-color: #1e1e1e; /* Fondo al hacer focus */
+  }
+  
+  /* Label (el texto de arriba: "Buscar usuario") */
+  .mat-form-field-label {
+    color: #00ff00 !important; /* Verde si quieres destacar el label */
+  }
+  
+  /* Texto del input */
+  input.mat-input-element {
+    color: #ffffff !important; /* Texto blanco */
+  }
+  
+  /* Placeholder dentro del input */
+  input.mat-input-element::placeholder {
+    color: #ffffff !important;
+    opacity: 0.5; /* Puedes ajustar el nivel de transparencia */
+  }
+  

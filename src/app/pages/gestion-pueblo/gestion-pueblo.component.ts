@@ -1,4 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Router } from '@angular/router'; // ⬅️ IMPORTANTE: importamos Router
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -27,6 +28,14 @@ export class GestionPuebloComponent implements AfterViewInit {
 
   @ViewChild('swiper', { static: true }) swiperEl!: ElementRef;
 
+  puebloGestionado: string = 'Figueruelas'; // ⬅️ Aquí debes cargar el pueblo real si es dinámico
+
+  constructor(private router: Router) {
+    // Aquí puedes cargar dinámicamente el pueblo gestionado si es necesario
+    // this.puebloGestionado = puebloDesdeUsuario;
+  }
+
+  // Items del carrusel
   gestionItems = [
     {
       titulo: 'Noticias',
@@ -60,6 +69,31 @@ export class GestionPuebloComponent implements AfterViewInit {
     }
   ];
 
+  // Método que se ejecuta al hacer clic en los botones de abajo
+  irAListadoUsuarios(): void {  
+
+    if (!this.puebloGestionado) {
+      console.error('No tienes un pueblo gestionado asignado');
+      return;
+    }
+
+    console.log(`Redirigiendo al listado de usuarios del pueblo: ${this.puebloGestionado}`);
+
+    // Redirige a la nueva ruta
+    this.router.navigate(['/usuarios', this.puebloGestionado]);
+  }
+
+  verIncidencias(): void {
+    console.log('Ver listado de incidencias');
+    // this.router.navigate(['/incidencias']);
+  }
+
+  anadirTelefonos(): void {
+    console.log('Añadir teléfonos');
+    // this.router.navigate(['/telefonos']);
+  }
+
+  // Configuración de breakpoints para el Swiper
   ngAfterViewInit(): void {
     const swiper: any = this.swiperEl.nativeElement;
 
@@ -69,10 +103,13 @@ export class GestionPuebloComponent implements AfterViewInit {
       1024: { slidesPerView: 3, spaceBetween: 20 }
     };
 
-    swiper.update && swiper.update(); // Refresca el componente si es necesario
+    swiper.update && swiper.update();
   }
 
+  // Al pulsar "Entrar" en cada tarjeta
   entrar(titulo: string): void {
     console.log(`Entrando en ${titulo}`);
+    // Aquí puedes meter la lógica para navegar a la sección según el título
   }
+
 }

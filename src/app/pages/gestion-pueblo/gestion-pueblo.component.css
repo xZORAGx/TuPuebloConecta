@@ -107,3 +107,11 @@ swiper-slide {
   background-color: #00cc00;
   transform: translateY(-2px);
 }
+/* Botones adicionales */
+button[mat-raised-button] {
+  box-shadow: 0px 4px 12px rgba(0, 255, 0, 0.3);
+}
+
+button[mat-raised-button]:hover {
+  transform: translateY(-3px);
+}

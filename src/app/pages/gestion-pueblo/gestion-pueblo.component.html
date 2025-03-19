@@ -2,7 +2,7 @@
 
   <!-- Header con logo y título -->
   <div class="flex items-center justify-center gap-4 w-full mb-6">
-    <img src="assets/logo_figueruelasconecta.png" alt="Logo" class="w-16 h-16" />
+    <img src="assets/images/LogoWeb.jpg" alt="Logo" class="w-16 h-16" />
     <h1 class="text-3xl font-bold text-green-500 text-center">
       Bienvenido a la gestión de tu pueblo
     </h1>
@@ -13,43 +13,71 @@
 
   <!-- Carrusel con Swiper Web Component -->
   <swiper-container
-  #swiper
-  loop="true"
-  navigation="true"
-  pagination="false"
-  slides-per-view="3"
-  space-between="20"
-  class="w-full max-w-6xl gestion-swiper overflow-visible">
+    #swiper
+    loop="true"
+    navigation="true"
+    pagination="false"
+    slides-per-view="3"
+    space-between="20"
+    class="w-full max-w-6xl gestion-swiper overflow-visible">
 
-  <swiper-slide *ngFor="let item of gestionItems" class="overflow-visible">
-    <mat-card class="gestion-card transition duration-300 ease-in-out transform hover:scale-105">
-      <mat-card-title class="text-green-400 text-2xl font-semibold text-center mb-2">
-        {{ item.titulo }}
-      </mat-card-title>
+    <swiper-slide *ngFor="let item of gestionItems" class="overflow-visible">
+      <mat-card class="gestion-card transition duration-300 ease-in-out transform hover:scale-105">
+        <mat-card-title class="text-green-400 text-2xl font-semibold text-center mb-2">
+          {{ item.titulo }}
+        </mat-card-title>
 
-      <div class="separator mb-4"></div>
+        <div class="separator mb-4"></div>
 
-      <mat-card-content>
-        <ul class="flex flex-col gap-3 text-gray-300 text-lg text-center">
-          <li>{{ item.accion1 }}</li>
-          <li>{{ item.accion2 }}</li>
-          <li>{{ item.accion3 }}</li>
-        </ul>
-      </mat-card-content>
+        <mat-card-content>
+          <ul class="flex flex-col gap-3 text-gray-300 text-lg text-center">
+            <li>{{ item.accion1 }}</li>
+            <li>{{ item.accion2 }}</li>
+            <li>{{ item.accion3 }}</li>
+          </ul>
+        </mat-card-content>
 
-      <mat-card-actions class="flex justify-center mt-6">
-        <button
-          mat-raised-button
-          color="primary"
-          class="bg-green-500 text-white w-full py-2 rounded-md hover:bg-green-600 transition"
-          (click)="entrar(item.titulo)">
-          Entrar
-        </button>
-      </mat-card-actions>
-    </mat-card>
-  </swiper-slide>
+        <mat-card-actions class="flex justify-center mt-6">
+          <button
+            mat-raised-button
+            color="primary"
+            class="bg-green-500 text-white w-full py-2 rounded-md hover:bg-green-600 transition"
+            (click)="entrar(item.titulo)">
+            Entrar
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </swiper-slide>
 
-</swiper-container>
+  </swiper-container>
 
+  <!-- Nueva sección de botones adicionales -->
+  <div class="flex flex-wrap justify-center items-center gap-6 mt-14 w-full max-w-5xl">
+    
+    <button
+      mat-raised-button
+      color="primary"
+      class="bg-green-500 text-black font-bold py-4 px-8 rounded-lg text-lg hover:bg-green-600 transition w-72"
+      (click)="irAListadoUsuarios()">
+      Ver listado de usuarios
+    </button>
+
+    <button
+    mat-raised-button
+    color="primary"
+    class="bg-green-500 text-black font-bold py-4 px-8 rounded-lg text-lg hover:bg-green-600 transition w-72"
+    (click)="irAListadoUsuarios()">
+    Ver listado de usuarios
+  </button>
+
+    <button
+      mat-raised-button
+      color="primary"
+      class="bg-green-500 text-black font-bold py-4 px-8 rounded-lg text-lg hover:bg-green-600 transition w-72"
+      (click)="anadirTelefonos()">
+      Añadir teléfonos
+    </button>
+
+  </div>
 
 </div>
