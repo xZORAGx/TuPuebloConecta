@@ -1,0 +1,86 @@
+:host {
+    display: block;
+    width: 100%;
+    background-color: #121212;
+    color: #ffffff;
+    min-height: 100vh;
+  }
+  
+  h1 {
+    color: #00ff00;
+  }
+  
+  .container {
+    padding: 1rem;
+  }
+  
+  .buscador-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    justify-content: center;
+  }
+  
+  .buscador,
+  .filtro-tipo {
+    width: 300px;
+  }
+  
+  mat-form-field {
+    width: 100%;
+  }
+  
+  /* Apariencia de los campos de búsqueda y filtro */
+  .mat-form-field-appearance-fill .mat-form-field-flex {
+    background-color: #ffffff;
+    border-radius: 8px;
+  }
+  
+  .mat-form-field-label {
+    color: #000000 !important;
+  }
+  
+  input.mat-input-element {
+    color: #000000 !important;
+  }
+  
+  .mat-select-value {
+    color: #000000 !important;
+  }
+  
+  .mat-form-field-appearance-fill .mat-form-field-underline {
+    display: none;
+  }
+  
+  .mat-form-field-appearance-fill .mat-form-field-flex:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .mat-form-field-appearance-fill.mat-focused .mat-form-field-flex {
+    background-color: #f0f0f0;
+  }
+  
+  .tabla {
+    width: 100%;
+  }
+  
+  .descripcion-corta {
+    display: inline-block;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  mat-paginator {
+    color: #ffffff;
+  }
+  
+  /* Estilos para el dialogo */
+  ::ng-deep .custom-dialog-container .mat-dialog-container {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border-radius: 12px;
+  }
+  

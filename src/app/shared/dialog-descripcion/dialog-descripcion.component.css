@@ -1,0 +1,48 @@
+/* Contenedor principal del diálogo */
+.custom-dialog-container {
+    background-color: #ffffff; /* Fondo blanco */
+    color: #000000;            /* Letras negras */
+    padding: 1rem;
+    border-radius: 16px;
+  }
+  
+  /* Título */
+  h2 {
+    color: #000000;            /* Letras negras */
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Contenido del diálogo */
+  mat-dialog-content {
+    max-height: 400px;
+    overflow-y: auto;
+    color: #000000;            /* Letras negras */
+    background-color: #ffffff; /* Fondo blanco */
+    padding: 1rem;
+  
+    /* 👇 Forzar salto de línea en cualquier caso */
+    white-space: pre-wrap;  /* Mantiene los saltos de línea y permite el wrap */
+    word-wrap: break-word;  /* Rompe las palabras largas */
+    word-break: break-word; /* Rompe las palabras si es necesario */
+  }
+  
+  /* Botones del diálogo */
+  mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+  
+  /* Botón cerrar */
+  button[mat-dialog-close] {
+    color: #ffffff;
+    background-color: #1976d2; /* Azul */
+    padding: 8px 16px;
+    border-radius: 8px;
+  }
+  
+  button[mat-dialog-close]:hover {
+    background-color: #115293; /* Azul más oscuro */
+  }
+  

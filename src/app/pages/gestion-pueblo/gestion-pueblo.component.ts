@@ -85,7 +85,7 @@ export class GestionPuebloComponent implements AfterViewInit {
 
   verIncidencias(): void {
     console.log('Ver listado de incidencias');
-    // this.router.navigate(['/incidencias']);
+    this.router.navigate([`/incidencias/${this.puebloGestionado}`]);
   }
 
   anadirTelefonos(): void {

@@ -4,10 +4,19 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home.component';
 import { LoginComponent } from './login/login.component';
 import { UsuariosComponent } from './pages/ListadoUsuarios/usuarios.component';
+// Elimina la importación directa del componente de incidencias
+// import { ListadoIncidenciasComponent } from './pages/ListadoIncidencias/listado-incidencias.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
+
+  // PANTALLA DE INCIDENCIAS CON PARAMETRO :pueblo (Lazy Load)
+  {
+    path: 'incidencias/:pueblo',
+    loadComponent: () => import('./pages/ListadoIncidencias/listado-incidencias.component')
+      .then(m => m.ListadoIncidenciasComponent)
+  },
 
   // PANTALLA DE USUARIOS CON PARAMETRO :pueblo
   { path: 'usuarios/:pueblo', component: UsuariosComponent },
