@@ -1,38 +1,43 @@
-<div class="crear-noticia-container">
+<div class="pantalla-container">
+  <!-- Formulario -->
+  <div class="crear-noticia-container">
+    <h2 class="titulo">Crear nueva noticia</h2>
 
-  <h2 class="titulo">Crear nueva noticia</h2>
+    <form [formGroup]="formNoticia" (ngSubmit)="publicarNoticia()">
+      <mat-form-field appearance="fill">
+        <mat-label>Título</mat-label>
+        <input matInput formControlName="titulo" />
+        <mat-error *ngIf="formNoticia.get('titulo')?.invalid">Título obligatorio</mat-error>
+      </mat-form-field>
 
-  <form [formGroup]="formNoticia" (ngSubmit)="publicarNoticia()">
-    
-    <!-- Campo Título -->
-    <mat-form-field appearance="fill">
-      <mat-label>Título</mat-label>
-      <input matInput formControlName="titulo" />
-      <mat-error *ngIf="formNoticia.get('titulo')?.invalid">Título obligatorio</mat-error>
-    </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descripcion" rows="5"></textarea>
+        <mat-error *ngIf="formNoticia.get('descripcion')?.invalid">Descripción obligatoria</mat-error>
+      </mat-form-field>
 
-    <!-- Campo Descripción -->
-    <mat-form-field appearance="fill">
-      <mat-label>Descripción</mat-label>
-      <textarea matInput formControlName="descripcion" rows="5"></textarea>
-      <mat-error *ngIf="formNoticia.get('descripcion')?.invalid">Descripción obligatoria</mat-error>
-    </mat-form-field>
+      <label class="texto-label">Imagen (opcional):</label>
+      <input type="file" accept="image/*" (change)="onFileSelected($event)" />
 
-    <!-- Imagen -->
-    <label class="texto-label">Imagen (opcional):</label>
-    <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+      <div *ngIf="imagenPreview" class="preview">
+        <p>Vista previa:</p>
+        <img [src]="imagenPreview" alt="Imagen seleccionada" />
+      </div>
 
-    <!-- Preview -->
-    <div *ngIf="imagenPreview" class="preview">
-      <p>Vista previa:</p>
-      <img [src]="imagenPreview" alt="Imagen seleccionada" />
-    </div>
+      <button mat-raised-button type="submit" [disabled]="formNoticia.invalid || cargando">
+        {{ cargando ? 'Publicando...' : 'Publicar Noticia' }}
+      </button>
+    </form>
+  </div>
 
-    <!-- Botón -->
-    <button mat-raised-button type="submit" [disabled]="formNoticia.invalid || cargando">
-      {{ cargando ? 'Publicando...' : 'Publicar Noticia' }}
-    </button>
-
-  </form>
-
+  <!-- Listado de Noticias -->
+  <div class="listado-noticias">
+    <h3 class="titulo-listado">Noticias registradas</h3>
+    <ul>
+      <li *ngFor="let noticia of noticias" (click)="verDetalle(noticia.id)">
+        <span class="titulo-clickable">{{ noticia.titulo }}</span>
+        <button (click)="eliminarNoticia(noticia.id); $event.stopPropagation()" class="btn-eliminar">Eliminar</button>
+      </li>
+    </ul>
+  </div>
 </div>

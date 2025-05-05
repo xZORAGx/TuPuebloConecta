@@ -1,16 +1,29 @@
-/* Contenedor general */
-.crear-noticia-container {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 2rem;
+:host {
+    display: block;
     background-color: #121212;
-    color: white;
-    border-radius: 12px;
     min-height: 100vh;
+    padding: 2rem 1rem;
   }
   
-  /* Título principal */
+  .pantalla-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+  
+  /* Formulario */
+  .crear-noticia-container {
+    flex: 1 1 400px;
+    max-width: 600px;
+    padding: 2rem;
+    background-color: #1e1e1e;
+    color: white;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+  }
+  
   .titulo {
     text-align: center;
     color: #22c55e;
@@ -19,14 +32,6 @@
     margin-bottom: 2rem;
   }
   
-  /* Etiquetas */
-  .texto-label {
-    margin-top: 1rem;
-    font-weight: bold;
-    color: #ffffff;
-  }
-  
-  /* mat-form-field blanco */
   mat-form-field {
     width: 100%;
   }
@@ -48,12 +53,10 @@
     font-weight: 500;
   }
   
-  /* Línea inferior oculta */
   .mat-form-field-appearance-fill .mat-form-field-underline {
     display: none;
   }
   
-  /* Imagen preview */
   .preview img {
     width: 100%;
     margin-top: 1rem;
@@ -63,7 +66,6 @@
     object-fit: cover;
   }
   
-  /* Botón siempre verde */
   button[mat-raised-button] {
     background-color: #22c55e !important;
     color: white !important;
@@ -85,20 +87,52 @@
     color: white;
     cursor: not-allowed;
   }
-  /* Fondo general de la pantalla */
-:host {
-    display: block;
-    background-color: #121212;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
   
-  /* Alineación centrada */
-  .crear-noticia-container {
+  /* Listado */
+  .listado-noticias {
+    flex: 1 1 300px;
     background-color: #1e1e1e;
+    color: white;
     padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+    height: fit-content;
+    max-height: 80vh;
+    overflow-y: auto;
   }
   
+  .titulo-listado {
+    color: #22c55e;
+    font-size: 20px;
+    margin-bottom: 1rem;
+  }
+  
+  .listado-noticias ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .listado-noticias li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .titulo-clickable {
+    flex: 1;
+    transition: color 0.2s;
+  }
+  
+  .titulo-clickable:hover {
+    color: #22c55e;
+  }
+  
+  .btn-eliminar {
+    background-color: transparent;
+    color: red;
+    border: none;
+    cursor: pointer;
+  }
   

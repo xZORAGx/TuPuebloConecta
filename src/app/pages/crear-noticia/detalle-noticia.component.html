@@ -1,0 +1,6 @@
+<div class="contenedor" *ngIf="noticia">
+    <h2 class="titulo">{{ noticia.titulo }}</h2>
+    <p class="descripcion">{{ noticia.descripcion }}</p>
+    <img *ngIf="noticia.imagenURL" class="imagen" [src]="noticia.imagenURL" (click)="ampliarImagen(noticia.imagenURL)" />
+  </div>
+  
