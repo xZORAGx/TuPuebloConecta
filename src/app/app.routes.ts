@@ -28,6 +28,13 @@ export const routes: Routes = [
       .then(m => m.GestionPuebloComponent)
   },
 
+  {
+    path: 'crear-noticia',
+    loadComponent: () => import('./pages/crear-noticia/crear-noticia.component')
+      .then(m => m.CrearNoticiaComponent)
+  },
+  
+
   // REDIRECCIÓN PARA RUTAS NO ENCONTRADAS
   { path: '**', redirectTo: '' }
 ];

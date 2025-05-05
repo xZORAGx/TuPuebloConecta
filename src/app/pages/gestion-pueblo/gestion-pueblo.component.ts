@@ -28,12 +28,9 @@ export class GestionPuebloComponent implements AfterViewInit {
 
   @ViewChild('swiper', { static: true }) swiperEl!: ElementRef;
 
-  puebloGestionado: string = 'Figueruelas'; // ⬅️ Aquí debes cargar el pueblo real si es dinámico
+  puebloGestionado: string = 'Figueruelas'; // Cárgalo dinámicamente si ya tienes un sistema implementado
 
-  constructor(private router: Router) {
-    // Aquí puedes cargar dinámicamente el pueblo gestionado si es necesario
-    // this.puebloGestionado = puebloDesdeUsuario;
-  }
+  constructor(private router: Router) {}
 
   // Items del carrusel
   gestionItems = [
@@ -70,16 +67,13 @@ export class GestionPuebloComponent implements AfterViewInit {
   ];
 
   // Método que se ejecuta al hacer clic en los botones de abajo
-  irAListadoUsuarios(): void {  
-
+  irAListadoUsuarios(): void {
     if (!this.puebloGestionado) {
       console.error('No tienes un pueblo gestionado asignado');
       return;
     }
 
     console.log(`Redirigiendo al listado de usuarios del pueblo: ${this.puebloGestionado}`);
-
-    // Redirige a la nueva ruta
     this.router.navigate(['/usuarios', this.puebloGestionado]);
   }
 
@@ -90,7 +84,31 @@ export class GestionPuebloComponent implements AfterViewInit {
 
   anadirTelefonos(): void {
     console.log('Añadir teléfonos');
-    // this.router.navigate(['/telefonos']);
+    this.router.navigate(['/telefonos']);
+  }
+
+  // Al pulsar "Entrar" en cada tarjeta
+  entrar(titulo: string): void {
+    console.log(`Entrando en ${titulo}`);
+    switch (titulo) {
+      case 'Noticias':
+        this.router.navigate(['/crear-noticia']);
+        break;
+      case 'Deportes':
+        // this.router.navigate(['/crear-deporte']);
+        break;
+      case 'Instalaciones':
+        // this.router.navigate(['/instalaciones']);
+        break;
+      case 'Fiestas':
+        // this.router.navigate(['/fiestas']);
+        break;
+      case 'Empleo':
+        // this.router.navigate(['/empleo']);
+        break;
+      default:
+        console.warn('Sección no reconocida');
+    }
   }
 
   // Configuración de breakpoints para el Swiper
@@ -104,12 +122,6 @@ export class GestionPuebloComponent implements AfterViewInit {
     };
 
     swiper.update && swiper.update();
-  }
-
-  // Al pulsar "Entrar" en cada tarjeta
-  entrar(titulo: string): void {
-    console.log(`Entrando en ${titulo}`);
-    // Aquí puedes meter la lógica para navegar a la sección según el título
   }
 
 }

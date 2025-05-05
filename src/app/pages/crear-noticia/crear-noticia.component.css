@@ -1,0 +1,104 @@
+/* Contenedor general */
+.crear-noticia-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #121212;
+    color: white;
+    border-radius: 12px;
+    min-height: 100vh;
+  }
+  
+  /* Título principal */
+  .titulo {
+    text-align: center;
+    color: #22c55e;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 2rem;
+  }
+  
+  /* Etiquetas */
+  .texto-label {
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+  }
+  
+  /* mat-form-field blanco */
+  mat-form-field {
+    width: 100%;
+  }
+  
+  .mat-form-field-appearance-fill .mat-form-field-flex {
+    background-color: white;
+    color: black;
+    border-radius: 8px;
+  }
+  
+  .mat-form-field-label {
+    color: #22c55e !important;
+    font-weight: 600;
+  }
+  
+  input.mat-input-element,
+  textarea.mat-input-element {
+    color: black;
+    font-weight: 500;
+  }
+  
+  /* Línea inferior oculta */
+  .mat-form-field-appearance-fill .mat-form-field-underline {
+    display: none;
+  }
+  
+  /* Imagen preview */
+  .preview img {
+    width: 100%;
+    margin-top: 1rem;
+    border-radius: 8px;
+    border: 1px solid #444;
+    max-height: 200px;
+    object-fit: cover;
+  }
+  
+  /* Botón siempre verde */
+  button[mat-raised-button] {
+    background-color: #22c55e !important;
+    color: white !important;
+    font-weight: bold;
+    padding: 12px;
+    margin-top: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 16px;
+  }
+  
+  button[mat-raised-button]:hover {
+    background-color: #16a34a !important;
+  }
+  
+  button[mat-raised-button][disabled] {
+    background-color: #22c55e !important;
+    opacity: 0.5;
+    color: white;
+    cursor: not-allowed;
+  }
+  /* Fondo general de la pantalla */
+:host {
+    display: block;
+    background-color: #121212;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  
+  /* Alineación centrada */
+  .crear-noticia-container {
+    background-color: #1e1e1e;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+  }
+  
+  

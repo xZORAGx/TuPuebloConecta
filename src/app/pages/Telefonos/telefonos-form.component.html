@@ -1,0 +1,44 @@
+<mat-card class="p-4 max-w-xl mx-auto mt-10">
+    <h2 class="text-xl font-bold mb-4">📞 Gestión de Teléfonos</h2>
+  
+    <form [formGroup]="form" (ngSubmit)="guardarTelefono()">
+      <mat-form-field appearance="fill" class="w-full mb-4">
+        <mat-label>Nombre del lugar</mat-label>
+        <input matInput formControlName="nombre" />
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill" class="w-full mb-4">
+        <mat-label>Número de teléfono</mat-label>
+        <input matInput formControlName="numero" />
+      </mat-form-field>
+  
+      <div class="flex gap-2">
+        <button mat-raised-button color="primary" type="submit">
+          {{ editandoId ? 'Guardar Cambios' : 'Añadir Teléfono' }}
+        </button>
+        <button *ngIf="editandoId" mat-raised-button color="warn" type="button" (click)="cancelarEdicion()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  
+    <hr class="my-6" />
+  
+    <div *ngIf="telefonos$ | async as telefonos; else vacio">
+      <div *ngFor="let tel of telefonos" class="mb-4 border-b pb-2">
+        <p class="font-semibold">{{ tel.nombre }}</p>
+        <p>{{ tel.numero }}</p>
+        <button mat-icon-button color="primary" (click)="editarTelefono(tel)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="eliminarTelefono(tel.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  
+    <ng-template #vacio>
+      <p>No hay teléfonos guardados aún.</p>
+    </ng-template>
+  </mat-card>
+  

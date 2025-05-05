@@ -1,23 +1,24 @@
-<h2 mat-dialog-title>Editar Usuario</h2> <!-- Título del dialog -->
+<h2 mat-dialog-title>Editar Usuario</h2>
 
 <mat-dialog-content>
   <form [formGroup]="form">
 
-    <mat-form-field class="w-full">
+    <mat-form-field appearance="fill" class="w-full">
       <mat-label>Usuario</mat-label>
-      <input matInput formControlName="Usuario">
+      <input matInput formControlName="Usuario" #firstInput>
     </mat-form-field>
 
-    <mat-form-field class="w-full">
+    <mat-form-field appearance="fill" class="w-full">
       <mat-label>Correo</mat-label>
       <input matInput formControlName="Correo">
     </mat-form-field>
 
-    <mat-form-field class="w-full">
+    <mat-form-field appearance="fill" class="w-full">
       <mat-label>Tipo</mat-label>
       <mat-select formControlName="Tipo">
         <mat-option value="Admin">Admin</mat-option>
         <mat-option value="User">User</mat-option>
+        <mat-option value="Programador">Programador</mat-option>
       </mat-select>
     </mat-form-field>
 

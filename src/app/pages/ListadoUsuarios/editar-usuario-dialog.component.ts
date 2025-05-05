@@ -1,9 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-// Angular Material que usas en el HTML
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,7 +14,7 @@ import { MatOptionModule } from '@angular/material/core';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,      // ⬅️ NECESARIO para el [formGroup]
+    ReactiveFormsModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
@@ -26,7 +25,9 @@ import { MatOptionModule } from '@angular/material/core';
   templateUrl: './editar-usuario-dialog.component.html',
   styleUrls: ['./editar-usuario-dialog.component.css']
 })
-export class EditarUsuarioDialog {
+export class EditarUsuarioDialog implements AfterViewInit {
+
+  @ViewChild('firstInput') firstInputRef!: ElementRef;
 
   form: FormGroup;
 
@@ -36,18 +37,27 @@ export class EditarUsuarioDialog {
     private fb: FormBuilder
   ) {
     this.form = this.fb.group({
-      Usuario: [data.Usuario],
-      Correo: [data.Correo],
-      Tipo: [data.Tipo]
+      Usuario: [data.Usuario || ''],
+      Correo: [data.Correo || ''],
+      Tipo: [data.Tipo || 'User']
+    });
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      if (this.firstInputRef?.nativeElement) {
+        this.firstInputRef.nativeElement.focus();
+      }
     });
   }
 
   guardar() {
-    this.dialogRef.close(this.form.value);
+    if (this.form.valid) {
+      this.dialogRef.close(this.form.value);
+    }
   }
 
   cancelar() {
     this.dialogRef.close();
   }
-
 }
