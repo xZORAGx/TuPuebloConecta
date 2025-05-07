@@ -63,4 +63,12 @@
   mat-panel-description button {
     margin-left: 0.5rem;
   }
-  
+  .detalle-horarios p {
+    margin: 0.25rem 0;
+    color: #ffffff; /* Texto blanco */
+  }
+  /* Panel title en verde */
+mat-panel-title,
+.mat-expansion-panel-header .mat-expansion-panel-header-title {
+  color: #4caf50 !important;
+}
