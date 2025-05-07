@@ -1,0 +1,66 @@
+.pantalla-container {
+    display: flex;
+    gap: 2rem;
+    padding: 1.5rem;
+    background: #1e1e1e;
+    min-height: 100vh;
+  }
+  
+  .card-form,
+  .card-listado {
+    flex: 1;
+    background: #2c2c2c;
+    color: #eee;
+  }
+  
+  .card-title {
+    font-size: 1.5rem;
+    color: #4caf50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .grid-temporadas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .season-section h3 {
+    margin-bottom: 0.5rem;
+    color: #a5d6a7;
+  }
+  
+  .bloque-horario h4 {
+    margin: 0 0 0.5rem;
+    color: #81c784;
+  }
+  
+  mat-card-actions {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 0.5rem;
+  }
+  
+  .btn-guardar {
+    background-color: #4caf50;
+    color: #000;
+  }
+  
+  .detalle-horarios p {
+    margin: 0.25rem 0;
+  }
+  
+  mat-expansion-panel {
+    background: #383838;
+    margin-bottom: 0.5rem;
+  }
+  
+  mat-panel-description button {
+    margin-left: 0.5rem;
+  }
+  

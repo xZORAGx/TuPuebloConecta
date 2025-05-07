@@ -16,6 +16,13 @@ export const routes: Routes = [
       .then(m => m.ListadoIncidenciasComponent)
   },
 
+  // PANTALLA DE INSTALACIONES (Listado + CRUD)
+  {
+    path: 'instalaciones',
+    loadComponent: () => import('./pages/ListadoInstalaciones/listado-instalaciones.component')
+      .then(m => m.ListadoInstalacionesComponent)
+  },
+
   // PANTALLA DE USUARIOS CON PARÁMETRO :pueblo
   { path: 'usuarios/:pueblo', component: UsuariosComponent },
 
