@@ -1,8 +1,7 @@
 <div class="pantalla-container">
-  <!-- Formulario -->
+  <!-- Formulario de creación/edición -->
   <div class="crear-noticia-container">
-    <h2 class="titulo">Crear nueva noticia</h2>
-
+    <h2 class="titulo">{{ isEditMode ? 'Editar noticia' : 'Crear nueva noticia' }}</h2>
     <form [formGroup]="formNoticia" (ngSubmit)="publicarNoticia()">
       <mat-form-field appearance="fill">
         <mat-label>Título</mat-label>
@@ -25,7 +24,9 @@
       </div>
 
       <button mat-raised-button type="submit" [disabled]="formNoticia.invalid || cargando">
-        {{ cargando ? 'Publicando...' : 'Publicar Noticia' }}
+        {{ cargando
+           ? (isEditMode ? 'Actualizando...' : 'Publicando...')
+           : (isEditMode ? 'Actualizar Noticia' : 'Publicar Noticia') }}
       </button>
     </form>
   </div>
@@ -34,9 +35,26 @@
   <div class="listado-noticias">
     <h3 class="titulo-listado">Noticias registradas</h3>
     <ul>
-      <li *ngFor="let noticia of noticias" (click)="verDetalle(noticia.id)">
-        <span class="titulo-clickable">{{ noticia.titulo }}</span>
-        <button (click)="eliminarNoticia(noticia.id); $event.stopPropagation()" class="btn-eliminar">Eliminar</button>
+      <li *ngFor="let noticia of noticias">
+        <span class="titulo-clickable" (click)="verDetalle(noticia.id)">{{ noticia.titulo }}</span>
+
+        <!-- Botón editar -->
+        <button
+          mat-icon-button
+          (click)="editarNoticia(noticia.id); $event.stopPropagation()"
+          matTooltip="Editar noticia"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <!-- Botón eliminar -->
+        <button
+          mat-icon-button
+          (click)="eliminarNoticia(noticia.id); $event.stopPropagation()"
+          matTooltip="Eliminar noticia"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
       </li>
     </ul>
   </div>

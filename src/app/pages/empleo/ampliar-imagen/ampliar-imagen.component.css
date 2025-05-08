@@ -1,0 +1,15 @@
+:host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    padding: 0;
+  }
+  
+  img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 12px;
+  }
+  

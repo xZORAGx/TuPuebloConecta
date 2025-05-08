@@ -1,0 +1,49 @@
+<div class="pantalla-container">
+  <!-- Formulario Empleo -->
+  <div class="crear-empleo-container">
+    <h2 class="titulo">Crear nueva oferta de empleo</h2>
+
+    <form [formGroup]="formEmpleo" (ngSubmit)="publicarEmpleo()">
+      <mat-form-field appearance="fill">
+        <mat-label>Título</mat-label>
+        <input matInput formControlName="titulo" />
+        <mat-error *ngIf="formEmpleo.get('titulo')?.invalid">
+          Título obligatorio
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descripcion" rows="5"></textarea>
+        <mat-error *ngIf="formEmpleo.get('descripcion')?.invalid">
+          Descripción obligatoria
+        </mat-error>
+      </mat-form-field>
+
+      <label class="texto-label">Imagen (opcional):</label>
+      <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+
+      <div *ngIf="imagenPreview" class="preview">
+        <p>Vista previa:</p>
+        <img [src]="imagenPreview" alt="Imagen seleccionada" />
+      </div>
+
+      <button mat-raised-button type="submit" [disabled]="formEmpleo.invalid || cargando">
+        {{ cargando ? 'Publicando...' : 'Publicar Empleo' }}
+      </button>
+    </form>
+  </div>
+
+  <!-- Listado de Empleos -->
+  <div class="listado-empleos">
+    <h3 class="titulo-listado-empleo">Empleos registrados</h3>
+    <ul>
+      <li *ngFor="let empleo of empleos" (click)="verDetalle(empleo.id)">
+        <span class="titulo-clickable">{{ empleo.titulo }}</span>
+        <button (click)="eliminarEmpleo(empleo.id); $event.stopPropagation()" class="btn-eliminar">
+          Eliminar
+        </button>
+      </li>
+    </ul>
+  </div>
+</div>

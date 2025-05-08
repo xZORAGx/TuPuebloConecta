@@ -1,0 +1,55 @@
+:host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #121212;
+    padding: 2rem;
+  }
+  
+  .contenedor {
+    background-color: #1e1e1e;
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 700px;
+    width: 100%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  }
+  
+  .titulo {
+    color: #22c55e;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .descripcion {
+    font-size: 16px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .imagen {
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #333;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .imagen:hover {
+    transform: scale(1.02);
+  }
+  
+  .dialogo-imagen {
+    background-color: transparent;
+    padding: 0;
+  }
+  
+  .dialogo-imagen img {
+    width: 100%;
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+  }

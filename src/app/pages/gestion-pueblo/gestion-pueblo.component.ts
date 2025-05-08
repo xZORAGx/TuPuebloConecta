@@ -1,5 +1,13 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
-import { Router } from '@angular/router'; // ⬅️ IMPORTANTE: importamos Router
+// src/app/pages/gestion-pueblo/gestion-pueblo.component.ts
+
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ViewChild,
+  AfterViewInit,
+  ElementRef
+} from '@angular/core';
+import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -25,12 +33,8 @@ register();
   styleUrls: ['./gestion-pueblo.component.css']
 })
 export class GestionPuebloComponent implements AfterViewInit {
-
   @ViewChild('swiper', { static: true }) swiperEl!: ElementRef;
-
-  puebloGestionado: string = 'Figueruelas'; // Cárgalo dinámicamente si ya tienes un sistema implementado
-
-  constructor(private router: Router) {}
+  puebloGestionado: string = 'Figueruelas';
 
   // Items del carrusel
   gestionItems = [
@@ -66,30 +70,29 @@ export class GestionPuebloComponent implements AfterViewInit {
     }
   ];
 
-  // Método que se ejecuta al hacer clic en los botones de abajo
+  constructor(private router: Router) {}
+
+  // Redirige al listado de usuarios del pueblo
   irAListadoUsuarios(): void {
     if (!this.puebloGestionado) {
       console.error('No tienes un pueblo gestionado asignado');
       return;
     }
-
-    console.log(`Redirigiendo al listado de usuarios del pueblo: ${this.puebloGestionado}`);
     this.router.navigate(['/usuarios', this.puebloGestionado]);
   }
 
+  // Ver incidencias por pueblo
   verIncidencias(): void {
-    console.log('Ver listado de incidencias');
     this.router.navigate([`/incidencias/${this.puebloGestionado}`]);
   }
 
+  // Añadir teléfonos (ejemplo)
   anadirTelefonos(): void {
-    console.log('Añadir teléfonos');
     this.router.navigate(['/telefonos']);
   }
 
-  // Al pulsar "Entrar" en cada tarjeta
+  // Acción al pulsar "Entrar" en cada tarjeta
   entrar(titulo: string): void {
-    console.log(`Entrando en ${titulo}`);
     switch (titulo) {
       case 'Noticias':
         this.router.navigate(['/crear-noticia']);
@@ -104,7 +107,7 @@ export class GestionPuebloComponent implements AfterViewInit {
         this.router.navigate(['/fiestas']);
         break;
       case 'Empleo':
-        // this.router.navigate(['/empleo']);
+        this.router.navigate(['/empleo']);
         break;
       default:
         console.warn('Sección no reconocida');
@@ -114,14 +117,11 @@ export class GestionPuebloComponent implements AfterViewInit {
   // Configuración de breakpoints para el Swiper
   ngAfterViewInit(): void {
     const swiper: any = this.swiperEl.nativeElement;
-
     swiper.breakpoints = {
-      0: { slidesPerView: 1, spaceBetween: 10 },
-      640: { slidesPerView: 2, spaceBetween: 15 },
+      0:    { slidesPerView: 1, spaceBetween: 10 },
+      640:  { slidesPerView: 2, spaceBetween: 15 },
       1024: { slidesPerView: 3, spaceBetween: 20 }
     };
-
     swiper.update && swiper.update();
   }
-
 }

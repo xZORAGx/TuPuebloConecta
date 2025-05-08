@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import {
   Firestore,
   collection, collectionData, addDoc,
-  deleteDoc, doc, query, Query
+  deleteDoc, doc, Query
 } from '@angular/fire/firestore';
 import {
   Storage,
@@ -36,11 +36,9 @@ interface Fiesta {
 @Component({
   selector: 'app-fiestas',
   standalone: true,
-  /* ------------ MÓDULOS IMPORTADOS (stand‑alone) ------------ */
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    /* Material */
     MatFormFieldModule, MatInputModule, MatButtonModule,
     MatIconModule, MatCardModule, MatTooltipModule,
     MatExpansionModule
@@ -50,17 +48,17 @@ interface Fiesta {
 })
 export class FiestasComponent implements OnInit, OnDestroy {
 
-  /* -------------------- PROPIEDADES -------------------- */
+  /* ------------ PROPIEDADES ------------ */
   form: FormGroup;
   fiestas: Fiesta[] = [];
   selectedFile: File | null = null;
 
-  previewUrl: string | ArrayBuffer | null = null;   // para imagen local
-  safePreviewUrl: SafeResourceUrl | null = null;    // pdf local seguro
+  previewUrl: string | ArrayBuffer | null = null;
+  safePreviewUrl: SafeResourceUrl | null = null;
   uploading = false;
 
   private sub?: Subscription;
-  private fsPath = 'pueblos/Figueruelas/Celebraciones';   // colección
+  private fsPath = 'pueblos/Figueruelas/Celebraciones';
 
   constructor(
     private fb: FormBuilder,
@@ -74,18 +72,16 @@ export class FiestasComponent implements OnInit, OnDestroy {
     });
   }
 
-  /* -------------------- CICLO DE VIDA -------------------- */
+  /* ------------ CICLO DE VIDA ------------ */
   ngOnInit(): void {
     const colRef = collection(this.firestore, this.fsPath) as unknown as Query<Fiesta>;
     this.sub = collectionData<Fiesta>(colRef, { idField: 'id' })
       .subscribe(list => this.fiestas = list);
   }
 
-  ngOnDestroy(): void {
-    this.sub?.unsubscribe();
-  }
+  ngOnDestroy(): void { this.sub?.unsubscribe(); }
 
-  /* -------------------- GESTIÓN ARCHIVO ------------------ */
+  /* -------------- ARCHIVO -------------- */
   onFileChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) { return; }
@@ -100,12 +96,11 @@ export class FiestasComponent implements OnInit, OnDestroy {
     this.selectedFile = file;
     this.form.get('file')!.setValue(file);
 
-    /* Vista previa inmediata */
     const reader = new FileReader();
     reader.onload = () => {
       this.previewUrl     = reader.result;
-      this.safePreviewUrl = this.sanitizer
-                              .bypassSecurityTrustResourceUrl(reader.result as string);
+      this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+                              reader.result as string);
     };
     reader.readAsDataURL(file);
   }
@@ -114,7 +109,7 @@ export class FiestasComponent implements OnInit, OnDestroy {
     if (this.safePreviewUrl) { window.open(this.safePreviewUrl as string, '_blank'); }
   }
 
-  /* ------------------------ SUBIR ------------------------ */
+  /* -------------- SUBIR -------------- */
   upload(): void {
     if (this.form.invalid || !this.selectedFile) { return; }
     this.uploading = true;
@@ -125,31 +120,22 @@ export class FiestasComponent implements OnInit, OnDestroy {
     const storagePath = `celebraciones/Figueruelas/${ts}_${file.name}`;
     const storageRef  = ref(this.storage, storagePath);
 
-    /* tarea subida */
     const task = uploadBytesResumable(storageRef, file);
 
     task.on('state_changed',
       undefined,
-      err => {                   // error
-        console.error(err);
-        this.uploading = false;
-        alert('Error al subir el archivo');
-      },
-      async () => {              // completado
+      err => { console.error(err); this.uploading = false; alert('Error al subir'); },
+      async () => {
         try {
           const pdfUrl = await getDownloadURL(storageRef);
-          await addDoc(
-            collection(this.firestore, this.fsPath),
-            { titulo, pdfUrl, storagePath, mimeType: file.type }
-          );
-          /* reseteo formulario */
+          await addDoc(collection(this.firestore, this.fsPath),
+                       { titulo, pdfUrl, storagePath, mimeType: file.type });
           this.form.reset();
-          this.selectedFile = null;
-          this.previewUrl = null;
+          this.selectedFile   = null;
+          this.previewUrl     = null;
           this.safePreviewUrl = null;
         } catch (e) {
-          console.error(e);
-          alert('Error al guardar en Firestore');
+          console.error(e); alert('Error al guardar en Firestore');
         } finally {
           this.uploading = false;
         }
@@ -157,20 +143,18 @@ export class FiestasComponent implements OnInit, OnDestroy {
     );
   }
 
-  /* ----------------------- ELIMINAR ---------------------- */
+  /* -------------- ELIMINAR -------------- */
   delete(f: Fiesta): void {
     if (!f.id || !confirm(`¿Eliminar “${f.titulo}”?`)) { return; }
 
     deleteDoc(doc(this.firestore, this.fsPath, f.id))
       .then(() => deleteObject(ref(this.storage, f.storagePath)))
-      .catch(err => {
-        console.error(err);
-        alert('Error al eliminar');
-      });
+      .catch(err => { console.error(err); alert('Error al eliminar'); });
   }
 
-  /* --------- URL segura para PDFs en iframes remotos ------ */
-  getSafeUrl(url: string) {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  /* -------------- VER PDF -------------- */
+  viewPdf(url: string, ev: Event): void {
+    ev.stopPropagation();          // no colapsar el panel
+    window.open(url, '_blank');    // pestaña nueva
   }
 }

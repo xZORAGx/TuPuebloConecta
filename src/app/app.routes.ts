@@ -11,7 +11,7 @@ export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
 
-  // INCIDENCIAS por pueblo (si sigues necesitando :pueblo ahí)
+  // INCIDENCIAS por pueblo
   {
     path: 'incidencias/:pueblo',
     loadComponent: () =>
@@ -30,7 +30,7 @@ export const routes: Routes = [
   // USUARIOS por pueblo
   { path: 'usuarios/:pueblo', component: UsuariosComponent },
 
-  // FIESTAS (ya no usa :pueblo)
+  // FIESTAS
   {
     path: 'fiestas',
     loadComponent: () =>
@@ -54,10 +54,30 @@ export const routes: Routes = [
         .then(m => m.CrearNoticiaComponent)
   },
   {
+    path: 'crear-noticia/:id',
+    loadComponent: () =>
+      import('./pages/crear-noticia/crear-noticia.component')
+        .then(m => m.CrearNoticiaComponent)
+  },
+  {
     path: 'detalle-noticia/:id',
     loadComponent: () =>
       import('./pages/crear-noticia/detalle-noticia.component')
         .then(m => m.DetalleNoticiaComponent)
+  },
+
+  // EMPLEO — listado/formulario y detalle
+  {
+    path: 'empleo',
+    loadComponent: () =>
+      import('./pages/empleo/crear-empleo/crear-empleo.component')
+        .then(m => m.CrearEmpleoComponent)
+  },
+  {
+    path: 'empleo/:id',
+    loadComponent: () =>
+      import('./pages/empleo/detalle-empleo/detalle-empleo.component')
+        .then(m => m.DetalleEmpleoComponent)
   },
 
   // Wildcard: rutas no encontradas

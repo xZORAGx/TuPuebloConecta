@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>¿Estás seguro?</h2>
+<mat-dialog-content>
+  <p>{{ data.mensaje }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close(false)">Cancelar</button>
+  <button mat-raised-button color="warn" (click)="dialogRef.close(true)">Eliminar</button>
+</mat-dialog-actions>
+
