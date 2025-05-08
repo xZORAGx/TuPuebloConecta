@@ -1,0 +1,79 @@
+/* ---------- Layout general ---------- */
+.pantalla-container {
+  display: flex;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: #1e1e1e;
+  min-height: 100vh;
+}
+
+.card-form,
+.card-listado {
+  flex: 1;
+  background: #2c2c2c;
+  color: #eee;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  color: #4caf50;
+  margin-bottom: 0.5rem;
+}
+
+/* ---------- Formulario subida ---------- */
+.full-width { width: 100%; }
+
+.file-input { margin: 1rem 0; }
+
+.preview-container { margin: 1rem 0; text-align: center; }
+
+.preview-btn { background: none; }
+
+.preview-img {
+  max-width: 64px;
+  max-height: 64px;
+  border-radius: 4px;
+}
+
+/* visor PDF local */
+.preview-pdf {
+  width: 100%;
+  height: 500px;
+  border: none;
+  margin-top: 0.5rem;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 0.5rem;
+}
+
+button[mat-flat-button] {
+  background-color: #4caf50;
+  color: #000;
+}
+
+/* ---------- Listado (acordeón) ---------- */
+.accordion-dark .mat-expansion-panel {
+  background: #2c2c2c;
+  color: #eee;
+}
+
+/* sin línea divisoria por defecto */
+.mat-expansion-panel-header::after {
+  background: transparent;
+}
+
+/* icono, título */
+.item-icon { margin-right: 8px; color: #4caf50; }
+.item-title { flex: 1; }
+
+/* contenido expandido */
+.panel-content { padding: 1rem 0 0.5rem; }
+
+.preview-img-large {
+  max-width: 100%;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}

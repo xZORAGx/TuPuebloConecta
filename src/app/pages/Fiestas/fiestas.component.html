@@ -1,0 +1,140 @@
+<div class="pantalla-container">
+
+  <!-- ========================================================= -->
+  <!-- 1)  FORMULARIO DE SUBIDA                                 -->
+  <!-- ========================================================= -->
+  <mat-card class="card-form">
+    <mat-card-title class="card-title">Nueva Fiesta</mat-card-title>
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="upload()">
+
+        <!-- ---------- Título ------------------------------------ -->
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Título</mat-label>
+          <input matInput formControlName="titulo" />
+          <mat-error *ngIf="form.get('titulo')?.invalid">
+            Título obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <!-- ---------- Archivo ----------------------------------- -->
+        <div class="file-input full-width">
+          <label>Seleccionar PDF/Imagen:</label>
+          <input type="file" (change)="onFileChange($event)" />
+        </div>
+
+        <!-- ---------- Previsualización local --------------------- -->
+        <div *ngIf="previewUrl" class="preview-container">
+          <button mat-icon-button (click)="openPreview()" class="preview-btn">
+
+            <!-- Icono PDF -->
+            <mat-icon *ngIf="selectedFile && selectedFile.type === 'application/pdf'">
+              picture_as_pdf
+            </mat-icon>
+
+            <!-- Imagen -->
+            <img *ngIf="selectedFile && selectedFile.type.startsWith('image/')"
+                 [src]="previewUrl"
+                 class="preview-img" />
+
+            <!-- Otro tipo -->
+            <mat-icon *ngIf="selectedFile
+                             && !selectedFile.type.startsWith('image/')
+                             && selectedFile.type !== 'application/pdf'">
+              insert_drive_file
+            </mat-icon>
+          </button>
+
+          <!-- Visor PDF “en grande” -->
+          <iframe *ngIf="selectedFile && selectedFile.type === 'application/pdf'"
+                  [src]="safePreviewUrl"
+                  class="preview-pdf">
+          </iframe>
+        </div>
+
+        <!-- ---------- Botón subir -------------------------------- -->
+        <mat-card-actions>
+          <button mat-flat-button color="primary"
+                  type="submit"
+                  [disabled]="uploading || form.invalid">
+            {{ uploading ? 'Subiendo…' : 'Subir Fiesta' }}
+          </button>
+        </mat-card-actions>
+
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+
+
+  <!-- ========================================================= -->
+  <!-- 2)  LISTADO / ACORDEÓN DE FIESTAS PUBLICADAS             -->
+  <!-- ========================================================= -->
+  <mat-card class="card-listado">
+    <mat-card-title class="card-title">Fiestas Publicadas</mat-card-title>
+
+    <mat-accordion *ngIf="fiestas.length; else noData" class="accordion-dark">
+
+      <mat-expansion-panel *ngFor="let f of fiestas" hideToggle>
+
+        <!-- ---------- Cabecera del panel ------------------------ -->
+        <mat-expansion-panel-header>
+
+          <!-- Icono según tipo de archivo almacenado -->
+          <mat-icon class="item-icon">
+            {{ (f.mimeType || '').startsWith('image/')
+                 ? 'image'
+                 : (f.mimeType === 'application/pdf'
+                        ? 'picture_as_pdf'
+                        : 'insert_drive_file') }}
+          </mat-icon>
+
+          <span class="item-title">{{ f.titulo }}</span>
+
+          <!-- Botón eliminar (evitamos que abra/cierre el panel) -->
+          <button mat-icon-button
+                  color="warn"
+                  matTooltip="Eliminar"
+                  (click)="delete(f); $event.stopPropagation()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-expansion-panel-header>
+
+
+
+        <!-- ---------- Contenido expandido ----------------------- -->
+        <div class="panel-content">
+
+          <!-- Imagen en tamaño grande -->
+          <img *ngIf="(f.mimeType || '').startsWith('image/')"
+               [src]="f.pdfUrl"
+               alt="Imagen de {{ f.titulo }}"
+               class="preview-img-large" />
+
+          <!-- PDF embebido -->
+          <iframe *ngIf="f.mimeType === 'application/pdf'"
+                  [src]="getSafeUrl(f.pdfUrl)"
+                  class="preview-pdf">
+          </iframe>
+
+          <!-- Botón descarga -->
+          <a mat-flat-button
+             color="primary"
+             [href]="f.pdfUrl"
+             download
+             target="_blank">
+            Descargar
+          </a>
+        </div>
+
+      </mat-expansion-panel>
+
+    </mat-accordion>
+
+    <ng-template #noData>
+      <p>No hay fiestas publicadas.</p>
+    </ng-template>
+  </mat-card>
+
+</div>

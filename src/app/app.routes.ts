@@ -1,52 +1,65 @@
+// src/app/app-routing.module.ts
+
 import { Routes } from '@angular/router';
 
 // COMPONENTES PRINCIPALES
-import { HomeComponent } from './pages/home.component';
-import { LoginComponent } from './login/login.component';
+import { HomeComponent }   from './pages/home.component';
+import { LoginComponent }  from './login/login.component';
 import { UsuariosComponent } from './pages/ListadoUsuarios/usuarios.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
 
-  // PANTALLA DE INCIDENCIAS CON PARÁMETRO :pueblo (Lazy Load)
+  // INCIDENCIAS por pueblo (si sigues necesitando :pueblo ahí)
   {
     path: 'incidencias/:pueblo',
-    loadComponent: () => import('./pages/ListadoIncidencias/listado-incidencias.component')
-      .then(m => m.ListadoIncidenciasComponent)
+    loadComponent: () =>
+      import('./pages/ListadoIncidencias/listado-incidencias.component')
+        .then(m => m.ListadoIncidenciasComponent)
   },
 
-  // PANTALLA DE INSTALACIONES (Listado + CRUD)
+  // INSTALACIONES
   {
     path: 'instalaciones',
-    loadComponent: () => import('./pages/ListadoInstalaciones/listado-instalaciones.component')
-      .then(m => m.ListadoInstalacionesComponent)
+    loadComponent: () =>
+      import('./pages/ListadoInstalaciones/listado-instalaciones.component')
+        .then(m => m.ListadoInstalacionesComponent)
   },
 
-  // PANTALLA DE USUARIOS CON PARÁMETRO :pueblo
+  // USUARIOS por pueblo
   { path: 'usuarios/:pueblo', component: UsuariosComponent },
 
-  // PANTALLA DE GESTIÓN DEL PUEBLO (Lazy Load)
+  // FIESTAS (ya no usa :pueblo)
+  {
+    path: 'fiestas',
+    loadComponent: () =>
+      import('./pages/Fiestas/fiestas.component')
+        .then(m => m.FiestasComponent)
+  },
+
+  // GESTIÓN DEL PUEBLO
   {
     path: 'gestion',
-    loadComponent: () => import('./pages/gestion-pueblo/gestion-pueblo.component')
-      .then(m => m.GestionPuebloComponent)
+    loadComponent: () =>
+      import('./pages/gestion-pueblo/gestion-pueblo.component')
+        .then(m => m.GestionPuebloComponent)
   },
 
-  // CREAR NOTICIA
+  // NOTICIAS
   {
     path: 'crear-noticia',
-    loadComponent: () => import('./pages/crear-noticia/crear-noticia.component')
-      .then(m => m.CrearNoticiaComponent)
+    loadComponent: () =>
+      import('./pages/crear-noticia/crear-noticia.component')
+        .then(m => m.CrearNoticiaComponent)
   },
-
-  // DETALLE DE NOTICIA
   {
     path: 'detalle-noticia/:id',
-    loadComponent: () => import('./pages/crear-noticia/detalle-noticia.component')
-      .then(m => m.DetalleNoticiaComponent)
+    loadComponent: () =>
+      import('./pages/crear-noticia/detalle-noticia.component')
+        .then(m => m.DetalleNoticiaComponent)
   },
 
-  // REDIRECCIÓN PARA RUTAS NO ENCONTRADAS
+  // Wildcard: rutas no encontradas
   { path: '**', redirectTo: '' }
 ];
