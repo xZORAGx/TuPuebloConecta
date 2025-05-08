@@ -1,3 +1,5 @@
+// src/app/pages/crear-noticia/crear-noticia.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -16,10 +18,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
 
-@Component({  
-  selector: 'app-crear-noticia',  
-  standalone: true,  
-  imports: [    
+@Component({
+  selector: 'app-crear-noticia',
+  standalone: true,
+  imports: [
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -29,8 +31,8 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
     MatTooltipModule,
     MatDialogModule,
     ConfirmDialogComponent
-  ],  
-  templateUrl: './crear-noticia.component.html',  
+  ],
+  templateUrl: './crear-noticia.component.html',
   styleUrls: ['./crear-noticia.component.css']
 })
 export class CrearNoticiaComponent implements OnInit {
@@ -62,7 +64,7 @@ export class CrearNoticiaComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    // 1) Detectar modo edición si recibimos id en la ruta
+    // Modo edición
     this.noticiaId = this.route.snapshot.paramMap.get('id');
     if (this.noticiaId) {
       this.isEditMode = true;
@@ -82,7 +84,7 @@ export class CrearNoticiaComponent implements OnInit {
       }
     }
 
-    // 2) Cargar listado de noticias
+    // Listado de noticias
     const noticiasRef = fsCollection(
       this.firestore,
       `pueblos/${this.puebloGestionado}/Noticias`
@@ -115,7 +117,7 @@ export class CrearNoticiaComponent implements OnInit {
    * Navega a la página de detalle de la noticia
    */
   verDetalle(id: string) {
-    this.router.navigate(['/noticia', id]);
+    this.router.navigate(['/detalle-noticia', id]);
   }
 
   async publicarNoticia() {
