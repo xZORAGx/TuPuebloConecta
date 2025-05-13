@@ -98,7 +98,7 @@ export class GestionPuebloComponent implements AfterViewInit {
         this.router.navigate(['/crear-noticia']);
         break;
       case 'Deportes':
-        // this.router.navigate(['/crear-deporte']);
+        this.router.navigate(['/deportes']);
         break;
       case 'Instalaciones':
         this.router.navigate(['/instalaciones']);

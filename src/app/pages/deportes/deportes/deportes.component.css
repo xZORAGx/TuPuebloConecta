@@ -1,0 +1,116 @@
+/* ── GLOBAL & TOOLBAR ── */
+:host, html, body {
+  background: #121212;
+  color: #eee;
+  margin: 0; padding: 0;
+  min-height: 100vh; display: block;
+}
+.app-toolbar {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: #1e1e1e; z-index: 10;
+}
+.app-title {
+  margin-left: 1rem;
+  font-size: 1.25rem; font-weight: bold;
+  color: #22c55e;
+}
+
+/* ── CONTENEDOR CENTRAL ── */
+.deportes-host.single-column {
+  position: relative;
+  max-width: 800px;
+  margin: 5rem auto 2rem;
+  padding: 0 1rem;
+}
+
+/* ── BARRAS LATERALES VERDES ── */
+.deportes-host.single-column::before,
+.deportes-host.single-column::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 10px;
+  background: rgba(34,197,94,0.1);
+  pointer-events: none;
+}
+.deportes-host.single-column::before { left: 0; }
+.deportes-host.single-column::after  { right: 0; }
+
+/* ── SECCIÓN (FORM + LIST) ── */
+.card-section {
+  position: relative; z-index: 2;
+  background: #1e1e1e !important;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* ── TÍTULOS ── */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #22c55e;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+/* ── FORM FIELDS OSCUROS ── */
+.dark-field .mat-form-field-flex {
+  background: #2e2e2e !important;
+  border-radius: 8px;
+}
+.dark-field mat-label,
+.dark-input {
+  color: #000000 !important;
+}
+.dark-field ::placeholder {
+  color: rgba(255,255,255,0.5) !important;
+}
+
+/* ── UTILS FLEX ── */
+.two-cols {
+  display: flex; gap: 1rem;
+}
+.two-cols .mat-form-field {
+  flex: 1;
+}
+.flex-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ── LISTADOS ── */
+.listado {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+}
+.listado li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #333;
+}
+
+/* ── PREVIEW IMAGEN ── */
+.preview img {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+/* ── BOTONES ── */
+button[mat-raised-button] {
+  margin-top: 1rem;
+  width: 100%;
+}
+button[color="accent"] {
+  background: #22c55e !important;
+  color: #121212 !important;
+}
