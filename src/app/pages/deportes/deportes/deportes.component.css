@@ -1,3 +1,5 @@
+/* deportes.component.css */
+
 /* ── GLOBAL & TOOLBAR ── */
 :host, html, body {
   background: #121212;
@@ -61,12 +63,18 @@
   background: #2e2e2e !important;
   border-radius: 8px;
 }
-.dark-field mat-label,
-.dark-input {
-  color: #000000 !important;
+/* Inputs oscuros: texto y placeholder claros */
+.dark-field .mat-input-element {
+  color: #fff !important;
 }
-.dark-field ::placeholder {
-  color: rgba(255,255,255,0.5) !important;
+.dark-field .mat-input-element::placeholder {
+  color: rgba(255,255,255,0.6) !important;
+}
+
+/* ── FORM FIELDS CLAROS ── */
+/* Si en algún momento tienes campos con fondo claro: placeholder gris */
+.mat-input-element::placeholder {
+  color: rgba(0,0,0,0.5) !important;
 }
 
 /* ── UTILS FLEX ── */
@@ -103,6 +111,25 @@
   object-fit: cover;
   border-radius: 8px;
   margin-top: 0.5rem;
+}
+
+/* ── INFO TEXT ── */
+.info-text {
+  color: #ddd;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
+/* ── VISTA PREVIA SELECCIÓN ── */
+.preview-selected {
+  margin-top: 0.5rem;
+}
+.preview-selected img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
 /* ── BOTONES ── */
