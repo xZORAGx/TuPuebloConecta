@@ -1,15 +1,52 @@
+<!-- ─── BARRA DE NAVEGACIÓN SUPERIOR ─── -->
+<mat-toolbar class="header-toolbar">
+  <span class="title">Tu Pueblo Conecta</span>
+</mat-toolbar>
+<mat-toolbar class="nav-toolbar">
+  <button
+    mat-button
+    routerLink="/crear-noticia"
+    routerLinkActive="active"
+    class="nav-link"
+  >
+    <span class="nav-text">Noticias</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/deportes"
+    routerLinkActive="active"
+    class="nav-link"
+  >
+    <span class="nav-text">Deportes</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/fiestas"
+    routerLinkActive="active"
+    class="nav-link"
+  >
+    <span class="nav-text">Fiestas</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/instalaciones"
+    routerLinkActive="active"
+    class="nav-link"
+  >
+    <span class="nav-text">Instalaciones</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/empleo"
+    routerLinkActive="active"
+    class="nav-link"
+  >
+    <span class="nav-text">Empleo</span>
+  </button>
+  <div class="indicator"></div>
+</mat-toolbar>
+
 <div class="flex flex-col items-center w-full p-6 bg-[#121212] min-h-screen text-white overflow-visible">
-
-  <!-- Header con logo y título -->
-  <div class="flex items-center justify-center gap-4 w-full mb-6">
-    <img src="assets/images/LogoWeb.jpg" alt="Logo" class="w-16 h-16" />
-    <h1 class="text-3xl font-bold text-green-500 text-center">
-      Bienvenido a la gestión de tu pueblo
-    </h1>
-  </div>
-
-  <!-- Separador verde -->
-  <div class="w-full h-1 bg-green-500 mb-10"></div>
 
   <!-- Carrusel con Swiper Web Component -->
   <swiper-container
@@ -63,12 +100,12 @@
     </button>
 
     <button
-    mat-raised-button
-    color="primary"
-    class="bg-green-500 text-black font-bold py-4 px-8 rounded-lg text-lg hover:bg-green-600 transition w-72"
-    (click)="verIncidencias()">
-    Ver listado Incidencias
-  </button>
+      mat-raised-button
+      color="primary"
+      class="bg-green-500 text-black font-bold py-4 px-8 rounded-lg text-lg hover:bg-green-600 transition w-72"
+      (click)="verIncidencias()">
+      Ver listado Incidencias
+    </button>
 
     <button
       mat-raised-button

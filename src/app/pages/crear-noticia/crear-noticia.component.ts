@@ -1,28 +1,52 @@
 // src/app/pages/crear-noticia/crear-noticia.component.ts
 
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  CUSTOM_ELEMENTS_SCHEMA
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { getDownloadURL, ref, uploadBytes, deleteObject, ref as storageRefFromUrl } from 'firebase/storage';
-import { addDoc, collection as fsCollection, query, orderBy, onSnapshot, deleteDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  deleteObject,
+  ref as storageRefFromUrl
+} from 'firebase/storage';
+import {
+  addDoc,
+  collection as fsCollection,
+  query,
+  orderBy,
+  onSnapshot,
+  deleteDoc,
+  doc,
+  getDoc,
+  updateDoc
+} from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import { Firestore } from '@angular/fire/firestore';
 import { Storage } from '@angular/fire/storage';
 import { Auth } from '@angular/fire/auth';
-import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
 
 @Component({
   selector: 'app-crear-noticia',
   standalone: true,
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
+    RouterModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -30,12 +54,13 @@ import { ConfirmDialogComponent } from './confirm-dialog.component';
     MatIconModule,
     MatTooltipModule,
     MatDialogModule,
+    MatToolbarModule,
     ConfirmDialogComponent
   ],
   templateUrl: './crear-noticia.component.html',
   styleUrls: ['./crear-noticia.component.css']
 })
-export class CrearNoticiaComponent implements OnInit {
+export class CrearNoticiaComponent implements OnInit, AfterViewInit {
   formNoticia: FormGroup;
   imagenFile: File | null = null;
   imagenPreview: string | ArrayBuffer | null = null;
@@ -90,13 +115,48 @@ export class CrearNoticiaComponent implements OnInit {
       `pueblos/${this.puebloGestionado}/Noticias`
     );
     const q = query(noticiasRef, orderBy('timestamp', 'desc'));
-    onSnapshot(q, (snapshot) => {
-      this.noticias = snapshot.docs.map((d) => ({
+    onSnapshot(q, snapshot => {
+      this.noticias = snapshot.docs.map(d => ({
         id: d.id,
         titulo: d.data()['titulo'],
         timestamp: d.data()['timestamp']
       }));
     });
+  }
+
+  ngAfterViewInit(): void {
+    // Indicador deslizante en la toolbar
+    setTimeout(() => {
+      const nav = document.querySelector('.nav-toolbar') as HTMLElement;
+      const links = Array.from(nav.querySelectorAll('.nav-link')) as HTMLElement[];
+      const indicator = nav.querySelector('.indicator') as HTMLElement;
+      if (!nav || !links.length || !indicator) return;
+
+      function updateIndicator(el: HTMLElement) {
+        const rect = el.getBoundingClientRect();
+        const parentRect = nav.getBoundingClientRect();
+        indicator.style.width = `${rect.width}px`;
+        indicator.style.left = `${rect.left - parentRect.left}px`;
+      }
+
+      // Inicial: coloca bajo el enlace activo
+      const active = nav.querySelector('.nav-link.active') as HTMLElement;
+      if (active) updateIndicator(active);
+
+      // Eventos hover y click
+      links.forEach(link => {
+        link.addEventListener('mouseenter', () => updateIndicator(link));
+        link.addEventListener('mouseleave', () => {
+          const curr = nav.querySelector('.nav-link.active') as HTMLElement;
+          if (curr) updateIndicator(curr);
+        });
+        link.addEventListener('click', () => {
+          links.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+          updateIndicator(link);
+        });
+      });
+    }, 0);
   }
 
   onFileSelected(event: any) {
@@ -113,9 +173,6 @@ export class CrearNoticiaComponent implements OnInit {
     this.router.navigate(['/crear-noticia', id]);
   }
 
-  /**
-   * Navega a la página de detalle de la noticia
-   */
   verDetalle(id: string) {
     this.router.navigate(['/detalle-noticia', id]);
   }
@@ -144,11 +201,11 @@ export class CrearNoticiaComponent implements OnInit {
         await updateDoc(docRef, { titulo, descripcion, imagenURL, timestamp });
         alert('✏️ Noticia actualizada con éxito');
       } else {
-        const noticiasRef = fsCollection(
+        const noticiasRef2 = fsCollection(
           this.firestore,
           `pueblos/${this.puebloGestionado}/Noticias`
         );
-        await addDoc(noticiasRef, { titulo, descripcion, imagenURL, timestamp });
+        await addDoc(noticiasRef2, { titulo, descripcion, imagenURL, timestamp });
         alert('✅ Noticia publicada con éxito');
       }
 
@@ -186,8 +243,8 @@ export class CrearNoticiaComponent implements OnInit {
           const pathStart = imagenURL.indexOf('/o/') + 3;
           const pathEnd = imagenURL.indexOf('?');
           const path = decodeURIComponent(imagenURL.substring(pathStart, pathEnd));
-          const storageRef = storageRefFromUrl(this.storage, path);
-          await deleteObject(storageRef);
+          const storageRefOld = storageRefFromUrl(this.storage, path);
+          await deleteObject(storageRefOld);
         }
       }
       await deleteDoc(docRef);

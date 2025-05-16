@@ -1,3 +1,58 @@
+<!-- src/app/pages/crear-noticia/crear-noticia.component.html -->
+
+<!-- ─── BARRA DE NAVEGACIÓN SUPERIOR ─── -->
+<mat-toolbar class="header-toolbar">
+  <span class="title">Tu Pueblo Conecta</span>
+</mat-toolbar>
+<mat-toolbar class="nav-toolbar">
+  <button
+    mat-button
+    routerLink="/crear-noticia"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    <span class="nav-text">Noticias</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/deportes"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    <span class="nav-text">Deportes</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/fiestas"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    <span class="nav-text">Fiestas</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/instalaciones"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    <span class="nav-text">Instalaciones</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/empleo"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    <span class="nav-text">Empleo</span>
+  </button>
+  <div class="indicator"></div>
+</mat-toolbar>
+
 <div class="pantalla-container">
   <!-- Formulario de creación/edición -->
   <div class="crear-noticia-container">

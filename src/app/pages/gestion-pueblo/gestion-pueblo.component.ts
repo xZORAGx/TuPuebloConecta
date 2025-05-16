@@ -34,6 +34,7 @@ register();
 })
 export class GestionPuebloComponent implements AfterViewInit {
   @ViewChild('swiper', { static: true }) swiperEl!: ElementRef;
+
   puebloGestionado: string = 'Figueruelas';
 
   // Items del carrusel
@@ -114,8 +115,8 @@ export class GestionPuebloComponent implements AfterViewInit {
     }
   }
 
-  // Configuración de breakpoints para el Swiper
   ngAfterViewInit(): void {
+    // 1. Configurar Swiper breakpoints
     const swiper: any = this.swiperEl.nativeElement;
     swiper.breakpoints = {
       0:    { slidesPerView: 1, spaceBetween: 10 },
@@ -123,5 +124,43 @@ export class GestionPuebloComponent implements AfterViewInit {
       1024: { slidesPerView: 3, spaceBetween: 20 }
     };
     swiper.update && swiper.update();
+
+    // 2. Configurar indicador deslizante de la navbar
+    setTimeout(() => {
+      const nav = document.querySelector('.nav-toolbar') as HTMLElement;
+      const links = Array.from(nav.querySelectorAll('.nav-link')) as HTMLElement[];
+      const indicator = nav.querySelector('.indicator') as HTMLElement;
+
+      if (!nav || !links.length || !indicator) return;
+
+      // Función para posicionar el indicador
+      function updateIndicator(el: HTMLElement) {
+        const rect = el.getBoundingClientRect();
+        const parentRect = nav.getBoundingClientRect();
+        indicator.style.width = `${rect.width}px`;
+        indicator.style.left = `${rect.left - parentRect.left}px`;
+      }
+
+      // Inicial: coloca bajo el enlace activo
+      const active = nav.querySelector('.nav-link.active') as HTMLElement;
+      if (active) {
+        updateIndicator(active);
+      }
+
+      // Eventos para hover y click
+      links.forEach(link => {
+        link.addEventListener('mouseenter', () => updateIndicator(link));
+        link.addEventListener('mouseleave', () => {
+          const curr = nav.querySelector('.nav-link.active') as HTMLElement;
+          if (curr) updateIndicator(curr);
+        });
+        link.addEventListener('click', () => {
+          // Actualiza clase active
+          links.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+          updateIndicator(link);
+        });
+      });
+    }, 0);
   }
 }

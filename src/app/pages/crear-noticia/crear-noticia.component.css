@@ -135,4 +135,75 @@
     border: none;
     cursor: pointer;
   }
-  
+  /* ─── ESTILOS PARA LA BARRA SUPERIOR ─── */
+.header-toolbar,
+.nav-toolbar {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* TÍTULO */
+.header-toolbar {
+  top: 0;
+  height: 64px;
+  background: linear-gradient(135deg, #2a2a2a, #111111);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header-toolbar .title {
+  color: #81c784;
+  font-size: 1.9rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(129, 199, 132, 0.7);
+}
+
+/* MENÚ DE NAVEGACIÓN */
+.nav-toolbar {
+  top: 64px;
+  height: 56px;
+  background: rgba(47, 50, 54, 0.9);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.nav-toolbar .nav-link {
+  position: relative;
+  color: #91d6a6;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0 16px;
+  margin: 0 8px;
+  transition: color 0.3s ease;
+}
+.nav-toolbar .nav-link:hover .nav-text,
+.nav-toolbar .nav-link.active .nav-text {
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+}
+
+/* INDICADOR DESLIZANTE */
+.nav-toolbar .indicator {
+  position: absolute;
+  bottom: 0;
+  height: 4px;
+  width: 0;
+  background: linear-gradient(90deg, #4caf50, #a5d6a7);
+  border-radius: 2px;
+  transition: left 0.4s ease, width 0.4s ease;
+}
+
+/* HIJO DIRECTO para dejar espacio al contenido */
+.nav-toolbar + .pantalla-container {
+  padding-top: 120px; /* 64px header + 56px nav */
+}
+.nav-toolbar .nav-link.active .nav-text {
+  color: #ffffff;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+}

@@ -1,188 +1,297 @@
-<mat-toolbar color="primary" class="app-toolbar">
-  <span class="app-title">FigueruelasConecta</span>
+<!-- ─── BARRA DE NAVEGACIÓN SUPERIOR ─── -->
+<mat-toolbar class="header-toolbar">
+  <span class="title">Tu Pueblo Conecta</span>
+</mat-toolbar>
+<mat-toolbar class="nav-toolbar">
+  <button
+    mat-button
+    routerLink="/crear-noticia"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    <span class="nav-text">Noticias</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/deportes"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    <span class="nav-text">Deportes</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/fiestas"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    <span class="nav-text">Fiestas</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/instalaciones"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    <span class="nav-text">Instalaciones</span>
+  </button>
+  <button
+    mat-button
+    routerLink="/empleo"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="nav-link"
+  >
+    <span class="nav-text">Empleo</span>
+  </button>
+  <div class="indicator"></div>
 </mat-toolbar>
 
-<div class="deportes-host single-column">
+<!-- WRAPPER para padding-top -->
+<div class="pantalla-container">
+  <div class="deportes-host single-column">
 
-  <!-- DEPORTES -->
-  <mat-card class="card-section">
-    <h2 class="section-title">
-      <mat-icon>sports_soccer</mat-icon> Deportes
-    </h2>
-    <form [formGroup]="formDeporte" (ngSubmit)="onSubmitDeporte()">
-      <mat-form-field appearance="fill" class="dark-field">
-        <mat-label>Nombre *</mat-label>
-        <input matInput class="dark-input" formControlName="nombre" placeholder="Ej. Fútbol">
-        <mat-error>Obligatorio</mat-error>
-      </mat-form-field>
-      <mat-form-field appearance="fill" class="dark-field">
-        <mat-label>Filtro *</mat-label>
-        <input matInput class="dark-input" formControlName="filtro" placeholder="Ej. futbol">
-        <mat-error>Obligatorio</mat-error>
-      </mat-form-field>
-      <mat-form-field appearance="fill" class="dark-field">
-        <mat-label>Emoji *</mat-label>
-        <input matInput class="dark-input" formControlName="emoji" maxlength="2" placeholder="Ej. ⚽">
-        <mat-error>Obligatorio</mat-error>
-      </mat-form-field>
-      <button mat-raised-button color="accent" type="submit" [disabled]="formDeporte.invalid">
-        <mat-icon>save</mat-icon> Guardar deporte
-      </button>
-    </form>
-    <ul class="listado">
-      <li *ngFor="let d of deportes$ | async">
-        <span>{{ d.emoji }} {{ d.nombre }}</span>
-        <button mat-icon-button color="warn" (click)="onDeleteDeporte(d.id)">
-          <mat-icon>delete</mat-icon>
+    <!-- DEPORTES -->
+    <mat-card class="card-section">
+      <h2 class="section-title">
+        <mat-icon>sports_soccer</mat-icon> Deportes
+      </h2>
+      <form [formGroup]="formDeporte" (ngSubmit)="onSubmitDeporte()">
+        <mat-form-field appearance="fill" class="dark-field">
+          <mat-label>Nombre *</mat-label>
+          <input matInput formControlName="nombre" placeholder="Ej. Fútbol" />
+          <mat-error>Obligatorio</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="dark-field">
+          <mat-label>Filtro *</mat-label>
+          <input matInput formControlName="filtro" placeholder="Ej. futbol" />
+          <mat-error>Obligatorio</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill" class="dark-field">
+          <mat-label>Emoji *</mat-label>
+          <input
+            matInput
+            formControlName="emoji"
+            maxlength="2"
+            placeholder="Ej. ⚽"
+          />
+          <mat-error>Obligatorio</mat-error>
+        </mat-form-field>
+        <button
+          mat-raised-button
+          color="accent"
+          type="submit"
+          [disabled]="formDeporte.invalid"
+        >
+          <mat-icon>save</mat-icon> Guardar deporte
         </button>
-      </li>
-    </ul>
-  </mat-card>
+      </form>
 
-  <!-- PARTIDOS -->
-  <mat-card class="card-section">
-    <h2 class="section-title">
-      <mat-icon>event</mat-icon> Partidos
-    </h2>
-    <form [formGroup]="formPartido" (ngSubmit)="onSubmitPartido()">
+      <ul class="listado">
+        <li *ngFor="let d of deportes$ | async">
+          <span>{{ d.emoji }} {{ d.nombre }}</span>
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="onDeleteDeporte(d.id)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </li>
+      </ul>
+    </mat-card>
 
-      <mat-form-field appearance="fill" class="dark-field">
-        <mat-label>Deporte *</mat-label>
-        <mat-select formControlName="deporte">
-          <mat-option *ngFor="let d of deportes$ | async" [value]="d.filtro">
-            {{ d.emoji }} {{ d.nombre }}
-          </mat-option>
-        </mat-select>
-        <mat-error>Obligatorio</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="dark-field">
-        <mat-label>Categoría *</mat-label>
-        <mat-select formControlName="categoria">
-          <mat-option *ngFor="let c of categoriaOptions" [value]="c">
-            {{ c }}
-          </mat-option>
-        </mat-select>
-        <mat-error>Obligatorio</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="fill" class="dark-field">
-        <mat-label>Día de la semana *</mat-label>
-        <mat-select formControlName="diaSemana">
-          <mat-option *ngFor="let d of diaOptions" [value]="d">
-            {{ d }}
-          </mat-option>
-        </mat-select>
-        <mat-error>Obligatorio</mat-error>
-      </mat-form-field>
-
-      <div class="two-cols">
+    <!-- PARTIDOS -->
+    <mat-card class="card-section">
+      <h2 class="section-title">
+        <mat-icon>event</mat-icon> Partidos
+      </h2>
+      <form [formGroup]="formPartido" (ngSubmit)="onSubmitPartido()">
         <mat-form-field appearance="fill" class="dark-field">
-          <mat-label>Equipo 1 *</mat-label>
-          <input matInput class="dark-input" formControlName="equipo1" placeholder="Equipo 1">
+          <mat-label>Deporte *</mat-label>
+          <mat-select formControlName="deporte">
+            <mat-option
+              *ngFor="let d of deportes$ | async"
+              [value]="d.filtro"
+            >
+              {{ d.emoji }} {{ d.nombre }}
+            </mat-option>
+          </mat-select>
           <mat-error>Obligatorio</mat-error>
         </mat-form-field>
         <mat-form-field appearance="fill" class="dark-field">
-          <mat-label>Equipo 2 *</mat-label>
-          <input matInput class="dark-input" formControlName="equipo2" placeholder="Equipo 2">
+          <mat-label>Categoría *</mat-label>
+          <mat-select formControlName="categoria">
+            <mat-option *ngFor="let c of categoriaOptions" [value]="c">
+              {{ c }}
+            </mat-option>
+          </mat-select>
           <mat-error>Obligatorio</mat-error>
         </mat-form-field>
-      </div>
-
-      <div class="two-cols">
         <mat-form-field appearance="fill" class="dark-field">
-          <mat-label>Fecha *</mat-label>
-          <input matInput class="dark-input"
-                 formControlName="fecha"
-                 placeholder="DD/MM/YYYY"
-                 (input)="onDateInput($event)">
-          <mat-error>Formato DD/MM/YYYY</mat-error>
+          <mat-label>Día de la semana *</mat-label>
+          <mat-select formControlName="diaSemana">
+            <mat-option *ngFor="let d of diaOptions" [value]="d">
+              {{ d }}
+            </mat-option>
+          </mat-select>
+          <mat-error>Obligatorio</mat-error>
         </mat-form-field>
+
+        <div class="two-cols">
+          <mat-form-field appearance="fill" class="dark-field">
+            <mat-label>Equipo 1 *</mat-label>
+            <input
+              matInput
+              formControlName="equipo1"
+              placeholder="Equipo 1"
+            />
+            <mat-error>Obligatorio</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="fill" class="dark-field">
+            <mat-label>Equipo 2 *</mat-label>
+            <input
+              matInput
+              formControlName="equipo2"
+              placeholder="Equipo 2"
+            />
+            <mat-error>Obligatorio</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="two-cols">
+          <mat-form-field appearance="fill" class="dark-field">
+            <mat-label>Fecha *</mat-label>
+            <input
+              matInput
+              formControlName="fecha"
+              placeholder="DD/MM/YYYY"
+              (input)="onDateInput($event)"
+            />
+            <mat-error>Formato DD/MM/YYYY</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="fill" class="dark-field">
+            <mat-label>Resultado *</mat-label>
+            <input
+              matInput
+              formControlName="resultado"
+              placeholder="0 - 0"
+              (input)="onResultInput($event)"
+            />
+            <mat-error>Formato X - Y</mat-error>
+          </mat-form-field>
+        </div>
+
+        <button
+          mat-raised-button
+          color="accent"
+          type="submit"
+          [disabled]="formPartido.invalid"
+        >
+          <mat-icon>save</mat-icon>
+          {{ isEditingPartido ? 'Actualizar partido' : 'Guardar partido' }}
+        </button>
+        <button
+          *ngIf="isEditingPartido"
+          mat-button
+          type="button"
+          (click)="cancelEditPartido()"
+        >
+          Cancelar
+        </button>
+      </form>
+
+      <ul class="listado">
+        <li *ngFor="let p of partidos$ | async">
+          <span>
+            <strong>{{ p.diaSemana }} {{ p.fecha }}:</strong>
+            {{ p.equipo1 }} {{ p.resultado }} {{ p.equipo2 }}
+          </span>
+          <div class="flex-center">
+            <button mat-icon-button color="primary" (click)="onEditPartido(p)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="onDeletePartido(p.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </li>
+      </ul>
+    </mat-card>
+
+    <!-- ACTIVIDADES -->
+    <mat-card class="card-section">
+      <h2 class="section-title">
+        <mat-icon>sports_handball</mat-icon> Actividades
+      </h2>
+      <form [formGroup]="formActividad" (ngSubmit)="onSubmitActividad()">
         <mat-form-field appearance="fill" class="dark-field">
-          <mat-label>Resultado *</mat-label>
-          <input matInput class="dark-input"
-                 formControlName="resultado"
-                 placeholder="0 - 0"
-                 (input)="onResultInput($event)">
-          <mat-error>Formato X - Y</mat-error>
+          <mat-label>Título *</mat-label>
+          <input
+            matInput
+            formControlName="titulo"
+            placeholder="Título"
+          />
+          <mat-error>Obligatorio</mat-error>
         </mat-form-field>
-      </div>
 
-      <button mat-raised-button color="accent" type="submit" [disabled]="formPartido.invalid">
-        <mat-icon>save</mat-icon>
-        {{ isEditingPartido ? 'Actualizar partido' : 'Guardar partido' }}
-      </button>
-      <button *ngIf="isEditingPartido" mat-button type="button" (click)="cancelEditPartido()">
-        Cancelar
-      </button>
-    </form>
+        <button
+          mat-raised-button
+          type="button"
+          [disabled]="uploading"
+          (click)="fileInput.click()"
+        >
+          <mat-icon *ngIf="!uploading">upload_file</mat-icon>
+          <mat-progress-spinner
+            *ngIf="uploading"
+            diameter="20"
+            mode="indeterminate"
+          ></mat-progress-spinner>
+          Subir imagen
+        </button>
+        <p class="info-text">Solo podéis subir archivos JPG.</p>
+        <input
+          #fileInput
+          type="file"
+          accept=".jpg,.jpeg,image/jpeg"
+          hidden
+          (change)="onFileSelected($event)"
+        />
 
-    <ul class="listado">
-      <li *ngFor="let p of partidos$ | async">
-        <span>
-          <strong>{{ p.diaSemana }} {{ p.fecha }}:</strong>
-          {{ p.equipo1 }} {{ p.resultado }} {{ p.equipo2 }}
-        </span>
-        <div class="flex-center">
-          <button mat-icon-button color="primary" (click)="onEditPartido(p)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" (click)="onDeletePartido(p.id)">
-            <mat-icon>delete</mat-icon>
-          </button>
+        <div *ngIf="selectedPreview" class="preview-selected">
+          <img [src]="selectedPreview" alt="Vista previa" />
         </div>
-      </li>
-    </ul>
-  </mat-card>
 
-  <!-- ACTIVIDADES -->
-  <mat-card class="card-section">
-    <h2 class="section-title">
-      <mat-icon>sports_handball</mat-icon> Actividades
-    </h2>
-    <form [formGroup]="formActividad" (ngSubmit)="onSubmitActividad()">
-      <mat-form-field appearance="fill" class="dark-field">
-        <mat-label>Título *</mat-label>
-        <input matInput class="dark-input" formControlName="titulo" placeholder="Título">
-        <mat-error>Obligatorio</mat-error>
-      </mat-form-field>
+        <button
+          mat-raised-button
+          color="accent"
+          type="submit"
+          [disabled]="formActividad.invalid"
+        >
+          <mat-icon>save</mat-icon> Guardar actividad
+        </button>
+      </form>
 
-      <button mat-raised-button type="button" [disabled]="uploading" (click)="fileInput.click()">
-        <mat-icon *ngIf="!uploading">upload_file</mat-icon>
-        <mat-progress-spinner *ngIf="uploading" diameter="20" mode="indeterminate"></mat-progress-spinner>
-        Subir imagen
-      </button>
-      <p class="info-text">Solo podéis subir archivos JPG.</p>
-      <input
-        #fileInput
-        type="file"
-        accept=".jpg,.jpeg,image/jpeg"
-        hidden
-        (change)="onFileSelected($event)">
+      <ul class="listado">
+        <li *ngFor="let a of actividades$ | async">
+          <div class="flex-center">
+            <span>{{ a.titulo }}</span>
+            <button mat-icon-button color="warn" (click)="onDeleteActividad(a.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          <div class="preview">
+            <img [src]="a.imageUrl" alt="{{ a.titulo }}" />
+          </div>
+        </li>
+      </ul>
+    </mat-card>
 
-      <!-- Mini-vista previa -->
-      <div *ngIf="selectedPreview" class="preview-selected">
-        <img [src]="selectedPreview" alt="Vista previa">
-      </div>
-
-      <button mat-raised-button color="accent" type="submit" [disabled]="formActividad.invalid">
-        <mat-icon>save</mat-icon> Guardar actividad
-      </button>
-    </form>
-
-    <ul class="listado">
-      <li *ngFor="let a of actividades$ | async">
-        <div class="flex-center">
-          <span>{{ a.titulo }}</span>
-          <button mat-icon-button color="warn" (click)="onDeleteActividad(a.id)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
-        <div class="preview">
-          <img [src]="a.imageUrl" alt="{{ a.titulo }}">
-        </div>
-      </li>
-    </ul>
-  </mat-card>
-
+  </div>
 </div>
+<!-- ──────────────────────────────────────────────────────────────────────── -->
+<!-- ──────────────────────────────────────────────────────────────────────── -->

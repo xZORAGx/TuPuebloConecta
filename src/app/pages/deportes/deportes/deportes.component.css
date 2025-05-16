@@ -1,31 +1,95 @@
-/* deportes.component.css */
-
-/* ── GLOBAL & TOOLBAR ── */
+/* ── GLOBAL ── */
 :host, html, body {
   background: #121212;
   color: #eee;
-  margin: 0; padding: 0;
-  min-height: 100vh; display: block;
-}
-.app-toolbar {
-  position: fixed; top: 0; left: 0; right: 0;
-  background: #1e1e1e; z-index: 10;
-}
-.app-title {
-  margin-left: 1rem;
-  font-size: 1.25rem; font-weight: bold;
-  color: #22c55e;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
 
-/* ── CONTENEDOR CENTRAL ── */
+/* ─── ESTILOS PARA LA BARRA SUPERIOR ─── */
+.header-toolbar,
+.nav-toolbar {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* TÍTULO */
+.header-toolbar {
+  top: 0;
+  height: 64px;
+  background: linear-gradient(135deg, #2a2a2a, #111111) !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header-toolbar .title {
+  color: #81c784;
+  font-size: 1.9rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(129,199,132,0.7);
+}
+
+/* MENÚ DE NAVEGACIÓN */
+.nav-toolbar {
+  top: 64px;
+  height: 56px;
+  background: rgba(47,50,54,0.9) !important;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.nav-toolbar .nav-link {
+  position: relative;
+  color: #81c784 !important;      /* todas verdes */
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0 16px;
+  margin: 0 8px;
+  transition: color 0.3s ease;
+}
+.nav-toolbar .nav-link .nav-text {
+  color: inherit;                  /* hereda el verde */
+}
+.nav-toolbar .nav-link:hover .nav-text {
+  color: #ffffff !important;
+}
+.nav-toolbar .nav-link.active .nav-text {
+  color: #81c784 !important;
+  text-shadow: 0 0 6px rgba(129,199,132,0.7);
+}
+
+/* INDICADOR DESLIZANTE */
+.nav-toolbar .indicator {
+  position: absolute;
+  bottom: 0;
+  height: 4px;
+  width: 0;
+  background: linear-gradient(90deg,#4caf50,#a5d6a7);
+  border-radius: 2px;
+  transition: left 0.4s ease, width 0.4s ease;
+}
+
+/* ESPACIO BAJO NAV */
+.nav-toolbar + .pantalla-container {
+  padding-top: 200px; /* 64px header + 56px nav */
+}
+
+/* CONTENEDOR CENTRAL */
 .deportes-host.single-column {
   position: relative;
   max-width: 800px;
-  margin: 5rem auto 2rem;
+  margin: 0 auto 2rem;
   padding: 0 1rem;
 }
 
-/* ── BARRAS LATERALES VERDES ── */
+/* BARRAS LATERALES */
 .deportes-host.single-column::before,
 .deportes-host.single-column::after {
   content: '';
@@ -38,17 +102,18 @@
 .deportes-host.single-column::before { left: 0; }
 .deportes-host.single-column::after  { right: 0; }
 
-/* ── SECCIÓN (FORM + LIST) ── */
+/* SECCIONES */
 .card-section {
-  position: relative; z-index: 2;
+  position: relative;
+  z-index: 2;
   background: #1e1e1e !important;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.5);
   padding: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
 }
 
-/* ── TÍTULOS ── */
+/* TÍTULOS */
 .section-title {
   display: flex;
   align-items: center;
@@ -58,12 +123,11 @@
   margin-bottom: 1rem;
 }
 
-/* ── FORM FIELDS OSCUROS ── */
+/* FORM FIELDS OSCUROS */
 .dark-field .mat-form-field-flex {
   background: #2e2e2e !important;
   border-radius: 8px;
 }
-/* Inputs oscuros: texto y placeholder claros */
 .dark-field .mat-input-element {
   color: #fff !important;
 }
@@ -71,15 +135,10 @@
   color: rgba(255,255,255,0.6) !important;
 }
 
-/* ── FORM FIELDS CLAROS ── */
-/* Si en algún momento tienes campos con fondo claro: placeholder gris */
-.mat-input-element::placeholder {
-  color: rgba(0,0,0,0.5) !important;
-}
-
-/* ── UTILS FLEX ── */
+/* UTILS FLEX */
 .two-cols {
-  display: flex; gap: 1rem;
+  display: flex;
+  gap: 1rem;
 }
 .two-cols .mat-form-field {
   flex: 1;
@@ -90,21 +149,24 @@
   align-items: center;
 }
 
-/* ── LISTADOS ── */
+/* LISTADOS: texto verde y más espacio */
 .listado {
   list-style: none;
-  margin: 1.5rem 0 0;
+  margin: 2rem 0 0;
   padding: 0;
 }
 .listado li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 0;
+  padding: 1.5rem 0;
   border-bottom: 1px solid #333;
 }
+.listado li span {
+  color: #81c784 !important;
+}
 
-/* ── PREVIEW IMAGEN ── */
+/* PREVIEW IMAGEN */
 .preview img {
   width: 100%;
   max-height: 180px;
@@ -113,14 +175,12 @@
   margin-top: 0.5rem;
 }
 
-/* ── INFO TEXT ── */
+/* INFO TEXT & VISTA PREVIA */
 .info-text {
   color: #ddd;
   font-size: 0.875rem;
   margin-top: 0.5rem;
 }
-
-/* ── VISTA PREVIA SELECCIÓN ── */
 .preview-selected {
   margin-top: 0.5rem;
 }
@@ -132,7 +192,7 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
 }
 
-/* ── BOTONES ── */
+/* BOTONES */
 button[mat-raised-button] {
   margin-top: 1rem;
   width: 100%;
@@ -140,4 +200,21 @@ button[mat-raised-button] {
 button[color="accent"] {
   background: #22c55e !important;
   color: #121212 !important;
+}
+button[color="accent"]:hover {
+  background: #16a34a !important;
+}
+button[color="primary"] {
+  background: #4caf50 !important;
+  color: #121212 !important;
+}
+button[color="primary"]:hover {
+  background: #388e3c !important;
+}
+button[color="warn"] {
+  background: #f44336 !important;
+  color: #121212 !important;
+}
+button[color="warn"]:hover {
+  background: #d32f2f !important;
 }
