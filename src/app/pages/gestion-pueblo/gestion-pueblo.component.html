@@ -1,54 +1,51 @@
-<!-- ─── BARRA DE NAVEGACIÓN SUPERIOR ─── -->
+<!-- HEADER (HOME + TÍTULO + USUARIO) -->
 <mat-toolbar class="header-toolbar">
+  <!-- ICONO HOME -->
+  <button mat-icon-button class="home-icon" routerLink="/gestion">
+    <img src="assets/images/casa.png" alt="Home" class="icon-img" />
+  </button>
+
   <span class="title">Tu Pueblo Conecta</span>
+
+  <!-- ICONO USER -->
+  <button mat-icon-button class="user-icon-btn" (click)="toggleUserMenu()">
+    <img src="assets/images/SimboloUser.png" alt="Usuario" class="icon-img" />
+  </button>
+
+  <!-- DROPDOWN USUARIO -->
+  <div class="user-dropdown" *ngIf="showUserMenu">
+    <p class="user-email">{{ userData?.correo || 'usuario@ejemplo.com' }}</p>
+    <p class="user-pueblo">Pueblo: {{ userData?.pueblo_gestionado || '—' }}</p>
+    <button mat-button class="logout-btn" (click)="router.navigate(['/'])">
+      Cerrar sesión
+    </button>
+  </div>
 </mat-toolbar>
+
+<!-- NAVBAR PRINCIPAL -->
 <mat-toolbar class="nav-toolbar">
-  <button
-    mat-button
-    routerLink="/crear-noticia"
-    routerLinkActive="active"
-    class="nav-link"
-  >
+  <button mat-button routerLink="/crear-noticia" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Noticias</span>
   </button>
-  <button
-    mat-button
-    routerLink="/deportes"
-    routerLinkActive="active"
-    class="nav-link"
-  >
+  <button mat-button routerLink="/deportes" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Deportes</span>
   </button>
-  <button
-    mat-button
-    routerLink="/fiestas"
-    routerLinkActive="active"
-    class="nav-link"
-  >
+  <button mat-button routerLink="/fiestas" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Fiestas</span>
   </button>
-  <button
-    mat-button
-    routerLink="/instalaciones"
-    routerLinkActive="active"
-    class="nav-link"
-  >
+  <button mat-button routerLink="/instalaciones" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Instalaciones</span>
   </button>
-  <button
-    mat-button
-    routerLink="/empleo"
-    routerLinkActive="active"
-    class="nav-link"
-  >
+  <button mat-button routerLink="/empleo" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Empleo</span>
   </button>
   <div class="indicator"></div>
 </mat-toolbar>
 
-<div class="flex flex-col items-center w-full p-6 bg-[#121212] min-h-screen text-white overflow-visible">
+<!-- CONTENIDO PRINCIPAL -->
+<div class="pantalla-container gestion-content flex flex-col items-center w-full">
 
-  <!-- Carrusel con Swiper Web Component -->
+  <!-- SWIPER CARRUSEL -->
   <swiper-container
     #swiper
     loop="true"
@@ -56,65 +53,41 @@
     pagination="false"
     slides-per-view="3"
     space-between="20"
-    class="w-full max-w-6xl gestion-swiper overflow-visible">
-
+    class="w-full max-w-6xl gestion-swiper overflow-visible"
+  >
     <swiper-slide *ngFor="let item of gestionItems" class="overflow-visible">
-      <mat-card class="gestion-card transition duration-300 ease-in-out transform hover:scale-105">
-        <mat-card-title class="text-green-400 text-2xl font-semibold text-center mb-2">
+      <mat-card class="gestion-card">
+        <mat-card-title>
           {{ item.titulo }}
         </mat-card-title>
-
         <div class="separator mb-4"></div>
-
         <mat-card-content>
-          <ul class="flex flex-col gap-3 text-gray-300 text-lg text-center">
+          <ul>
             <li>{{ item.accion1 }}</li>
             <li>{{ item.accion2 }}</li>
             <li>{{ item.accion3 }}</li>
           </ul>
         </mat-card-content>
-
-        <mat-card-actions class="flex justify-center mt-6">
-          <button
-            mat-raised-button
-            color="primary"
-            class="bg-green-500 text-white w-full py-2 rounded-md hover:bg-green-600 transition"
-            (click)="entrar(item.titulo)">
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="entrar(item.titulo)">
             Entrar
           </button>
         </mat-card-actions>
       </mat-card>
     </swiper-slide>
-
   </swiper-container>
 
-  <!-- Nueva sección de botones adicionales -->
-  <div class="flex flex-wrap justify-center items-center gap-6 mt-14 w-full max-w-5xl">
-    
-    <button
-      mat-raised-button
-      color="primary"
-      class="bg-green-500 text-black font-bold py-4 px-8 rounded-lg text-lg hover:bg-green-600 transition w-72"
-      (click)="irAListadoUsuarios()">
+  <!-- BOTONES EXTRA -->
+  <div class="extra-buttons">
+    <button mat-raised-button color="primary" (click)="irAListadoUsuarios()">
       Ver listado de usuarios
     </button>
-
-    <button
-      mat-raised-button
-      color="primary"
-      class="bg-green-500 text-black font-bold py-4 px-8 rounded-lg text-lg hover:bg-green-600 transition w-72"
-      (click)="verIncidencias()">
+    <button mat-raised-button color="primary" (click)="verIncidencias()">
       Ver listado Incidencias
     </button>
-
-    <button
-      mat-raised-button
-      color="primary"
-      class="bg-green-500 text-black font-bold py-4 px-8 rounded-lg text-lg hover:bg-green-600 transition w-72"
-      (click)="anadirTelefonos()">
+    <button mat-raised-button color="primary" (click)="anadirTelefonos()">
       Añadir teléfonos
     </button>
-
   </div>
 
 </div>

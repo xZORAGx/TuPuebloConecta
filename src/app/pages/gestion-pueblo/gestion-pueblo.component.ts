@@ -1,22 +1,29 @@
-// src/app/pages/gestion-pueblo/gestion-pueblo.component.ts
-
 import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   ViewChild,
   AfterViewInit,
-  ElementRef
+  ElementRef,
+  OnInit,
+  OnDestroy
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { Auth } from '@angular/fire/auth';
+import { Firestore, doc, docData } from '@angular/fire/firestore';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { Subscription } from 'rxjs';
 
-// Swiper como Web Component
 import { register } from 'swiper/element/bundle';
 register();
+
+interface UserWeb {
+  correo: string;
+  pueblo_gestionado: string;
+}
 
 @Component({
   selector: 'app-gestion-pueblo',
@@ -32,91 +39,72 @@ register();
   templateUrl: './gestion-pueblo.component.html',
   styleUrls: ['./gestion-pueblo.component.css']
 })
-export class GestionPuebloComponent implements AfterViewInit {
+export class GestionPuebloComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('swiper', { static: true }) swiperEl!: ElementRef;
 
-  puebloGestionado: string = 'Figueruelas';
+  showUserMenu = false;
+  userData: UserWeb | null = null;
+  private sub?: Subscription;
 
-  // Items del carrusel
   gestionItems = [
-    {
-      titulo: 'Noticias',
-      accion1: 'Crear noticias',
-      accion2: 'Editar noticias',
-      accion3: 'Eliminar noticias'
-    },
-    {
-      titulo: 'Deportes',
-      accion1: 'Crear eventos deportivos',
-      accion2: 'Editar eventos deportivos',
-      accion3: 'Eliminar eventos deportivos'
-    },
-    {
-      titulo: 'Instalaciones',
-      accion1: 'Añadir instalaciones',
-      accion2: 'Editar instalaciones',
-      accion3: 'Eliminar instalaciones'
-    },
-    {
-      titulo: 'Fiestas',
-      accion1: 'Publicar fiestas',
-      accion2: 'Editar fiestas',
-      accion3: 'Eliminar fiestas'
-    },
-    {
-      titulo: 'Empleo',
-      accion1: 'Publicar ofertas de empleo',
-      accion2: 'Editar ofertas de empleo',
-      accion3: 'Eliminar ofertas de empleo'
-    }
+    { titulo: 'Noticias',     accion1: 'Crear noticias',           accion2: 'Editar noticias',           accion3: 'Eliminar noticias' },
+    { titulo: 'Deportes',     accion1: 'Crear eventos deportivos', accion2: 'Editar eventos deportivos', accion3: 'Eliminar eventos deportivos' },
+    { titulo: 'Instalaciones', accion1: 'Añadir instalaciones',      accion2: 'Editar instalaciones',      accion3: 'Eliminar instalaciones' },
+    { titulo: 'Fiestas',      accion1: 'Publicar fiestas',           accion2: 'Editar fiestas',            accion3: 'Eliminar fiestas' },
+    { titulo: 'Empleo',       accion1: 'Publicar ofertas de empleo', accion2: 'Editar ofertas de empleo',  accion3: 'Eliminar ofertas de empleo' }
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    public router: Router,
+    public auth: Auth,
+    private firestore: Firestore
+  ) {}
 
-  // Redirige al listado de usuarios del pueblo
+  ngOnInit(): void {
+    const uid = this.auth.currentUser?.uid;
+    if (!uid) return;
+    const userDoc = doc(this.firestore, 'usuarios_web', uid);
+    this.sub = docData(userDoc).subscribe(data => {
+      this.userData = data as UserWeb;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+  }
+
+  toggleUserMenu() {
+    this.showUserMenu = !this.showUserMenu;
+  }
+
   irAListadoUsuarios(): void {
-    if (!this.puebloGestionado) {
-      console.error('No tienes un pueblo gestionado asignado');
-      return;
-    }
-    this.router.navigate(['/usuarios', this.puebloGestionado]);
+    const pueblo = this.userData?.pueblo_gestionado;
+    if (!pueblo) return;
+    this.router.navigate(['/usuarios', pueblo]);
   }
 
-  // Ver incidencias por pueblo
   verIncidencias(): void {
-    this.router.navigate([`/incidencias/${this.puebloGestionado}`]);
+    const pueblo = this.userData?.pueblo_gestionado;
+    if (!pueblo) return;
+    this.router.navigate([`/incidencias/${pueblo}`]);
   }
 
-  // Añadir teléfonos (ejemplo)
   anadirTelefonos(): void {
     this.router.navigate(['/telefonos']);
   }
 
-  // Acción al pulsar "Entrar" en cada tarjeta
   entrar(titulo: string): void {
     switch (titulo) {
-      case 'Noticias':
-        this.router.navigate(['/crear-noticia']);
-        break;
-      case 'Deportes':
-        this.router.navigate(['/deportes']);
-        break;
-      case 'Instalaciones':
-        this.router.navigate(['/instalaciones']);
-        break;
-      case 'Fiestas':
-        this.router.navigate(['/fiestas']);
-        break;
-      case 'Empleo':
-        this.router.navigate(['/empleo']);
-        break;
-      default:
-        console.warn('Sección no reconocida');
+      case 'Noticias':      this.router.navigate(['/crear-noticia']);  break;
+      case 'Deportes':      this.router.navigate(['/deportes']);       break;
+      case 'Instalaciones': this.router.navigate(['/instalaciones']);  break;
+      case 'Fiestas':       this.router.navigate(['/fiestas']);       break;
+      case 'Empleo':        this.router.navigate(['/empleo']);        break;
     }
   }
 
   ngAfterViewInit(): void {
-    // 1. Configurar Swiper breakpoints
+    // Configura Swiper
     const swiper: any = this.swiperEl.nativeElement;
     swiper.breakpoints = {
       0:    { slidesPerView: 1, spaceBetween: 10 },
@@ -125,29 +113,19 @@ export class GestionPuebloComponent implements AfterViewInit {
     };
     swiper.update && swiper.update();
 
-    // 2. Configurar indicador deslizante de la navbar
+    // Indicador de navbar
     setTimeout(() => {
       const nav = document.querySelector('.nav-toolbar') as HTMLElement;
       const links = Array.from(nav.querySelectorAll('.nav-link')) as HTMLElement[];
       const indicator = nav.querySelector('.indicator') as HTMLElement;
-
       if (!nav || !links.length || !indicator) return;
-
-      // Función para posicionar el indicador
-      function updateIndicator(el: HTMLElement) {
-        const rect = el.getBoundingClientRect();
-        const parentRect = nav.getBoundingClientRect();
-        indicator.style.width = `${rect.width}px`;
-        indicator.style.left = `${rect.left - parentRect.left}px`;
-      }
-
-      // Inicial: coloca bajo el enlace activo
+      const updateIndicator = (el: HTMLElement) => {
+        const r = el.getBoundingClientRect(), nr = nav.getBoundingClientRect();
+        indicator.style.width = `${r.width}px`;
+        indicator.style.left  = `${r.left - nr.left}px`;
+      };
       const active = nav.querySelector('.nav-link.active') as HTMLElement;
-      if (active) {
-        updateIndicator(active);
-      }
-
-      // Eventos para hover y click
+      if (active) updateIndicator(active);
       links.forEach(link => {
         link.addEventListener('mouseenter', () => updateIndicator(link));
         link.addEventListener('mouseleave', () => {
@@ -155,7 +133,6 @@ export class GestionPuebloComponent implements AfterViewInit {
           if (curr) updateIndicator(curr);
         });
         link.addEventListener('click', () => {
-          // Actualiza clase active
           links.forEach(l => l.classList.remove('active'));
           link.classList.add('active');
           updateIndicator(link);
