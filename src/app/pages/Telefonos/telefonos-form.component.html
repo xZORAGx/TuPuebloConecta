@@ -1,57 +1,99 @@
 <!-- telefonos-form.component.html -->
-<mat-card class="p-4 max-w-xl mx-auto mt-10">
-  <h2 class="text-xl font-bold mb-4">📞 Gestión de Teléfonos</h2>
-
-  <form [formGroup]="form" (ngSubmit)="guardarTelefono()">
-    <mat-form-field appearance="fill" class="w-full mb-4">
-      <mat-label>Nombre del lugar</mat-label>
-      <input matInput formControlName="nombre" />
-    </mat-form-field>
-
-    <mat-form-field appearance="fill" class="w-full mb-4">
-      <mat-label>Número de teléfono</mat-label>
-      <input matInput formControlName="numero" />
-    </mat-form-field>
-
-    <div class="flex gap-2">
-      <button mat-raised-button color="primary" type="submit">
-        {{ editandoId ? 'Guardar Cambios' : 'Añadir Teléfono' }}
-      </button>
-      <button
-        *ngIf="editandoId"
-        mat-raised-button
-        color="warn"
-        type="button"
-        (click)="cancelarEdicion()"
-      >
-        Cancelar
-      </button>
-    </div>
-  </form>
-
-  <hr class="my-6" />
-
-  <div *ngIf="telefonos$ | async as telefonos; else vacio">
-    <div
-      *ngFor="let tel of telefonos"
-      class="mb-4 border-b pb-2 telefono-item"
-    >
-      <p class="font-semibold">{{ tel.nombre }}</p>
-      <p>{{ tel.numero }}</p>
-      <button mat-icon-button color="primary" (click)="editarTelefono(tel)">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button
-        mat-icon-button
-        color="warn"
-        (click)="eliminarTelefono(tel.id)"
-      >
-        <mat-icon>delete</mat-icon>
-      </button>
-    </div>
+<!-- HEADER (HOME + TÍTULO + USUARIO) -->
+<mat-toolbar class="header-toolbar">
+  <button mat-icon-button class="home-icon" routerLink="/gestion">
+    <img src="assets/images/casa.png" alt="Home" class="icon-img" />
+  </button>
+  <span class="title">Tu Pueblo Conecta</span>
+  <button mat-icon-button class="user-icon-btn" (click)="toggleUserMenu()">
+    <img src="assets/images/SimboloUser.png" alt="Usuario" class="icon-img" />
+  </button>
+  <div class="user-dropdown" *ngIf="showUserMenu">
+    <p class="user-email">{{ userData?.correo || 'usuario@ejemplo.com' }}</p>
+    <p class="user-pueblo">Pueblo: {{ userData?.pueblo_gestionado || '—' }}</p>
+    <button mat-button class="logout-btn" (click)="onLogout()">
+      Cerrar sesión
+    </button>
   </div>
+</mat-toolbar>
 
-  <ng-template #vacio>
-    <p>No hay teléfonos guardados aún.</p>
-  </ng-template>
-</mat-card>
+<!-- NAVBAR PRINCIPAL -->
+<div #navToolbar class="nav-toolbar">
+  <button mat-button routerLink="/crear-noticia" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Noticias</span>
+  </button>
+  <button mat-button routerLink="/deportes" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Deportes</span>
+  </button>
+  <button mat-button routerLink="/fiestas" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Fiestas</span>
+  </button>
+  <button mat-button routerLink="/instalaciones" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Instalaciones</span>
+  </button>
+  <button mat-button routerLink="/empleo" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Empleo</span>
+  </button>
+  <div class="indicator"></div>
+</div>
+
+<!-- CONTENIDO -->
+<div class="container pantalla-container">
+  <!-- panel teléfonos -->
+  <mat-card class="p-4 max-w-xl mx-auto mt-10">
+    <h2 class="text-xl font-bold mb-4">📞 Gestión de Teléfonos</h2>
+
+    <form [formGroup]="form" (ngSubmit)="guardarTelefono()">
+      <mat-form-field appearance="fill" class="w-full mb-4">
+        <mat-label>Nombre del lugar</mat-label>
+        <input matInput formControlName="nombre" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="w-full mb-4">
+        <mat-label>Número de teléfono</mat-label>
+        <input matInput formControlName="numero" />
+      </mat-form-field>
+
+      <div class="flex gap-2">
+        <button mat-raised-button color="primary" type="submit">
+          {{ editandoId ? 'Guardar Cambios' : 'Añadir Teléfono' }}
+        </button>
+        <button
+          *ngIf="editandoId"
+          mat-raised-button
+          color="warn"
+          type="button"
+          (click)="cancelarEdicion()"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+
+    <hr class="my-6" />
+
+    <div *ngIf="telefonos$ | async as telefonos; else vacio">
+      <div
+        *ngFor="let tel of telefonos"
+        class="mb-4 border-b pb-2 telefono-item"
+      >
+        <p class="font-semibold">{{ tel.nombre }}</p>
+        <p>{{ tel.numero }}</p>
+        <button mat-icon-button color="primary" (click)="editarTelefono(tel)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="eliminarTelefono(tel.id)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <ng-template #vacio>
+      <p>No hay teléfonos guardados aún.</p>
+    </ng-template>
+  </mat-card>
+</div>

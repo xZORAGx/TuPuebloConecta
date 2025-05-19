@@ -1,5 +1,23 @@
-<!-- listado-incidencias.component.html -->
-<div class="container">
+<!-- HEADER (HOME + TÍTULO + USUARIO) -->
+<mat-toolbar class="header-toolbar">
+  <button mat-icon-button class="home-icon" routerLink="/gestion">
+    <img src="assets/images/casa.png" alt="Home" class="icon-img" />
+  </button>
+  <span class="title">Tu Pueblo Conecta</span>
+  <button mat-icon-button class="user-icon-btn" (click)="toggleUserMenu()">
+    <img src="assets/images/SimboloUser.png" alt="Usuario" class="icon-img" />
+  </button>
+  <div class="user-dropdown" *ngIf="showUserMenu">
+    <p class="user-email">{{ userData?.correo || 'usuario@ejemplo.com' }}</p>
+    <p class="user-pueblo">Pueblo: {{ userData?.pueblo_gestionado || '—' }}</p>
+    <button mat-button class="logout-btn" (click)="onLogout()">
+      Cerrar sesión
+    </button>
+  </div>
+</mat-toolbar>
+
+<!-- CONTENIDO -->
+<div class="pantalla-container">
   <h1 class="titulo">Incidencias de {{ puebloGestionado }}</h1>
 
   <!-- Buscador y Filtro -->

@@ -7,6 +7,7 @@ import {
   HostListener
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
@@ -21,6 +22,7 @@ register();
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     RouterModule,
+    MatIconModule,
     MatButtonModule,
     MatToolbarModule,
     CommonModule
@@ -29,12 +31,11 @@ register();
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements AfterViewInit {
-
   @ViewChild('starsCanvas') starsCanvas!: ElementRef<HTMLCanvasElement>;
 
   private ctx!: CanvasRenderingContext2D;
   private stars: any[] = [];
-  private starCount = 150;
+  private starCount = 100; // Reducido el número de estrellas
   private width!: number;
   private height!: number;
 
@@ -47,56 +48,61 @@ export class HomeComponent implements AfterViewInit {
   @HostListener('window:resize', ['$event'])
   onResize() {
     this.initCanvas();
-    this.createStars();
   }
 
-  private initCanvas() {
+  private initCanvas(): void {
     const canvas = this.starsCanvas.nativeElement;
     this.ctx = canvas.getContext('2d')!;
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
-    canvas.width = this.width;
-    canvas.height = this.height;
+    
+    // Ajustar el canvas al tamaño de la ventana
+    this.width = canvas.width = window.innerWidth;
+    this.height = canvas.height = window.innerHeight;
+    
+    // Establecer el fondo negro
+    this.ctx.fillStyle = '#0a0a0a';
+    this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
-  private createStars() {
+  private createStars(): void {
     this.stars = [];
     for (let i = 0; i < this.starCount; i++) {
-      const depth = Math.random();
       this.stars.push({
         x: Math.random() * this.width,
         y: Math.random() * this.height,
-        radius: depth * 1.5,
-        speed: depth * 0.3 + 0.05,
-        opacity: Math.random() * 0.5 + 0.5
+        size: Math.random() * 2,
+        speed: Math.random() * 0.3 + 0.1,
+        opacity: Math.random() * 0.5 + 0.3 // Añadida opacidad variable
       });
     }
   }
 
-  private animateStars() {
-    this.ctx.clearRect(0, 0, this.width, this.height);
+  private animateStars(): void {
+    const animate = () => {
+      // Limpiar canvas con fondo negro
+      this.ctx.fillStyle = '#0a0a0a';
+      this.ctx.fillRect(0, 0, this.width, this.height);
+      
+      // Dibujar estrellas con color verde
+      this.stars.forEach(star => {
+        this.ctx.beginPath();
+        this.ctx.fillStyle = `rgba(76, 175, 80, ${star.opacity})`;
+        this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        this.ctx.fill();
 
-    for (let star of this.stars) {
-      // Twinkle effect
-      star.opacity += (Math.random() - 0.5) * 0.05;
-      if (star.opacity > 1) star.opacity = 1;
-      if (star.opacity < 0.3) star.opacity = 0.3;
+        // Mover estrella
+        star.y += star.speed;
+        
+        // Si la estrella sale de la pantalla, resetear posición
+        if (star.y > this.height) {
+          star.y = 0;
+          star.x = Math.random() * this.width;
+          star.opacity = Math.random() * 0.5 + 0.3; // Nueva opacidad al resetear
+        }
+      });
 
-      this.ctx.beginPath();
-      this.ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-      this.ctx.fillStyle = `rgba(76, 175, 80, ${star.opacity})`;
-      this.ctx.shadowBlur = 10;
-      this.ctx.shadowColor = 'rgba(118, 255, 3, 0.5)';
-      this.ctx.fill();
+      requestAnimationFrame(animate);
+    };
 
-      star.y += star.speed;
-
-      if (star.y > this.height) {
-        star.y = 0;
-        star.x = Math.random() * this.width;
-      }
-    }
-
-    requestAnimationFrame(() => this.animateStars());
+    animate();
   }
 }

@@ -1,61 +1,45 @@
-<!-- src/app/pages/crear-noticia/crear-noticia.component.html -->
-
-<!-- ─── BARRA DE NAVEGACIÓN SUPERIOR ─── -->
+<!-- HEADER (HOME + TÍTULO + USUARIO) -->
 <mat-toolbar class="header-toolbar">
+  <button mat-icon-button class="home-icon" routerLink="/gestion">
+    <img src="assets/images/casa.png" alt="Home" class="icon-img" />
+  </button>
   <span class="title">Tu Pueblo Conecta</span>
+  <button mat-icon-button class="user-icon-btn" (click)="toggleUserMenu()">
+    <img src="assets/images/SimboloUser.png" alt="Usuario" class="icon-img" />
+  </button>
+  <div class="user-dropdown" *ngIf="showUserMenu">
+    <p class="user-email">{{ userData?.correo || 'usuario@ejemplo.com' }}</p>
+    <p class="user-pueblo">Pueblo: {{ userData?.pueblo_gestionado || '—' }}</p>
+    <button mat-button class="logout-btn" (click)="router.navigate(['/'])">
+      Cerrar sesión
+    </button>
+  </div>
 </mat-toolbar>
-<mat-toolbar class="nav-toolbar">
-  <button
-    mat-button
-    routerLink="/crear-noticia"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    class="nav-link"
-  >
+
+<!-- NAVBAR PRINCIPAL -->
+<div #navToolbar class="nav-toolbar">
+  <button mat-button routerLink="/crear-noticia" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Noticias</span>
   </button>
-  <button
-    mat-button
-    routerLink="/deportes"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    class="nav-link"
-  >
+  <button mat-button routerLink="/deportes" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Deportes</span>
   </button>
-  <button
-    mat-button
-    routerLink="/fiestas"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    class="nav-link"
-  >
+  <button mat-button routerLink="/fiestas" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Fiestas</span>
   </button>
-  <button
-    mat-button
-    routerLink="/instalaciones"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    class="nav-link"
-  >
+  <button mat-button routerLink="/instalaciones" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Instalaciones</span>
   </button>
-  <button
-    mat-button
-    routerLink="/empleo"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="{ exact: true }"
-    class="nav-link"
-  >
+  <button mat-button routerLink="/empleo" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Empleo</span>
   </button>
   <div class="indicator"></div>
-</mat-toolbar>
+</div>
 
+<!-- CONTENIDO PRINCIPAL: FORMULARIO Y LISTADO JUNTOS -->
 <div class="pantalla-container">
-  <!-- Formulario de creación/edición -->
-  <div class="crear-noticia-container">
+  <!-- Panel de crear/editar noticia -->
+  <div class="form-container">
     <h2 class="titulo">{{ isEditMode ? 'Editar noticia' : 'Crear nueva noticia' }}</h2>
     <form [formGroup]="formNoticia" (ngSubmit)="publicarNoticia()">
       <mat-form-field appearance="fill">
@@ -86,28 +70,16 @@
     </form>
   </div>
 
-  <!-- Listado de Noticias -->
+  <!-- Panel de listado de noticias -->
   <div class="listado-noticias">
     <h3 class="titulo-listado">Noticias registradas</h3>
     <ul>
       <li *ngFor="let noticia of noticias">
         <span class="titulo-clickable" (click)="verDetalle(noticia.id)">{{ noticia.titulo }}</span>
-
-        <!-- Botón editar -->
-        <button
-          mat-icon-button
-          (click)="editarNoticia(noticia.id); $event.stopPropagation()"
-          matTooltip="Editar noticia"
-        >
+        <button mat-icon-button (click)="editarNoticia(noticia.id); $event.stopPropagation()" matTooltip="Editar noticia">
           <mat-icon>edit</mat-icon>
         </button>
-
-        <!-- Botón eliminar -->
-        <button
-          mat-icon-button
-          (click)="eliminarNoticia(noticia.id); $event.stopPropagation()"
-          matTooltip="Eliminar noticia"
-        >
+        <button mat-icon-button (click)="eliminarNoticia(noticia.id); $event.stopPropagation()" matTooltip="Eliminar noticia">
           <mat-icon>delete</mat-icon>
         </button>
       </li>

@@ -1,29 +1,30 @@
+<!-- Background Canvas -->
 <canvas #starsCanvas class="stars-canvas"></canvas>
+
 <!-- Navbar superior -->
-<mat-toolbar color="primary" class="navbar">
-  <span class="logo">Tu Pueblo Conecta</span>
-  <button
-    mat-button
-    color="accent"
-    type="button"
-    [routerLink]="'/login'"
-    class="login-button"
-  >
-    Login
+<mat-toolbar class="navbar">
+  <div class="logo-container">
+    <img src="assets/images/LogoWeb.jpg" alt="Logo" class="navbar-logo" />
+    <span class="logo">Tu Pueblo Conecta</span>
+  </div>
+  <button mat-raised-button class="login-button" [routerLink]="'/login'">
+    <mat-icon>login</mat-icon>
+    <span>Iniciar Sesión</span>
   </button>
 </mat-toolbar>
-
-
 
 <!-- Hero Section -->
 <section class="hero-section">
   <div class="hero-content">
     <div class="hero-text">
-      <h1 class="glow">Conecta tu pueblo con el futuro</h1>
-      <p>
-        Gestiona la comunicación y los servicios municipales desde cualquier
-        lugar.
+      <h1>Conecta tu pueblo con el futuro</h1>
+      <p class="hero-subtitle">
+        Gestiona la comunicación y los servicios municipales desde cualquier lugar.
       </p>
+      <button mat-raised-button class="cta-button" [routerLink]="'/login'">
+        Comienza Ahora
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
     </div>
     <div class="hero-image">
       <img
@@ -34,83 +35,97 @@
   </div>
 </section>
 
-
-
-
-<!-- Swiper Carrusel (Web Component) -->
-<section class="swiper-section">
+<!-- Features Section -->
+<section class="features-section">
+  <h2 class="section-title">Nuestros Servicios</h2>
   <swiper-container
     slides-per-view="auto"
     space-between="20"
     navigation="true"
     pagination="true"
-    scrollbar="true"
     class="my-swiper"
   >
-    <swiper-slide class="slide-card">
+    <swiper-slide class="feature-card">
+      <mat-icon>article</mat-icon>
       <h3>Noticias</h3>
-      <p>Aquí podrás ver todos los comunicados del ayuntamiento.</p>
+      <p>Comunicados oficiales y últimas novedades de tu ayuntamiento.</p>
     </swiper-slide>
 
-    <swiper-slide class="slide-card">
+    <swiper-slide class="feature-card">
+      <mat-icon>sports_soccer</mat-icon>
       <h3>Deportes</h3>
-      <p>Consulta horarios de las actividades deportivas y más.</p>
+      <p>Actividades deportivas, horarios y reservas de instalaciones.</p>
     </swiper-slide>
 
-    <swiper-slide class="slide-card">
+    <swiper-slide class="feature-card">
+      <mat-icon>location_city</mat-icon>
       <h3>Instalaciones</h3>
-      <p>Consulta horarios de tus instalaciones locales.</p>
+      <p>Gestión y reserva de espacios públicos municipales.</p>
     </swiper-slide>
 
-    <swiper-slide class="slide-card">
+    <swiper-slide class="feature-card">
+      <mat-icon>celebration</mat-icon>
       <h3>Fiestas</h3>
-      <p>Programas de fiestas y días festivos de tu localidad.</p>
+      <p>Calendario festivo y eventos culturales de tu localidad.</p>
     </swiper-slide>
 
-    <swiper-slide class="slide-card">
-      <h3>Tablón de empleo</h3>
-      <p>Ofertas de empleo subidas por empresas de la zona.</p>
+    <swiper-slide class="feature-card">
+      <mat-icon>work</mat-icon>
+      <h3>Empleo</h3>
+      <p>Ofertas laborales y oportunidades en tu zona.</p>
     </swiper-slide>
 
-    <swiper-slide class="slide-card">
+    <swiper-slide class="feature-card">
+      <mat-icon>wb_sunny</mat-icon>
       <h3>El Tiempo</h3>
-      <p>Consulta el tiempo actual en tu municipio.</p>
-    </swiper-slide>
-
-    <swiper-slide class="slide-card">
-      <h3>Comercios</h3>
-      <p>Últimas novedades de tus comercios locales.</p>
-    </swiper-slide>
-
-    <swiper-slide class="slide-card">
-      <h3>Teléfonos</h3>
-      <p>Teléfonos de interés de tu localidad.</p>
+      <p>Previsión meteorológica actualizada de tu municipio.</p>
     </swiper-slide>
   </swiper-container>
 </section>
 
-<!-- Quiénes Somos -->
-<section class="section who">
-  <h2>¿Quiénes somos?</h2>
-  <p>
-    Somos un equipo dedicado a acercar los servicios municipales a la
-    ciudadanía de una forma moderna, intuitiva y eficiente.
-  </p>
+<!-- About Section -->
+<section class="about-section">
+  <div class="about-content">
+    <h2 class="section-title">¿Quiénes somos?</h2>
+    <p class="about-text">
+      Somos un equipo dedicado a modernizar la comunicación entre ayuntamientos y ciudadanos,
+      haciendo la gestión municipal más accesible y eficiente para todos.
+    </p>
+    <div class="stats-container">
+      <div class="stat-item">
+        <h3>50+</h3>
+        <p>Municipios</p>
+      </div>
+      <div class="stat-item">
+        <h3>10k+</h3>
+        <p>Usuarios</p>
+      </div>
+      <div class="stat-item">
+        <h3>24/7</h3>
+        <p>Disponibilidad</p>
+      </div>
+    </div>
+  </div>
 </section>
-
-<!-- Contacto -->
-<section class="section contact">
-  <h2>Contacto</h2>
-  <p>
-    ¿Quieres saber más? Escríbenos a:
-    <a href="mailto:contacto&#64;tupuebloconecta.com"
-      >contacto&#64;tupuebloconecta.com</a
-    >
-  </p>
-</section>
-
 
 <!-- Footer -->
 <footer class="footer">
-  &copy; 2025 Tu Pueblo Conecta. Todos los derechos reservados.
+  <div class="footer-content">
+    <div class="footer-section">
+      <h3>Contacto</h3>
+      <p><mat-icon>email</mat-icon> info&#64;tupuebloconecta.es</p>
+      <p><mat-icon>phone</mat-icon> +34 900 123 456</p>
+    </div>
+    <div class="footer-section">
+      <h3>Síguenos</h3>
+      <div class="social-links">
+        <a href="#" class="social-link"><mat-icon>facebook</mat-icon></a>
+        <a href="#" class="social-link"><mat-icon>twitter</mat-icon></a>
+        <a href="#" class="social-link"><mat-icon>instagram</mat-icon></a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2024 Tu Pueblo Conecta. Todos los derechos reservados.</p>
+  </div>
 </footer>

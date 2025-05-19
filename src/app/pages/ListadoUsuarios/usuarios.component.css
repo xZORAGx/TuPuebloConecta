@@ -1,77 +1,252 @@
+/* GLOBAL */
 :host {
-    display: block;
+  display: block;
+  width: 100%;
+  background-color: #121212;
+  color: #ffffff;
+  min-height: 100vh;
+  overflow: visible;
+}
+
+/* ── GLOBAL ── */
+:host, html, body {
+  margin: 0; padding: 0;
+  background: #121212; color: #eee;
+  min-height: 100vh;
+  height: 100%;
+}
+
+/* HEADER & NAV */
+.header-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  background: linear-gradient(135deg,#2a2a2a,#111111) !important;
+  z-index: 1002;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header-toolbar .home-icon,
+.header-toolbar .user-icon-btn {
+  position: absolute; top:0; bottom:0; margin:auto 0;
+  width:56px; height:56px; background:none; border:none; cursor:pointer;
+}
+.header-toolbar .home-icon { left:1rem; }
+.header-toolbar .user-icon-btn { right:1rem; }
+.header-toolbar .icon-img { width:100%; height:100%; object-fit:contain; }
+.header-toolbar .title {
+  color:#81c784; font-size:1.9rem; letter-spacing:1px;
+  text-shadow:0 0 8px rgba(129,199,132,0.7);
+}
+
+/* DROPDOWN USUARIO */
+.user-dropdown {
+  position: absolute;
+  top: 64px;
+  right: 1rem;
+  background: #000000 !important;
+  border: 1px solid #111111 !important;
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  min-width: 200px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.95);
+  z-index: 9999 !important;
+  color: #ffffff !important;
+  backdrop-filter: none !important;
+}
+.user-dropdown p {
+  background: transparent !important;
+  color: #fff !important;
+  margin: .25rem 0;
+  font-size: .9rem;
+}
+.user-dropdown .user-pueblo { font-weight: 500; }
+.user-dropdown .logout-btn {
+  width: 100%;
+  margin-top: .5rem;
+  background: #22c55e !important;
+  color: #121212 !important;
+  border-radius: 20px;
+}
+.user-dropdown .logout-btn:hover {
+  background: #16a34a !important;
+}
+
+/* NAVBAR */
+.nav-toolbar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 100vw;
+  background: rgba(47,50,54,0.95) !important;
+  z-index: 1001 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  box-sizing: border-box;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-toolbar .nav-link {
+  margin: 0 8px;
+  padding: 0 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color .3s ease;
+  position: relative;
+}
+
+.nav-toolbar .nav-link .nav-text {
+  color: #ffffff;
+}
+
+.nav-toolbar .nav-link:hover .nav-text {
+  color: #81c784;
+  text-shadow: 0 0 6px rgba(129,199,132,0.7);
+}
+
+.nav-toolbar .nav-link.active .nav-text {
+  color: #22c55e;
+  text-shadow: 0 0 6px rgba(34,197,94,0.7);
+}
+
+.nav-toolbar .indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #22c55e 60%, #a5d6a7 100%);
+  border-radius: 3px;
+  z-index: 2000;
+  transition: left 0.4s cubic-bezier(.4,2,.6,1), width 0.4s cubic-bezier(.4,2,.6,1);
+  pointer-events: none;
+}
+
+/* CONTENT CONTAINER */
+.container {
+  padding: 24px;
+  background: #121212;
+  min-height: calc(100vh - 140px);
+  box-sizing: border-box;
+}
+
+.pantalla-container {
+  padding-top: 140px; /* 64px header + 56px nav + 20px padding */
+  background: #121212;
+  min-height: calc(100vh - 140px);
+}
+
+/* TÍTULO */
+.titulo {
+  color: #22c55e;
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+/* BUSCADOR */
+.buscador-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.buscador {
+  width: 600px;
+  max-width: 90%;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+/* TABLE STYLES */
+:host ::ng-deep {
+  /* Table container */
+  .tabla {
     width: 100%;
-    background-color: #121212;
-    color: #ffffff;
-    min-height: 100vh;
+    background-color: #1e1e1e !important;
+    border-radius: 8px;
+    overflow: hidden;
   }
-  
-  h1 {
-    color: #00ff00;
+
+  /* Header cells */
+  .mat-mdc-header-cell {
+    background-color: #2a2a2a !important;
+    color: #22c55e !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
   }
-  
-  mat-card {
-    background-color: #1e1e1e;
-    color: #ffffff;
+
+  /* Header text - make it more visible */
+  .mat-sort-header-content {
+    color: #22c55e !important;
+    font-weight: 600 !important;
   }
-  
-  mat-card-title {
-    font-size: 1.5rem;
-  }
-  
-  mat-card-content p {
-    margin-bottom: 0.5rem;
-  }
-  /* Contenedor para alinear si quieres centrarla o moverla */
-  .buscador-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .buscador {
-    width: 600px;
-    max-width: 90%;
-  }
-  
-  mat-form-field {
-    width: 100%;
-  }
-  
-  /* Quitamos el fondo feo y lo dejamos limpio */
-  .mat-form-field-appearance-fill .mat-form-field-flex {
-    background-color: transparent; /* Elimina fondo negro raro */
-    border-radius: 8px; /* Bordes redondeados si quieres */
-  }
-  
-  /* El borde inferior */
-  .mat-form-field-appearance-fill .mat-form-field-underline {
-    display: none; /* ELIMINA la línea de debajo */
-  }
-  
-  /* Hover efecto (por si aparece uno por defecto) */
-  .mat-form-field-appearance-fill .mat-form-field-flex:hover {
-    background-color: #1e1e1e; /* Cambia al color que quieras o pon transparente */
-  }
-  
-  /* Cuando haces focus */
-  .mat-form-field-appearance-fill.mat-focused .mat-form-field-flex {
-    background-color: #1e1e1e; /* Fondo al hacer focus */
-  }
-  
-  /* Label (el texto de arriba: "Buscar usuario") */
-  .mat-form-field-label {
-    color: #00ff00 !important; /* Verde si quieres destacar el label */
-  }
-  
-  /* Texto del input */
-  input.mat-input-element {
-    color: #ffffff !important; /* Texto blanco */
-  }
-  
-  /* Placeholder dentro del input */
-  input.mat-input-element::placeholder {
+
+  /* Data cells */
+  .mat-mdc-cell {
     color: #ffffff !important;
-    opacity: 0.5; /* Puedes ajustar el nivel de transparencia */
+    background-color: transparent !important;
   }
-  
+
+  /* Rows */
+  .mat-mdc-row {
+    background-color: #1e1e1e !important;
+  }
+
+  .mat-mdc-row:nth-child(odd) {
+    background-color: #262626 !important;
+  }
+
+  .mat-mdc-row:hover {
+    background-color: #2a2a2a !important;
+  }
+
+  /* Search field */
+  .mat-mdc-form-field-flex {
+    background: #2a2a2a !important;
+  }
+
+  .mat-mdc-form-field .mat-mdc-text-field-wrapper {
+    background-color: #2a2a2a !important;
+  }
+
+  .mat-mdc-text-field-wrapper .mat-mdc-form-field-flex .mat-mdc-form-field-infix input {
+    color: #ffffff !important;
+  }
+
+  .mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: #2a2a2a !important;
+  }
+
+  .mat-mdc-form-field-label {
+    color: #81c784 !important;
+  }
+
+  /* Paginator */
+  .mat-mdc-paginator {
+    background-color: #1e1e1e !important;
+    color: #ffffff !important;
+  }
+
+  .mat-mdc-paginator-outer-container {
+    background-color: #1e1e1e !important;
+  }
+
+  .mat-mdc-paginator-container {
+    color: #ffffff !important;
+  }
+
+  .mat-mdc-paginator-range-label,
+  .mat-mdc-paginator-page-size-label {
+    color: #ffffff !important;
+  }
+}

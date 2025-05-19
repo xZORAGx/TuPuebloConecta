@@ -82,15 +82,10 @@ export class GestionPuebloComponent implements OnInit, AfterViewInit, OnDestroy 
     if (!pueblo) return;
     this.router.navigate(['/usuarios', pueblo]);
   }
-
   verIncidencias(): void {
     const pueblo = this.userData?.pueblo_gestionado;
     if (!pueblo) return;
     this.router.navigate([`/incidencias/${pueblo}`]);
-  }
-
-  anadirTelefonos(): void {
-    this.router.navigate(['/telefonos']);
   }
 
   entrar(titulo: string): void {

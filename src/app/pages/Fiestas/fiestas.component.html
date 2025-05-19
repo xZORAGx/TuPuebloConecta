@@ -1,104 +1,125 @@
-<div class="pantalla-container">
+<!-- HEADER (HOME + TÍTULO + USUARIO) -->
+<mat-toolbar class="header-toolbar">
+  <!-- ICONO HOME -->
+  <button mat-icon-button class="home-icon" routerLink="/gestion">
+    <img src="assets/images/casa.png" alt="Home" class="icon-img" />
+  </button>
 
-  <!-- ============ 1) FORMULARIO DE SUBIDA ============ -->
+  <span class="title">Tu Pueblo Conecta</span>
+
+  <!-- ICONO USER -->
+  <button mat-icon-button class="user-icon-btn" (click)="toggleUserMenu()">
+    <img src="assets/images/SimboloUser.png" alt="Usuario" class="icon-img" />
+  </button>
+
+  <!-- DROPDOWN USUARIO -->
+  <div class="user-dropdown" *ngIf="showUserMenu">
+    <p class="user-email">{{ userData?.correo || 'usuario@ejemplo.com' }}</p>
+    <p class="user-pueblo">Pueblo: {{ userData?.pueblo_gestionado || '—' }}</p>
+    <button mat-button class="logout-btn" (click)="router.navigate(['/'])">
+      Cerrar sesión
+    </button>
+  </div>
+</mat-toolbar>
+
+<!-- NAVBAR PRINCIPAL -->
+<div #navToolbar class="nav-toolbar">
+  <button mat-button routerLink="/crear-noticia" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Noticias</span>
+  </button>
+  <button mat-button routerLink="/deportes" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Deportes</span>
+  </button>
+  <button mat-button routerLink="/fiestas" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Fiestas</span>
+  </button>
+  <button mat-button routerLink="/instalaciones" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Instalaciones</span>
+  </button>
+  <button mat-button routerLink="/empleo" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Empleo</span>
+  </button>
+  <div class="indicator"></div>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="pantalla-container">
+  <!-- FORMULARIO SUBIDA -->
   <mat-card class="card-form">
     <mat-card-title class="card-title">Nueva Fiesta</mat-card-title>
-
     <mat-card-content>
       <form [formGroup]="form" (ngSubmit)="upload()">
-
-        <!-- Título -->
         <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Título</mat-label>
+          <mat-label>Título *</mat-label>
           <input matInput formControlName="titulo" />
           <mat-error *ngIf="form.get('titulo')?.invalid">Título obligatorio</mat-error>
         </mat-form-field>
 
-        <!-- Archivo -->
         <div class="file-input full-width">
           <label>Seleccionar PDF/Imagen:</label>
           <input type="file" (change)="onFileChange($event)" />
         </div>
 
-        <!-- Previsualización local (sin iframe) -->
         <div *ngIf="previewUrl" class="preview-container">
           <button mat-icon-button (click)="openPreview()" class="preview-btn">
-            <mat-icon *ngIf="selectedFile && selectedFile.type==='application/pdf'">
+            <mat-icon *ngIf="selectedFile?.type === 'application/pdf'">
               picture_as_pdf
             </mat-icon>
-
-            <img *ngIf="selectedFile && selectedFile.type.startsWith('image/')"
-                 [src]="previewUrl" class="preview-img" />
-
-            <mat-icon *ngIf="selectedFile
-                             && !selectedFile.type.startsWith('image/')
-                             && selectedFile.type!=='application/pdf'">
+            <img
+              *ngIf="selectedFile?.type?.startsWith('image/')"
+              [src]="previewUrl"
+              class="preview-img"
+            />
+            <mat-icon
+              *ngIf="
+                selectedFile
+                && !selectedFile.type.startsWith('image/')
+                && selectedFile.type !== 'application/pdf'
+              "
+            >
               insert_drive_file
             </mat-icon>
           </button>
         </div>
 
-        <!-- Botón subir -->
         <mat-card-actions>
-          <button mat-flat-button color="primary"
-                  type="submit"
+          <button mat-flat-button color="primary" type="submit"
                   [disabled]="uploading || form.invalid">
             {{ uploading ? 'Subiendo…' : 'Subir Fiesta' }}
           </button>
         </mat-card-actions>
-
       </form>
     </mat-card-content>
   </mat-card>
 
-
-
-  <!-- ============ 2) LISTADO / ACORDEÓN ============ -->
+  <!-- LISTADO / ACORDEÓN -->
   <mat-card class="card-listado">
     <mat-card-title class="card-title">Fiestas Publicadas</mat-card-title>
-
     <mat-accordion *ngIf="fiestas.length; else noData" class="accordion-dark">
-
       <mat-expansion-panel *ngFor="let f of fiestas" hideToggle>
-
-        <!-- Cabecera -->
         <mat-expansion-panel-header>
           <mat-icon class="item-icon">
-            {{ (f.mimeType || '').startsWith('image/')
-                 ? 'image'
-                 : (f.mimeType === 'application/pdf' ? 'picture_as_pdf' : 'insert_drive_file') }}
+            {{ f.mimeType.startsWith('image/')  ? 'image'
+             : f.mimeType === 'application/pdf'    ? 'picture_as_pdf'
+             : 'insert_drive_file' }}
           </mat-icon>
-
           <span class="item-title">{{ f.titulo }}</span>
-
-          <button mat-icon-button color="warn"
-                  matTooltip="Eliminar"
+          <button mat-icon-button color="warn" matTooltip="Eliminar"
                   (click)="delete(f); $event.stopPropagation()">
             <mat-icon>delete</mat-icon>
           </button>
         </mat-expansion-panel-header>
-
-
-
-        <!-- Contenido perezoso -->
         <ng-template matExpansionPanelContent>
           <div class="panel-content">
-
-            <!-- Imagen -->
-            <img *ngIf="(f.mimeType || '').startsWith('image/')"
+            <img *ngIf="f.mimeType.startsWith('image/')"
                  [src]="f.pdfUrl"
-                 alt="Imagen de {{ f.titulo }}"
                  class="preview-img-large" />
-
-            <!-- PDF: botón Ver -->
             <div *ngIf="f.mimeType === 'application/pdf'" class="pdf-actions">
               <button mat-stroked-button color="primary"
                       (click)="viewPdf(f.pdfUrl, $event)">
                 Ver PDF
               </button>
             </div>
-
-            <!-- Descargar -->
             <a mat-flat-button color="primary"
                [href]="f.pdfUrl"
                download
@@ -107,12 +128,10 @@
             </a>
           </div>
         </ng-template>
-
       </mat-expansion-panel>
-
     </mat-accordion>
-
-    <ng-template #noData><p>No hay fiestas publicadas.</p></ng-template>
+    <ng-template #noData>
+      <p>No hay fiestas publicadas.</p>
+    </ng-template>
   </mat-card>
-
 </div>

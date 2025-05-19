@@ -1,7 +1,13 @@
-import { Component, OnInit, AfterViewInit, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  ViewEncapsulation
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule }     from '@angular/material/input';
@@ -32,7 +38,9 @@ import {
   deleteObject
 } from '@angular/fire/storage';
 
-import { Observable } from 'rxjs';
+import { Auth } from '@angular/fire/auth';
+import { docData } from '@angular/fire/firestore';
+import { Subscription, Observable } from 'rxjs';
 
 interface Deporte  { id?: string; nombre: string; filtro: string; emoji: string; }
 interface Partido  {
@@ -46,6 +54,12 @@ interface Partido  {
   resultado: string;
 }
 interface Actividad { id?: string; titulo: string; imageUrl: string; storagePath?: string; }
+
+// Para los datos del dropdown de usuario
+interface UserWeb {
+  correo: string;
+  pueblo_gestionado: string;
+}
 
 @Component({
   selector: 'app-deportes',
@@ -68,11 +82,18 @@ interface Actividad { id?: string; titulo: string; imageUrl: string; storagePath
   templateUrl: './deportes.component.html',
   styleUrls: ['./deportes.component.css']
 })
-export class DeportesComponent implements OnInit, AfterViewInit {
+export class DeportesComponent implements OnInit, AfterViewInit, OnDestroy {
+  // ─── Menú Usuario ───
+  showUserMenu = false;
+  userData: UserWeb | null = null;
+  private userSub?: Subscription;
+
+  // ─── Formularios ───
   formDeporte!: FormGroup;
   formPartido!: FormGroup;
   formActividad!: FormGroup;
 
+  // ─── Observables ───
   deportes$!: Observable<Deporte[]>;
   partidos$!: Observable<Partido[]>;
   actividades$!: Observable<Actividad[]>;
@@ -82,7 +103,6 @@ export class DeportesComponent implements OnInit, AfterViewInit {
 
   currentPartidoId: string | null = null;
   isEditingPartido = false;
-
   uploading = false;
   selectedPreview: string | null = null;
 
@@ -90,12 +110,23 @@ export class DeportesComponent implements OnInit, AfterViewInit {
 
   constructor(
     private fb: FormBuilder,
+    public router: Router, // Cambiado a public para acceso en plantilla
+    public auth: Auth,
     private firestore: Firestore,
     private storage: Storage
   ) {}
 
   ngOnInit(): void {
-    // Formularios
+    // ─── Cargar datos usuario ───
+    const uid = this.auth.currentUser?.uid;
+    if (uid) {
+      const userDoc = doc(this.firestore, 'usuarios_web', uid);
+      this.userSub = docData(userDoc).subscribe(data => {
+        this.userData = data as UserWeb;
+      });
+    }
+
+    // ─── Inicializar formularios ───
     this.formDeporte = this.fb.group({
       nombre: ['', Validators.required],
       filtro: ['', Validators.required],
@@ -116,7 +147,7 @@ export class DeportesComponent implements OnInit, AfterViewInit {
       storagePath: ['']
     });
 
-    // Observables
+    // ─── Cargar listas ───
     this.deportes$ = collectionData(
       collection(this.firestore, `${this.basePath}/Deportes`),
       { idField: 'id' }
@@ -134,17 +165,17 @@ export class DeportesComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Indicador nav
+    // Indicador deslizante de la navbar (igual que antes)
     setTimeout(() => {
       const nav = document.querySelector('.nav-toolbar') as HTMLElement;
       const links = Array.from(nav.querySelectorAll('.nav-link')) as HTMLElement[];
       const indicator = nav.querySelector('.indicator') as HTMLElement;
       if (!nav || !links.length || !indicator) return;
-      function updateIndicator(el: HTMLElement) {
+      const updateIndicator = (el: HTMLElement) => {
         const r = el.getBoundingClientRect(), p = nav.getBoundingClientRect();
         indicator.style.width = `${r.width}px`;
         indicator.style.left  = `${r.left - p.left}px`;
-      }
+      };
       const active = nav.querySelector('.nav-link.active') as HTMLElement;
       if (active) updateIndicator(active);
       links.forEach(link => {
@@ -162,7 +193,19 @@ export class DeportesComponent implements OnInit, AfterViewInit {
     }, 0);
   }
 
-  /* DEPORTES */
+  ngOnDestroy(): void {
+    this.userSub?.unsubscribe();
+  }
+
+  // ─── Menú Usuario ───
+  toggleUserMenu(): void {
+    this.showUserMenu = !this.showUserMenu;
+  }
+  onLogout(): void {
+    this.auth.signOut().then(() => this.router.navigate(['/']));
+  }
+
+  // ─── DEPORTES ───
   onSubmitDeporte() {
     if (this.formDeporte.invalid) return;
     addDoc(collection(this.firestore, `${this.basePath}/Deportes`), this.formDeporte.value)
@@ -173,7 +216,7 @@ export class DeportesComponent implements OnInit, AfterViewInit {
     deleteDoc(doc(this.firestore, `${this.basePath}/Deportes/${id}`));
   }
 
-  /* PARTIDOS */
+  // ─── PARTIDOS ───
   async onSubmitPartido() {
     if (this.formPartido.invalid) return;
     const data = this.formPartido.value;
@@ -212,7 +255,7 @@ export class DeportesComponent implements OnInit, AfterViewInit {
     this.formPartido.patchValue({ resultado: v }, { emitEvent: false });
   }
 
-  /* ACTIVIDADES */
+  // ─── ACTIVIDADES ───
   async onFileSelected(e: any) {
     const file: File = e.target.files[0];
     if (!file) return;

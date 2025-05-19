@@ -1,15 +1,56 @@
+<!-- ─── HEADER (HOME + TÍTULO + USUARIO) ─── -->
+<mat-toolbar class="header-toolbar">
+  <!-- ICONO HOME -->
+  <button mat-icon-button class="home-icon" routerLink="/gestion">
+    <img src="assets/images/casa.png" alt="Home" class="icon-img" />
+  </button>
+
+  <!-- TÍTULO CENTRAL -->
+  <span class="title">Tu Pueblo Conecta</span>
+
+  <!-- ICONO USUARIO -->
+  <button mat-icon-button class="user-icon-btn" (click)="toggleUserMenu()">
+    <img src="assets/images/SimboloUser.png" alt="Usuario" class="icon-img" />
+  </button>
+
+  <!-- DROPDOWN DE USUARIO -->
+  <div class="user-dropdown" *ngIf="showUserMenu">
+    <p class="user-email">{{ userData?.correo || 'usuario@ejemplo.com' }}</p>
+    <p class="user-pueblo">Pueblo: {{ userData?.pueblo_gestionado || '—' }}</p>
+    <button mat-button class="logout-btn" (click)="onLogout()">Cerrar sesión</button>
+  </div>
+</mat-toolbar>
+
+<!-- ─── NAVBAR PRINCIPAL ─── -->
+<div #navToolbar class="nav-toolbar">
+  <button mat-button routerLink="/crear-noticia" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Noticias</span>
+  </button>
+  <button mat-button routerLink="/deportes" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Deportes</span>
+  </button>
+  <button mat-button routerLink="/fiestas" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Fiestas</span>
+  </button>
+  <button mat-button routerLink="/instalaciones" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Instalaciones</span>
+  </button>
+  <button mat-button routerLink="/empleo" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Empleo</span>
+  </button>  <div class="indicator"></div>
+</div>
+
+<!-- ─── CONTENIDO PRINCIPAL ─── -->
 <div class="pantalla-container">
   <!-- Formulario Empleo -->
   <div class="crear-empleo-container">
-    <h2 class="titulo">Crear nueva oferta de empleo</h2>
+    <h2 class="titulo">{{ isEditMode ? 'Editar empleo' : 'Crear nueva oferta de empleo' }}</h2>
 
     <form [formGroup]="formEmpleo" (ngSubmit)="publicarEmpleo()">
       <mat-form-field appearance="fill">
         <mat-label>Título</mat-label>
         <input matInput formControlName="titulo" />
-        <mat-error *ngIf="formEmpleo.get('titulo')?.invalid">
-          Título obligatorio
-        </mat-error>
+        <mat-error *ngIf="formEmpleo.get('titulo')?.invalid">Título obligatorio</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="fill">
@@ -29,7 +70,7 @@
       </div>
 
       <button mat-raised-button type="submit" [disabled]="formEmpleo.invalid || cargando">
-        {{ cargando ? 'Publicando...' : 'Publicar Empleo' }}
+        {{ cargando ? (isEditMode ? 'Actualizando...' : 'Publicando...') : (isEditMode ? 'Actualizar Empleo' : 'Publicar Empleo') }}
       </button>
     </form>
   </div>
@@ -40,7 +81,7 @@
     <ul>
       <li *ngFor="let empleo of empleos" (click)="verDetalle(empleo.id)">
         <span class="titulo-clickable">{{ empleo.titulo }}</span>
-        <button (click)="eliminarEmpleo(empleo.id); $event.stopPropagation()" class="btn-eliminar">
+        <button class="btn-eliminar" (click)="eliminarEmpleo(empleo.id); $event.stopPropagation()">
           Eliminar
         </button>
       </li>

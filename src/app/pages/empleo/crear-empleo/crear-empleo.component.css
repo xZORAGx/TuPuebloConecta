@@ -1,137 +1,222 @@
 :host {
-    display: block;
-    background-color: #121212;
-    min-height: 100vh;
-    padding: 2rem 1rem;
-  }
-  
-  .pantalla-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 3rem;
-    flex-wrap: wrap;
-  }
-  
-  /* Formulario Empleo */
-  .crear-empleo-container {
-    flex: 1 1 400px;
-    max-width: 600px;
-    padding: 2rem;
-    background-color: #1e1e1e;
-    color: white;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-  }
-  
-  .titulo {
-    text-align: center;
-    color: #22c55e;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 2rem;
-  }
-  
-  mat-form-field {
-    width: 100%;
-  }
-  
-  .mat-form-field-appearance-fill .mat-form-field-flex {
-    background-color: white;
-    color: black;
-    border-radius: 8px;
-  }
-  
-  .mat-form-field-label {
-    color: #22c55e !important;
-    font-weight: 600;
-  }
-  
-  input.mat-input-element,
-  textarea.mat-input-element {
-    color: black;
-    font-weight: 500;
-  }
-  
-  .mat-form-field-appearance-fill .mat-form-field-underline {
-    display: none;
-  }
-  
-  .preview img {
-    width: 100%;
-    margin-top: 1rem;
-    border-radius: 8px;
-    border: 1px solid #444;
-    max-height: 200px;
-    object-fit: cover;
-  }
-  
-  button[mat-raised-button] {
-    background-color: #22c55e !important;
-    color: white !important;
-    font-weight: bold;
-    padding: 12px;
-    margin-top: 2rem;
-    border-radius: 8px;
-    width: 100%;
-    font-size: 16px;
-  }
-  
-  button[mat-raised-button]:hover {
-    background-color: #16a34a !important;
-  }
-  
-  button[mat-raised-button][disabled] {
-    background-color: #22c55e !important;
-    opacity: 0.5;
-    color: white;
-    cursor: not-allowed;
-  }
-  
-  /* Listado Empleos */
-  .listado-empleos {
-    flex: 1 1 300px;
-    background-color: #1e1e1e;
-    color: white;
-    padding: 2rem;
-    border-radius: 12px;
-    height: fit-content;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-  
-  .titulo-listado-empleo {
-    color: #22c55e;
-    font-size: 20px;
-    margin-bottom: 1rem;
-  }
-  
-  .listado-empleos ul {
-    list-style: none;
-    padding-left: 0;
-  }
-  
-  .listado-empleos li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #333;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-  }
-  
-  .titulo-clickable {
-    flex: 1;
-    transition: color 0.2s;
-  }
-  
-  .titulo-clickable:hover {
-    color: #22c55e;
-  }
-  
-  .btn-eliminar {
-    background-color: transparent;
-    color: red;
-    border: none;
-    cursor: pointer;
-  }
+  display: block;
+  background-color: #121212;
+  color: #ffffff;
+  min-height: 100vh;
+  overflow: visible;
+}
+
+/* ─── TOOLBARS ─── */
+.header-toolbar,
+.nav-toolbar {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  overflow: visible !important;
+  z-index: 1000;
+}
+
+/* HEADER */
+.header-toolbar {
+  top: 0;
+  height: 64px;
+  background: linear-gradient(135deg, #2a2a2a, #111111);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  z-index: 1002; /* Higher than navbar */
+}
+.header-toolbar .home-icon,
+.header-toolbar .user-icon-btn {
+  position: absolute;
+  top: 0; bottom: 0;
+  margin: auto 0;
+  width: 56px; height: 56px;
+  background: none; border: none; cursor: pointer;
+}
+.header-toolbar .home-icon { left: 1rem; }
+.header-toolbar .user-icon-btn { right: 1rem; }
+.header-toolbar .icon-img {
+  width: 100%; height: 100%; object-fit: contain;
+}
+.header-toolbar .title {
+  color: #81c784;
+  font-size: 1.9rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(129,199,132,0.7);
+}
+
+/* DROPDOWN USUARIO */
+.user-dropdown {
+  position: absolute;
+  top: 64px;
+  right: 1rem;
+  background: #000000 !important;
+  border: 1px solid #111111 !important;
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  min-width: 200px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.95);
+  z-index: 3000 !important; /* Consistent with other components */
+  color: #ffffff !important;
+  backdrop-filter: none !important;
+}
+.user-dropdown p {
+  background: transparent !important;
+  color: #fff !important;
+  margin: .25rem 0;
+  font-size: .9rem;
+}
+.user-dropdown .user-pueblo { font-weight: 500; }
+.user-dropdown .logout-btn {
+  width: 100%;
+  margin-top: .5rem;
+  background: #22c55e !important;
+  color: #121212 !important;
+  border-radius: 20px;
+}
+.user-dropdown .logout-btn:hover {
+  background: #16a34a !important;
+}
+
+/* NAVBAR */
+.nav-toolbar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 100vw;
+  background: rgba(47,50,54,0.95) !important;
+  z-index: 1001 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  box-sizing: border-box;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+header .nav-toolbar {
+  background: #000000 !important;
+}
+.nav-toolbar .nav-link {
+  margin: 0 8px;
+  padding: 0 16px;
+  color: #91d6a6;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+.nav-toolbar .nav-link:hover .nav-text,
+.nav-toolbar .nav-link.active .nav-text {
+  color: #fff;
+  text-shadow: 0 0 6px rgba(255,255,255,0.7);
+}
+.nav-toolbar .nav-link.active .nav-text {
+  color: #22c55e;
+  text-shadow: 0 0 6px rgba(34,197,94,0.7);
+}
+.nav-toolbar .indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #22c55e 60%, #a5d6a7 100%);
+  border-radius: 3px;
+  z-index: 2000;
+  transition: left 0.4s cubic-bezier(.4,2,.6,1), width 0.4s cubic-bezier(.4,2,.6,1);
+  pointer-events: none;
+  display: block;
+}
+
+/* DEJAR ESPACIO DEBAJO DE LA NAV */
+.nav-toolbar + .pantalla-container {
+  padding-top: 120px; /* 64px header + 56px nav */
+}
+
+/* ─── ESTILOS DEL FORM Y LISTADO ─── */
+.pantalla-container {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding: 2rem 1rem;
+}
+.crear-empleo-container {
+  flex: 0 0 33%;
+  max-width: 33%;
+  padding: 2rem;
+  background-color: #1e1e1e;
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+.titulo {
+  text-align: center;
+  color: #22c55e;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+mat-form-field { width: 100%; }
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background: #fff; color: #000; border-radius: 8px;
+}
+.mat-form-field-label { color: #22c55e !important; font-weight: 600; }
+.mat-input-element { color: #000; font-weight: 500; }
+.preview img {
+  width: 100%;
+  margin-top: 1rem;
+  border-radius: 8px;
+  border: 1px solid #444;
+  max-height: 200px;
+  object-fit: cover;
+}
+button[mat-raised-button] {
+  background: #22c55e !important;
+  color: #fff !important;
+  font-weight: bold;
+  padding: 12px;
+  margin-top: 2rem;
+  border-radius: 8px;
+  font-size: 16px;
+  width: 100%;
+}
+button[mat-raised-button]:hover { background: #16a34a !important; }
+button[mat-raised-button][disabled] {
+  opacity: 0.5; cursor: not-allowed;
+}
+
+/* LISTADO */
+.listado-empleos {
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 2rem;
+  flex: 1 1 30%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.titulo-listado-empleo {
+  color: #22c55e;
+  font-size: 20px;
+  margin-bottom: 1rem;
+}
+.listado-empleos ul { list-style: none; padding: 0; }
+.listado-empleos li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #333;
+  cursor: pointer;
+}
+.titulo-clickable { flex: 1; transition: color 0.2s; cursor: pointer; }
+.titulo-clickable:hover { color: #22c55e; }
+.btn-eliminar {
+  background: transparent;
+  color: red;
+  border: none;
+  cursor: pointer;
+}
+.btn-eliminar:hover { color: #ff0000; }

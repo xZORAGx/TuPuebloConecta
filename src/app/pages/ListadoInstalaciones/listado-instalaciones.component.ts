@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {
   Firestore,
   collection,
@@ -9,8 +9,11 @@ import {
   addDoc,
   deleteDoc,
   doc,
-  updateDoc
+  updateDoc,
+  docData
 } from '@angular/fire/firestore';
+import { Auth } from '@angular/fire/auth';
+import { Observable, Subscription } from 'rxjs';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule      } from '@angular/material/input';
@@ -19,6 +22,7 @@ import { MatIconModule       } from '@angular/material/icon';
 import { MatCardModule       } from '@angular/material/card';
 import { MatListModule       } from '@angular/material/list';
 import { MatExpansionModule  } from '@angular/material/expansion';
+import { MatToolbarModule    } from '@angular/material/toolbar';
 
 interface Instalacion {
   id?: string;
@@ -33,11 +37,18 @@ interface Instalacion {
   veranoTardeCierre?:      string;
 }
 
+// Para los datos del dropdown de usuario
+interface UserWeb {
+  correo: string;
+  pueblo_gestionado: string;
+}
+
 @Component({
   selector: 'app-listado-instalaciones',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -45,12 +56,21 @@ interface Instalacion {
     MatIconModule,
     MatCardModule,
     MatListModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatToolbarModule
   ],
   templateUrl: './listado-instalaciones.component.html',
   styleUrls: ['./listado-instalaciones.component.css']
 })
-export class ListadoInstalacionesComponent implements OnInit {
+export class ListadoInstalacionesComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('navToolbar') navToolbar!: ElementRef;
+
+  // ─── Menú Usuario ───
+  showDropdown = false;
+  userData: UserWeb | null = null;
+  private userSub?: Subscription;
+
+  // ─── Datos y estado ───
   formInstalacion: FormGroup;
   instalaciones: Instalacion[] = [];
   cargando = false;
@@ -58,12 +78,13 @@ export class ListadoInstalacionesComponent implements OnInit {
   isEditing = false;
   selectedId?: string;
 
-  private path = 'pueblos/Figueruelas/Instalaciones';
+  private basePath = '';
 
   constructor(
     private fb: FormBuilder,
     private firestore: Firestore,
-    private router: Router
+    public router: Router,
+    public auth: Auth
   ) {
     this.formInstalacion = this.fb.group({
       titulo: ['', Validators.required],
@@ -79,22 +100,73 @@ export class ListadoInstalacionesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const colRef = collection(this.firestore, this.path);
-    collectionData(colRef, { idField: 'id' })
-      .subscribe((docs: any[]) => {
-        this.instalaciones = docs.map(d => ({
-          id: d.id,
-          titulo: d.Titulo,
-          inviernoMananaApertura: d.HorarioInvierno_Manana_Apertura,
-          inviernoMananaCierre:   d.HorarioInvierno_Manana_Cierre,
-          inviernoTardeApertura:  d.HorarioInvierno_Tarde_Apertura,
-          inviernoTardeCierre:    d.HorarioInvierno_Tarde_Cierre,
-          veranoMananaApertura:   d.HorarioVerano_Manana_Apertura,
-          veranoMananaCierre:     d.HorarioVerano_Manana_Cierre,
-          veranoTardeApertura:    d.HorarioVerano_Tarde_Apertura,
-          veranoTardeCierre:      d.HorarioVerano_Tarde_Cierre
-        }));
+    // ─── Cargar datos usuario ───
+    const uid = this.auth.currentUser?.uid;
+    if (uid) {
+      const userDoc = doc(this.firestore, 'usuarios_web', uid);
+      this.userSub = docData(userDoc).subscribe(data => {
+        this.userData = data as UserWeb;
+        this.basePath = `pueblos/${this.userData.pueblo_gestionado}`;
+        
+        // Una vez tenemos el pueblo, cargar instalaciones
+        const colRef = collection(this.firestore, `${this.basePath}/Instalaciones`);
+        collectionData(colRef, { idField: 'id' })
+          .subscribe((docs: any[]) => {
+            this.instalaciones = docs.map(d => ({
+              id: d.id,
+              titulo: d.Titulo,
+              inviernoMananaApertura: d.HorarioInvierno_Manana_Apertura,
+              inviernoMananaCierre:   d.HorarioInvierno_Manana_Cierre,
+              inviernoTardeApertura:  d.HorarioInvierno_Tarde_Apertura,
+              inviernoTardeCierre:    d.HorarioInvierno_Tarde_Cierre,
+              veranoMananaApertura:   d.HorarioVerano_Manana_Apertura,
+              veranoMananaCierre:     d.HorarioVerano_Manana_Cierre,
+              veranoTardeApertura:    d.HorarioVerano_Tarde_Apertura,
+              veranoTardeCierre:      d.HorarioVerano_Tarde_Cierre
+            }));
+          });
       });
+    }
+  }
+
+  ngAfterViewInit(): void {
+    // Indicador deslizante en la navbar
+    setTimeout(() => {
+      const nav = this.navToolbar.nativeElement;
+      const links = Array.from(nav.querySelectorAll('.nav-link')) as HTMLElement[];
+      const indicator = nav.querySelector('.indicator') as HTMLElement;
+      if (!nav || !links.length || !indicator) return;
+      
+      const updateIndicator = (el: HTMLElement) => {
+        const r = el.getBoundingClientRect(),
+              nr = nav.getBoundingClientRect();
+        indicator.style.width = `${r.width}px`;
+        indicator.style.left = `${r.left - nr.left}px`;
+      };
+
+      const active = nav.querySelector('.nav-link.active') as HTMLElement;
+      if (active) updateIndicator(active);
+
+      links.forEach(link => {
+        link.addEventListener('mouseenter', () => updateIndicator(link));
+        link.addEventListener('mouseleave', () => {
+          const curr = nav.querySelector('.nav-link.active') as HTMLElement;
+          if (curr) updateIndicator(curr);
+        });
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.userSub?.unsubscribe();
+  }
+
+  toggleDropdown(): void {
+    this.showDropdown = !this.showDropdown;
+  }
+
+  logout(): void {
+    this.auth.signOut().then(() => this.router.navigate(['/']));
   }
 
   async publicarInstalacion(): Promise<void> {
@@ -140,12 +212,12 @@ export class ListadoInstalacionesComponent implements OnInit {
 
     try {
       if (this.isEditing && this.selectedId) {
-        const docRef = doc(this.firestore, this.path, this.selectedId);
+        const docRef = doc(this.firestore, `${this.basePath}/Instalaciones`, this.selectedId);
         await updateDoc(docRef, payload);
         this.isEditing = false;
         this.selectedId = undefined;
       } else {
-        await addDoc(collection(this.firestore, this.path), payload);
+        await addDoc(collection(this.firestore, `${this.basePath}/Instalaciones`), payload);
       }
       this.formInstalacion.reset();
     } finally {
@@ -171,7 +243,7 @@ export class ListadoInstalacionesComponent implements OnInit {
 
   async eliminarInstalacion(id?: string): Promise<void> {
     if (!id) return;
-    await deleteDoc(doc(this.firestore, this.path, id));
+    await deleteDoc(doc(this.firestore, `${this.basePath}/Instalaciones`, id));
   }
 
   verDetalle(id?: string): void {

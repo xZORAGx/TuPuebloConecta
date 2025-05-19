@@ -23,7 +23,7 @@
 </mat-toolbar>
 
 <!-- NAVBAR PRINCIPAL -->
-<mat-toolbar class="nav-toolbar">
+<div #navToolbar class="nav-toolbar">
   <button mat-button routerLink="/crear-noticia" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Noticias</span>
   </button>
@@ -40,7 +40,7 @@
     <span class="nav-text">Empleo</span>
   </button>
   <div class="indicator"></div>
-</mat-toolbar>
+</div>
 
 <!-- CONTENIDO PRINCIPAL -->
 <div class="pantalla-container gestion-content flex flex-col items-center w-full">
@@ -84,9 +84,6 @@
     </button>
     <button mat-raised-button color="primary" (click)="verIncidencias()">
       Ver listado Incidencias
-    </button>
-    <button mat-raised-button color="primary" (click)="anadirTelefonos()">
-      Añadir teléfonos
     </button>
   </div>
 

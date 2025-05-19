@@ -1,10 +1,30 @@
 :host {
   display: block;
   width: 100%;
-  background-color: #121212;
-  color: #ffffff;
+  background-color: #0a0a0a;
+  color: #4CAF50;
   min-height: 100vh;
   overflow: visible;
+}
+
+/* HEADER */
+.header-toolbar {
+  background-color: #0a0a0a !important;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+}
+
+.header-toolbar .title {
+  color: #00ff00 !important;
+  font-size: 28px;
+  font-weight: 700;
+  margin-left: 15px;
+  letter-spacing: 1px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  text-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+  -webkit-text-stroke: 1px rgba(0, 255, 0, 0.3);
+  text-transform: uppercase;
 }
 
 /* SWIPER */
@@ -19,8 +39,8 @@ swiper-slide {
 
 /* TARJETAS */
 .gestion-card {
-  background-color: #1e1e1e;
-  color: #fff;
+  background-color: #121212;
+  color: #4CAF50;
   width: 260px;
   height: 450px;
   border-radius: 12px;
@@ -31,7 +51,9 @@ swiper-slide {
   position: relative;
   overflow: visible;
   transition: transform 0.3s ease;
+  border: 1px solid #1e1e1e;
 }
+
 .gestion-card::before {
   content: "";
   position: absolute;
@@ -39,50 +61,63 @@ swiper-slide {
   width: calc(100% + 24px);
   height: calc(100% + 24px);
   border-radius: 16px;
-  background: radial-gradient(circle, rgba(0,255,0,0.4) 0%, rgba(0,255,0,0.1) 40%, transparent 70%);
+  background: radial-gradient(circle, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0.05) 40%, transparent 70%);
   opacity: 0;
   transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: -1;
 }
+
 .gestion-card:hover {
   transform: scale(1.05);
+  border-color: #4CAF50;
 }
+
 .gestion-card:hover::before {
   opacity: 1;
   transform: scale(1.1);
 }
+
 .separator {
   height: 2px;
   width: 100%;
-  background-color: #22c55e;
+  background-color: #4CAF50;
   margin: 0 auto 1rem;
 }
+
 .gestion-card ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
+
 .gestion-card ul li {
   margin-bottom: 0.5rem;
-  color: #ddd;
+  color: #81C784;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.1);
 }
+
 .gestion-card mat-card-title {
-  color: #22c55e;
+  color: #4CAF50 !important;
   text-align: center;
   font-size: 1.4rem;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+  margin-bottom: 1rem;
 }
 
 /* BOTONES */
 button[mat-raised-button] {
   width: 100%;
-  background: #22c55e;
-  color: #121212;
-}
-button[mat-raised-button]:hover {
-  background: #16a34a;
+  background: #388E3C;
+  color: #ffffff;
+  transition: all 0.3s ease;
 }
 
-/* TOOLBARS (asegurar dropdown visible) */
+button[mat-raised-button]:hover {
+  background: #2E7D32;
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+}
+
+/* TOOLBARS */
 .header-toolbar,
 .nav-toolbar {
   position: fixed;
@@ -95,131 +130,122 @@ button[mat-raised-button]:hover {
 .header-toolbar {
   top: 0;
   height: 64px;
-  background: linear-gradient(135deg, #2a2a2a, #111111);
+  background: #0a0a0a;
+  border-bottom: 1px solid #4CAF50;
   display: flex;
   align-items: center;
-  justify-content: center;
-  position: relative;
-  padding: 0 1rem;
-  z-index: 1000; /* por encima de la nav */
-}
-/* ICONOS HOME & USER */
-.header-toolbar .home-icon,
-.header-toolbar .user-icon-btn {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  margin: auto 0;
-  width: 56px;
-  height: 56px;
-  padding: 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-.header-toolbar .home-icon {
-  left: 1rem;
-}
-.header-toolbar .user-icon-btn {
-  right: 1rem;
-}
-.header-toolbar .icon-img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-/* TITLE */
-.header-toolbar .title {
-  color: #81c784;
-  font-size: 1.9rem;
-  letter-spacing: 1px;
-  text-shadow: 0 0 8px rgba(129,199,132,0.7);
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 1000;
 }
 
-/* DROPDOWN USUARIO (negro sólido + texto blanco) */
-.user-dropdown {
-  position: absolute;
-  top: 64px;
-  right: 1rem;
-  background: #000 !important;
-  border: 1px solid #111;
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-  min-width: 200px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.7);
-  z-index: 1100; /* más alto que la nav */
-  backdrop-filter: none !important;
-}
-.user-dropdown p {
-  background: transparent !important;
-  color: #fff !important;
-  margin: 0.25rem 0;
-  font-size: 0.9rem;
-}
-.user-dropdown .user-pueblo {
-  font-weight: 500;
-}
-.user-dropdown .logout-btn {
-  margin-top: 0.5rem;
-  width: 100%;
-  background: #4caf50 !important;
-  color: #121212 !important;
-}
-.user-dropdown .logout-btn:hover {
-  background: #388e3c !important;
+.title {
+  color: #4CAF50 !important;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
 }
 
 /* NAVBAR */
 .nav-toolbar {
   top: 64px;
-  height: 56px;
-  background: rgba(47,50,54,0.9);
+  height: 48px;
+  background: #121212;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 900; /* por debajo del header y el dropdown */
+  gap: 1rem;
+  border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+  z-index: 999;
 }
-.nav-toolbar .nav-link {
-  margin: 0 8px;
-  padding: 0 16px;
-  color: #91d6a6;
+
+.nav-link {
+  color: #4CAF50 !important;
+  transition: color 0.3s ease;
+  position: relative;
 }
-.nav-toolbar .nav-link:hover .nav-text {
-  color: #fff;
+
+.nav-link:hover {
+  color: #66BB6A !important; /* Verde más claro al hacer hover */
 }
-.nav-toolbar .nav-link.active .nav-text {
-  color: #81c784;
+
+.nav-link.active {
+  color: #81C784 !important; /* Verde más claro para el elemento activo */
 }
-.nav-toolbar .indicator {
+
+.indicator {
   position: absolute;
   bottom: 0;
-  height: 4px;
-  background: #22c55e;
-  transition: left 0.4s ease, width 0.4s ease;
+  height: 2px;
+  background-color: #4CAF50;
+  transition: all 0.3s ease;
 }
 
-/* ESPACIO BAJO TOOLBARS */
-.nav-toolbar + .pantalla-container {
-  padding-top: 140px; /* 64px header + 56px nav + 20px extra */
-}
-
-/* CONTENIDO */
-.pantalla-container.gestion-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* USER DROPDOWN */
+.user-dropdown {
+  position: absolute;
+  top: 64px;
+  right: 20px;
   background: #121212;
-  min-height: calc(100vh - 140px);
+  border: 1px solid #4CAF50;
+  border-radius: 8px;
+  padding: 1rem;
+  min-width: 200px;
+  z-index: 1001;
+}
+
+.user-email,
+.user-pueblo {
+  color: #81C784;
+  margin-bottom: 0.5rem;
+}
+
+.logout-btn {
+  width: 100%;
+  background: transparent;
+  color: #4CAF50;
+  border: 1px solid #4CAF50;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(76, 175, 80, 0.1);
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+}
+
+/* EXTRAS */
+.extra-buttons {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
   padding: 0 1rem;
 }
 
-/* BOTONES EXTRA */
-.extra-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin: 2rem 0;
+.icon-img {
+  width: 24px;
+  height: 24px;
+  filter: invert(57%) sepia(89%) saturate(434%) hue-rotate(93deg) brightness(95%) contrast(89%);
 }
-.extra-buttons button {
-  flex: 1 1 240px;
+
+/* Estilos globales para títulos */
+h1, h2, h3, h4, h5, h6,
+.title,
+mat-card-title,
+.nav-text,
+.section-title {
+  color: #4CAF50 !important;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+}
+
+/* Títulos en el dropdown del usuario */
+.user-dropdown p {
+  color: #4CAF50 !important;
+}
+
+/* Textos en las tarjetas */
+.gestion-card ul li {
+  color: #81C784;
 }

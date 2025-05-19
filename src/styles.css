@@ -15,10 +15,15 @@
 /* ------------------------------------------ */
 /* ✅ Estilos Globales para el sitio */
 /* ------------------------------------------ */
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #0a0a0a !important;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
 body {
-  background-color: #121212; /* Fondo negro para el look dark */
-  color: white; /* Color de texto global blanco */
-  font-family: 'Roboto', sans-serif; /* Fuente más legible */
   min-height: 100vh;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -49,3 +54,80 @@ mat-toolbar {
 /* ------------------------------------------ */
 /* ✅ Puedes añadir aquí tus utilidades personalizadas si necesitas */
 /* ------------------------------------------ */
+.nav-toolbar {
+  background: #000 !important;
+}
+
+.stars-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: #0a0a0a;
+}
+
+/* Asegurarnos que el contenido está por encima del canvas */
+.content-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+/* Material Design Theme Overrides */
+.mat-mdc-button, .mat-mdc-raised-button {
+  --mdc-filled-button-container-color: #388E3C;
+  --mdc-filled-button-label-text-color: #ffffff;
+}
+
+.mat-toolbar {
+  background-color: #0a0a0a !important;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #388E3C;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4CAF50;
+}
+
+/* Estilos globales para títulos */
+h1, h2, h3, h4, h5, h6,
+.mat-mdc-card-title,
+.section-title {
+  color: #4CAF50 !important;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+}
+
+/* Header title específico */
+mat-toolbar .title {
+  color: #00ff00 !important;
+  text-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+/* Material Card Overrides */
+.mat-mdc-card {
+  --mdc-elevated-card-label-text-color: #4CAF50;
+}
+
+/* Material Button Text Color Override */
+.mat-mdc-button-base {
+  --mat-mdc-button-persistent-ripple-color: #4CAF50;
+}
+
+/* Navegación activa */
+.active {
+  color: #4CAF50 !important;
+}
