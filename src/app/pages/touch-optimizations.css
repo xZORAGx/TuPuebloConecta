@@ -1,0 +1,34 @@
+/* ===========================
+   TOUCH DEVICE OPTIMIZATIONS
+=========================== */
+@media (hover: none) {
+  /* Enhanced touch targets for mobile */
+  .faq-question,
+  .login-button,
+  .cta-button,
+  .button-with-icon,
+  .social-link,
+  .footer-section ul li a {
+    min-height: 44px;
+  }
+  
+  /* Disable hover effects that don't work well on touch */
+  .feature-card:hover,
+  .mission-card:hover,
+  .vision-card:hover,
+  .stat-item:hover,
+  .faq-item:hover,
+  .social-link:hover {
+    transform: none !important;
+  }
+  
+  /* Apply active state styles for touch feedback */
+  .feature-card:active,
+  .mission-card:active,
+  .vision-card:active,
+  .stat-item:active,
+  .social-link:active {
+    transform: scale(0.98) !important;
+    transition: transform 0.1s ease;
+  }
+}

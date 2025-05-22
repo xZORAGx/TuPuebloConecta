@@ -1,5 +1,6 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient, withFetch } from '@angular/common/http'; // Import provideHttpClient and withFetch
 
 // Componentes de tus páginas
 import { HomeComponent } from './pages/home.component';
@@ -34,8 +35,10 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
 
-
     // Angular Material necesita animations
-    provideAnimations()
+    provideAnimations(),
+
+    // Provide HttpClient for MatIconRegistry and other HTTP services
+    provideHttpClient(withFetch()) // Add withFetch() for modern fetch-based HttpClient
   ]
 };

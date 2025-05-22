@@ -4,7 +4,9 @@ import {
   AfterViewInit,
   ElementRef,
   ViewChild,
-  HostListener
+  HostListener,
+  OnDestroy,
+  OnInit
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,12 +27,11 @@ register();
     MatIconModule,
     MatButtonModule,
     MatToolbarModule,
-    CommonModule
-  ],
+    CommonModule  ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css', './touch-optimizations.css']
 })
-export class HomeComponent implements AfterViewInit {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('starsCanvas') starsCanvas!: ElementRef<HTMLCanvasElement>;
 
   private ctx!: CanvasRenderingContext2D;
@@ -38,11 +39,96 @@ export class HomeComponent implements AfterViewInit {
   private starCount = 100; // Reducido el número de estrellas
   private width!: number;
   private height!: number;
+  private animationFrameId: number | null = null;
 
-  ngAfterViewInit(): void {
+  // Nuevos datos para secciones dinámicas
+  faqItems: any[] = [];
+
+  ngOnInit(): void {
+    // Inicializar FAQs con estado cerrado
+    this.faqItems = [
+      { 
+        question: '¿Cómo puede mi ayuntamiento unirse a Tu Pueblo Conecta?', 
+        answer: 'El proceso es sencillo. Póngase en contacto con nuestro equipo a través del formulario en la sección de contacto o llamando al número proporcionado. Un asesor le guiará por todo el proceso de implementación, que suele durar menos de dos semanas.',
+        isOpen: false 
+      },
+      { 
+        question: '¿Es necesario tener conocimientos técnicos para usar la plataforma?', 
+        answer: 'No, nuestra plataforma está diseñada para ser intuitiva y fácil de usar. Además, ofrecemos formación gratuita para todo el personal del ayuntamiento y soporte técnico continuo.',
+        isOpen: false 
+      },
+      { 
+        question: '¿Cómo pueden los ciudadanos acceder a la información de su municipio?', 
+        answer: 'Los ciudadanos pueden acceder a través de nuestra aplicación móvil, disponible para iOS y Android, o mediante la versión web. Solo necesitan registrarse con su correo electrónico y seleccionar su municipio.',
+        isOpen: false 
+      },
+      { 
+        question: '¿Qué coste tiene para el ayuntamiento?', 
+        answer: 'Ofrecemos diferentes planes según el tamaño del municipio y las funcionalidades necesarias. Contáctenos para recibir un presupuesto personalizado. Todos nuestros planes incluyen soporte técnico y actualizaciones.',
+        isOpen: false 
+      }
+    ];
+  }  ngAfterViewInit(): void {
     this.initCanvas();
     this.createStars();
     this.animateStars();
+    
+    // Add event listener to detect when we're at the bottom of the page
+    window.addEventListener('scroll', this.handleScroll);
+    
+    // Initialize Swiper with responsive settings
+    this.initSwiperResponsive();
+  }
+  
+  private initSwiperResponsive(): void {
+    // This will ensure the Swiper container adapts to viewport changes
+    window.addEventListener('resize', () => {
+      const swiperElement = document.querySelector('swiper-container');
+      if (swiperElement) {
+        // @ts-ignore - Force Swiper to update after resize
+        swiperElement.swiper?.update();
+      }
+    });
+  }
+    ngOnDestroy(): void {
+    // Cleanup animation frame and event listeners
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+    window.removeEventListener('scroll', this.handleScroll);
+    window.removeEventListener('resize', () => {
+      const swiperElement = document.querySelector('swiper-container');
+      if (swiperElement) {
+        // @ts-ignore
+        swiperElement.swiper?.update();
+      }
+    });
+  }
+  
+  // Toggle FAQ items
+  toggleFaq(index: number): void {
+    this.faqItems[index].isOpen = !this.faqItems[index].isOpen;
+  }
+  
+  // Handle scroll events to check for footer visibility
+  private handleScroll = (): void => {
+    const footerElement = document.querySelector('.footer');
+    if (footerElement) {
+      const rect = footerElement.getBoundingClientRect();
+      
+      // If footer is becoming visible, slow down the stars animation
+      if (rect.top < window.innerHeight) {
+        // Slow down stars when footer is visible
+        this.stars.forEach(star => {
+          star.speed = Math.max(0.05, star.speed * 0.8);
+        });
+      } else {
+        // Normal speed when footer is not visible
+        this.stars.forEach(star => {
+          star.speed = Math.random() * 0.3 + 0.1;
+        });
+      }
+    }
   }
 
   @HostListener('window:resize', ['$event'])
@@ -100,7 +186,7 @@ export class HomeComponent implements AfterViewInit {
         }
       });
 
-      requestAnimationFrame(animate);
+      this.animationFrameId = requestAnimationFrame(animate);
     };
 
     animate();

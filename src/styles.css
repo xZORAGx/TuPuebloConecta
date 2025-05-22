@@ -45,6 +45,13 @@ html, body {
   overflow-x: hidden;
 }
 
+/* Ensure the page has enough height for scrolling */
+html, body {
+  min-height: 100%;
+  height: auto;
+  overflow-y: auto;
+}
+
 /* Material Toolbar fix */
 mat-toolbar {
   margin: 0;
@@ -72,6 +79,14 @@ mat-toolbar {
 .content-wrapper {
   position: relative;
   z-index: 1;
+}
+
+/* Ensure the footer is properly positioned */
+.footer {
+  position: relative;
+  z-index: 1;
+  margin-top: 2rem;
+  width: 100%;
 }
 
 /* Material Design Theme Overrides */
@@ -132,6 +147,103 @@ mat-toolbar .title {
   color: #4CAF50 !important;
 }
 
+/* ===========================
+   ANIMACIONES Y TRANSICIONES PROFESIONALES
+=========================== */
+.fade-in {
+  animation: fadeIn 0.6s ease-in;
+}
+
+.slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Efecto de hover para tarjetas y botones */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Mejora visual para inputs y formularios */
+.mat-mdc-form-field {
+  margin-bottom: 1rem;
+}
+
+.mat-mdc-form-field .mat-mdc-floating-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.mat-mdc-text-field-wrapper {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border-radius: 8px !important;
+}
+
+/* Animación suave para botones */
+.button-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.button-with-icon:hover mat-icon {
+  transform: translateX(3px);
+}
+
+/* Esquinas redondeadas consistentes */
+.rounded-box {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Sombras sutiles para componentes flotantes */
+.subtle-shadow {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Efecto de pulsación para botones */
+.pulse-on-click {
+  position: relative;
+  overflow: hidden;
+}
+
+.pulse-on-click::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.6s, opacity 0.6s;
+}
+
+.pulse-on-click:active::after {
+  transform: scale(0, 0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
 /* ------------------------------------------ */
 /* ✅ Responsive Adjustments */
 /* ------------------------------------------ */
@@ -174,6 +286,26 @@ mat-toolbar .title {
   .icon-img {
     width: 20px; /* Adjust icon sizes */
     height: 20px;
+  }
+
+  .stars-canvas {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+  }
+  
+  /* Ensure content is touchable/scrollable on mobile */
+  .hero-section, .features-section, .about-section, .footer {
+    position: relative;
+    z-index: 10;
+    touch-action: auto;
+  }
+  
+  /* Additional touch improvements for mobile */
+  .footer a, .footer button, .social-link, .nav-link {
+    touch-action: auto;
+    -webkit-tap-highlight-color: rgba(76, 175, 80, 0.3);
+    padding: 8px; /* Larger tap targets for mobile */
   }
 }
 

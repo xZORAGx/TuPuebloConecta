@@ -9,7 +9,7 @@
   </div>
   <button mat-raised-button class="login-button" [routerLink]="'/login'">
     <mat-icon>login</mat-icon>
-    <span>Iniciar Sesión</span>
+    <span class="login-text">Iniciar Sesión</span>
   </button>
 </mat-toolbar>
 
@@ -37,13 +37,30 @@
 
 <!-- Features Section -->
 <section class="features-section">
-  <h2 class="section-title">Nuestros Servicios</h2>
-  <swiper-container
+  <h2 class="section-title">Nuestros Servicios</h2>  <swiper-container
     slides-per-view="auto"
     space-between="20"
     navigation="true"
     pagination="true"
     class="my-swiper"
+    breakpoints='{
+      "320": {
+        "slidesPerView": 1.2,
+        "spaceBetween": 10
+      },
+      "480": {
+        "slidesPerView": 1.5,
+        "spaceBetween": 15
+      },
+      "768": {
+        "slidesPerView": 2.5,
+        "spaceBetween": 20
+      },
+      "992": {
+        "slidesPerView": 3,
+        "spaceBetween": 20
+      }
+    }'
   >
     <swiper-slide class="feature-card">
       <mat-icon>article</mat-icon>
@@ -90,7 +107,28 @@
     <p class="about-text">
       Somos un equipo dedicado a modernizar la comunicación entre ayuntamientos y ciudadanos,
       haciendo la gestión municipal más accesible y eficiente para todos.
-    </p>
+    </p>    <!-- Misión y Visión -->
+    <div class="mission-vision-container">
+      <div class="mission-card">
+        <div class="mission-icon">
+          <mat-icon>lightbulb</mat-icon>
+        </div>
+        <h3 class="mission-title">Nuestra misión</h3>
+        <p class="mission-text">
+          Transformar la comunicación entre ayuntamientos y ciudadanos a través de tecnología innovadora, haciendo que los servicios municipales sean accesibles, transparentes y eficientes para todos, sin importar su ubicación o capacidades digitales.
+        </p>
+      </div>
+      <div class="vision-card">
+        <div class="vision-icon">
+          <mat-icon>visibility</mat-icon>
+        </div>
+        <h3 class="vision-title">Nuestra visión</h3>
+        <p class="vision-text">
+          Construir comunidades más conectadas, participativas y resilientes, donde cada ciudadano pueda contribuir activamente a la mejora de su municipio, y donde cada ayuntamiento pueda servir de manera efectiva a sus habitantes en la era digital.
+        </p>
+      </div>
+    </div>
+    
     <div class="stats-container">
       <div class="stat-item">
         <h3>50+</h3>
@@ -108,24 +146,101 @@
   </div>
 </section>
 
+
+
+
+
+<!-- Mapa Interactivo de Municipios -->
+<section class="map-section">
+  <div class="container">
+    <h2 class="section-title">Municipios Conectados</h2>
+    <p class="section-subtitle">Descubre los pueblos que ya forman parte de nuestra red</p>
+    <div class="map-container">
+      <!-- Aquí iría un mapa interactivo real. Por ahora usamos una imagen placeholder -->
+      <div class="map-placeholder rounded-box">
+        <div class="map-overlay">
+          <h3>Más de 50 municipios conectados</h3>
+          <p>Explora el mapa para descubrir todos los ayuntamientos que ya utilizan nuestra plataforma</p>
+          <button mat-raised-button color="primary" class="pulse-on-click">
+            Explorar municipios
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+  <div class="container">
+    <h2 class="section-title">Preguntas Frecuentes</h2>
+    <div class="faq-container">
+      <div *ngFor="let faq of faqItems; let i = index" class="faq-item hover-lift">
+        <div class="faq-question" (click)="toggleFaq(i)">
+          <h3>{{ faq.question }}</h3>
+          <mat-icon class="faq-icon" [style.transform]="faq.isOpen ? 'rotate(180deg)' : 'rotate(0deg)'">expand_more</mat-icon>
+        </div>
+        <div class="faq-answer" [style.maxHeight]="faq.isOpen ? '500px' : '0'">
+          <p>{{ faq.answer }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sección de Call to Action -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2>¿Listo para transformar la comunicación en tu municipio?</h2>
+      <p>Únete a los más de 50 ayuntamientos que ya están mejorando la vida de sus ciudadanos</p>
+      <div class="cta-buttons">
+        <button mat-raised-button color="primary" class="pulse-on-click button-with-icon">
+          Solicitar demostración <mat-icon>play_circle</mat-icon>
+        </button>
+        <button mat-stroked-button class="button-with-icon">
+          Contactar con ventas <mat-icon>phone</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- Footer -->
 <footer class="footer">
   <div class="footer-content">
-    <div class="footer-section">
+    <div class="footer-section about-us">
+      <h3>Tu Pueblo Conecta</h3>
+      <p>Modernizando la comunicación entre ayuntamientos y ciudadanos, facilitando una gestión municipal más accesible y eficiente para todos.</p>
+    </div>
+    <div class="footer-section links">
+      <h3>Enlaces Rápidos</h3>
+      <ul>
+        <li><a routerLink="/login">Iniciar Sesión</a></li>
+        <li><a routerLink="/noticias">Noticias</a></li>
+        <li><a routerLink="/deportes">Deportes</a></li>
+        <li><a routerLink="/fiestas">Fiestas</a></li>
+        <li><a routerLink="/empleo">Empleo</a></li>
+      </ul>
+    </div>
+    <div class="footer-section contact">
       <h3>Contacto</h3>
       <p><mat-icon>email</mat-icon> info&#64;tupuebloconecta.es</p>
       <p><mat-icon>phone</mat-icon> +34 900 123 456</p>
+      <p><mat-icon>location_on</mat-icon> Calle Falsa 123, Pueblo Ejemplo, España</p>
     </div>
-    <div class="footer-section">
+    <div class="footer-section social">
       <h3>Síguenos</h3>
       <div class="social-links">
         <a href="#" class="social-link"><mat-icon>facebook</mat-icon></a>
         <a href="#" class="social-link"><mat-icon>twitter</mat-icon></a>
-        <a href="#" class="social-link"><mat-icon>instagram</mat-icon></a>
+        <a href="#" class="social-link"><mat-icon>photo_camera</mat-icon></a>
+        <a href="#" class="social-link"><mat-icon>business</mat-icon></a>
       </div>
     </div>
   </div>
   <div class="footer-bottom">
     <p>&copy; 2024 Tu Pueblo Conecta. Todos los derechos reservados.</p>
+    <p><a routerLink="/terminos">Términos de Servicio</a> | <a routerLink="/privacidad">Política de Privacidad</a></p>
   </div>
 </footer>
