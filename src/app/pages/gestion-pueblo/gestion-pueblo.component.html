@@ -43,17 +43,15 @@
 </div>
 
 <!-- CONTENIDO PRINCIPAL -->
-<div class="pantalla-container gestion-content flex flex-col items-center w-full">
-
-  <!-- SWIPER CARRUSEL -->
+<div class="pantalla-container gestion-content flex flex-col items-center w-full">  <!-- SWIPER CARRUSEL -->
   <swiper-container
     #swiper
     loop="true"
     navigation="true"
-    pagination="false"
+    pagination="true"
     slides-per-view="3"
     space-between="20"
-    class="w-full max-w-6xl gestion-swiper overflow-visible"
+    class="gestion-swiper"
   >
     <swiper-slide *ngFor="let item of gestionItems" class="overflow-visible">
       <mat-card class="gestion-card">

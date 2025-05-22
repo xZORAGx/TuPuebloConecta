@@ -131,3 +131,72 @@ mat-toolbar .title {
 .active {
   color: #4CAF50 !important;
 }
+
+/* ------------------------------------------ */
+/* ✅ Responsive Adjustments */
+/* ------------------------------------------ */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px; /* Adjust base font size for smaller screens */
+  }
+
+  /* Make scrollbar thinner on mobile */
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2c6b2f; /* Slightly darker for mobile */
+  }
+
+  /* Adjust padding for toolbars on smaller screens */
+  mat-toolbar {
+    padding: 0 8px; /* Reduce padding */
+  }
+
+  .nav-toolbar {
+    /* Allow nav items to wrap if needed, or adjust font size */
+    flex-wrap: wrap;
+    padding: 8px;
+  }
+
+  .nav-toolbar .nav-link {
+    font-size: 0.9rem; /* Smaller font for nav items */
+    padding: 4px 8px; /* Adjust padding */
+    margin: 2px; /* Add small margin for wrapped items */
+  }
+
+  .header-toolbar .title {
+    font-size: 1.2rem; /* Adjust title size */
+  }
+
+  .icon-img {
+    width: 20px; /* Adjust icon sizes */
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 13px; /* Further adjust for very small screens */
+  }
+
+  .header-toolbar .title {
+    font-size: 1rem; /* Smaller title for very small screens */
+  }
+
+  .nav-toolbar .nav-link {
+    font-size: 0.8rem; /* Even smaller font for nav items */
+  }
+
+  /* Ensure buttons and inputs are easily tappable */
+  .mat-mdc-button, .mat-mdc-raised-button, .mat-mdc-icon-button {
+    min-height: 40px; /* Ensure tappable height */
+    padding: 0 12px;
+  }
+
+  .mat-mdc-form-field {
+    width: 100%; /* Make form fields full width */
+  }
+}

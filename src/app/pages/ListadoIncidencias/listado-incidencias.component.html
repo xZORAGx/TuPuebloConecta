@@ -16,6 +16,26 @@
   </div>
 </mat-toolbar>
 
+<!-- NAVBAR PRINCIPAL -->
+<div #navToolbar class="nav-toolbar">
+  <button mat-button routerLink="/crear-noticia" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Noticias</span>
+  </button>
+  <button mat-button routerLink="/deportes" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Deportes</span>
+  </button>
+  <button mat-button routerLink="/fiestas" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Fiestas</span>
+  </button>
+  <button mat-button routerLink="/instalaciones" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Instalaciones</span>
+  </button>
+  <button mat-button routerLink="/empleo" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Empleo</span>
+  </button>
+  <div class="indicator"></div>
+</div>
+
 <!-- CONTENIDO -->
 <div class="pantalla-container">
   <h1 class="titulo">Incidencias de {{ puebloGestionado }}</h1>
@@ -99,13 +119,13 @@
     <!-- Acciones -->
     <ng-container matColumnDef="acciones">
       <th mat-header-cell *matHeaderCellDef>Acciones</th>
-      <td mat-cell *matCellDef="let element">
-        <a
+      <td mat-cell *matCellDef="let element">        <a
           *ngIf="element.fotoUrl"
-          [href]="normalizeUrl(element.fotoUrl)"
+          [href]="element.fotoUrl"
           target="_blank"
           rel="noopener"
           mat-button
+          class="ver-imagen-btn"
         >
           Ver Imagen
         </a>

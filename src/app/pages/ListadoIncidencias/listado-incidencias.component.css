@@ -69,36 +69,55 @@
 
 /* NAVBAR */
 .nav-toolbar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #000000;
-  padding: 0;
   position: fixed;
   top: 64px;
   left: 0;
-  right: 0;
-  gap: 1rem;
-  height: 48px;
-  z-index: 1001;
-  border-bottom: 1px solid #333;
-  overflow: hidden;
-}
-
-.nav-link {
-  color: #ffffff;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  transition: color 0.3s ease;
-  position: relative;
-  text-decoration: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  outline: none;
-  min-width: 100px;
+  width: 100vw;
+  background: rgba(47,50,54,0.95) !important;
+  z-index: 1001 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  box-sizing: border-box;
+  height: 56px;
   display: flex;
   align-items: center;
+  justify-content: center;
+}
+
+.nav-toolbar .nav-link {
+  margin: 0 8px;
+  padding: 0 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color .3s ease;
+}
+
+.nav-toolbar .nav-link .nav-text {
+  color: #ffffff;
+}
+
+.nav-toolbar .nav-link:hover .nav-text {
+  color: #81c784;
+  text-shadow: 0 0 6px rgba(129,199,132,0.7);
+}
+
+.nav-toolbar .nav-link.active .nav-text {
+  color: #22c55e;
+  text-shadow: 0 0 6px rgba(34,197,94,0.7);
+}
+
+.nav-toolbar .indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #22c55e 60%, #a5d6a7 100%);
+  border-radius: 3px;
+  z-index: 2000;
+  transition: left 0.4s cubic-bezier(.4,2,.6,1), width 0.4s cubic-bezier(.4,2,.6,1);
+  pointer-events: none;
+  display: block;
+}
   justify-content: center;
 }
 
@@ -149,6 +168,27 @@
   margin-top: 64px;  /* solo 64px del header */
   min-height: calc(100vh - 64px);
   background: #23272b;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.pantalla-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 140px 2rem 2rem 2rem; /* top | right | bottom | left */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ajuste responsive */
+@media (max-width: 768px) {
+  .pantalla-container {
+    padding: 140px 1rem 1rem 1rem;
+  }
+}
+
+/* PADDING PARA EL CONTENIDO */
+.nav-toolbar + .pantalla-container {
+  padding-top: 140px; /* 64px header + 56px nav + 20px extra */
 }
 
 .buscador-container {
@@ -220,3 +260,13 @@ mat-form-field {
     color: #ffffff;
     border-radius: 12px;
   }
+
+.ver-imagen-btn {
+  background-color: #1e88e5 !important;
+  color: white !important;
+  margin-right: 8px !important;
+}
+
+.ver-imagen-btn:hover {
+  background-color: #1565c0 !important;
+}

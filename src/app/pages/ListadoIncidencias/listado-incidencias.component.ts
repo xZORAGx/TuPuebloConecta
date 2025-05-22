@@ -1,32 +1,38 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { trigger, state, style, animate, transition } from '@angular/animations';
-import {
-  Firestore,
-  collection,
-  getDocs,
-  deleteDoc,
-  doc
-} from '@angular/fire/firestore';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+
+// Angular Material
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, MatPaginatorIntl, MatPaginator } from '@angular/material/paginator';
+import { MatSortModule, MatSort } from '@angular/material/sort';
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
+
+// Firebase
+import { Firestore, collection, getDocs, deleteDoc, doc } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
-import { MatTableDataSource }        from '@angular/material/table';
-import { MatPaginator }              from '@angular/material/paginator';
-import { MatSort }                   from '@angular/material/sort';
-import { MatDialog }                 from '@angular/material/dialog';
-import { CommonModule }              from '@angular/common';
-import { MatFormFieldModule }        from '@angular/material/form-field';
-import { MatInputModule }            from '@angular/material/input';
-import { MatSelectModule }           from '@angular/material/select';
-import { MatOptionModule }           from '@angular/material/core';
-import { MatTableModule }            from '@angular/material/table';
-import { MatPaginatorModule }        from '@angular/material/paginator';
-import { MatSortModule }             from '@angular/material/sort';
-import { MatButtonModule }           from '@angular/material/button';
-import { MatTooltipModule }          from '@angular/material/tooltip';
-import { MatDialogModule }           from '@angular/material/dialog';
-import { MatToolbarModule }          from '@angular/material/toolbar';
-import { Router, RouterModule }      from '@angular/router';
+
+// Components
 import { DialogDescripcionComponent } from '../../shared/dialog-descripcion/dialog-descripcion.component';
-import { Subscription }              from 'rxjs';
+
+interface Incidencia {
+  id: string;
+  Titulo: string;
+  Descripcion: string;
+  Correo: string;
+  tipo: string;
+  fotoUrl?: string | null;
+}
 
 @Component({
   selector: 'app-listado-incidencias',
@@ -53,16 +59,35 @@ import { Subscription }              from 'rxjs';
     MatDialogModule
   ],
   templateUrl: './listado-incidencias.component.html',
-  styleUrls: ['./listado-incidencias.component.css']
+  styleUrls: ['./listado-incidencias.component.css'],
+  providers: [
+    {
+      provide: MatPaginatorIntl,
+      useFactory: () => {
+        const paginatorIntl = new MatPaginatorIntl();
+        paginatorIntl.itemsPerPageLabel = 'Elementos por página:';
+        paginatorIntl.nextPageLabel = 'Siguiente';
+        paginatorIntl.previousPageLabel = 'Anterior';
+        paginatorIntl.getRangeLabel = (page: number, pageSize: number, length: number) => {
+          if (length === 0) return `0 de ${length}`;
+          const start = page * pageSize + 1;
+          const end = Math.min(start + pageSize - 1, length);
+          return `${start} - ${end} de ${length}`;
+        };
+        return paginatorIntl;
+      }
+    }
+  ]
 })
 export class ListadoIncidenciasComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('navToolbar') navToolbar!: ElementRef;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort)      sort!: MatSort;
+  @ViewChild(MatSort) sort!: MatSort;
+
   // User data and menu
   showUserMenu = false;
   userData: any = null;
-  private userSub: any;  // Using any type since Firebase's Unsubscribe doesn't match Subscription
+  private authStateSubscription?: Subscription;
   puebloGestionado = 'Figueruelas';
 
   // Table data
@@ -73,145 +98,206 @@ export class ListadoIncidenciasComponent implements OnInit, AfterViewInit, OnDes
     'Objeto perdido'
   ];
 
-  displayedColumns = [
-    'titulo',
-    'descripcion',
-    'correo',
-    'tipo',
-    'acciones'
-  ];
-  dataSource = new MatTableDataSource<any>();
+  displayedColumns = ['titulo', 'descripcion', 'correo', 'tipo', 'acciones'];
+  dataSource: MatTableDataSource<Incidencia>;
+  private filterValue = '';
+  private tipoFilterValue = '';
+
+  // Cleanup and navigation
+  private isComponentActive = true;
+  private cleanupFn?: () => void;
 
   constructor(
     private firestore: Firestore,
-    private dialog:    MatDialog,
-    private router:    Router,
-    public auth:      Auth
-  ) {}
+    private dialog: MatDialog,
+    private router: Router,
+    public auth: Auth
+  ) {
+    this.dataSource = new MatTableDataSource<Incidencia>();
+    
+    // Initialize filter predicate
+    this.dataSource.filterPredicate = (data: Incidencia, filter: string) => {
+      const searchStr = filter.toLowerCase();
+      return data.Titulo.toLowerCase().includes(searchStr) ||
+             data.Descripcion.toLowerCase().includes(searchStr) ||
+             data.Correo.toLowerCase().includes(searchStr) ||
+             data.tipo.toLowerCase().includes(searchStr);
+    };
+  }
 
   ngOnInit(): void {
     this.obtenerIncidencias();
     
-    // Subscribe to user data
-    this.userSub = this.auth.onAuthStateChanged(user => {
-      if (user) {
-        this.userData = {
-          correo: user.email,
-          pueblo_gestionado: this.puebloGestionado
-        };
-      } else {
-        this.userData = null;
-        this.router.navigate(['/']);
-      }
-    });
+    this.authStateSubscription = new Subscription();
+    this.authStateSubscription.add(
+      this.auth.onAuthStateChanged(user => {
+        if (this.isComponentActive) {
+          if (user) {
+            this.userData = {
+              correo: user.email,
+              pueblo_gestionado: this.puebloGestionado
+            };
+          } else {
+            this.userData = null;
+            this.router.navigate(['/']);
+          }
+        }
+      })
+    );
   }
 
-  private cleanupFn: (() => void) | null = null;
-
   ngAfterViewInit(): void {
+    // Configure paginator and sort after data is loaded
+    if (this.paginator && this.sort) {
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }
+
+    // Configure sliding indicator for navbar
+    this.initializeNavbarIndicator();
+  }
+
+  private initializeNavbarIndicator(): void {
     setTimeout(() => {
-      const nav = document.querySelector('.nav-toolbar') as HTMLElement;
-      const indicator = nav.querySelector('.indicator') as HTMLElement;
-      const links = nav.querySelectorAll('.nav-link');
+      const nav = this.navToolbar?.nativeElement;
+      const links = Array.from(nav?.querySelectorAll('.nav-link') || []) as HTMLElement[];
+      const indicator = nav?.querySelector('.indicator') as HTMLElement;
+      if (!nav || !links.length || !indicator) return;
 
-      const updateIndicator = (el: HTMLElement, { width = el.offsetWidth, left = el.offsetLeft } = {}) => {
-        indicator.style.width = `${width}px`;
-        indicator.style.left = `${left}px`;
+      const updateIndicator = (el: HTMLElement) => {
+        const r = el.getBoundingClientRect();
+        const p = nav.getBoundingClientRect();
+        indicator.style.width = `${r.width}px`;
+        indicator.style.left = `${r.left - p.left}px`;
       };
 
-      const handleMouseEnter = function(this: HTMLElement, e: Event) {
-        updateIndicator(this);
-      };
+      const active = nav.querySelector('.nav-link.active') as HTMLElement;
+      if (active) updateIndicator(active);
 
-      const handleMouseLeave = function(this: HTMLElement, e: Event) {
-        const activeLink = nav.querySelector('.nav-link.active') as HTMLElement;
-        if (activeLink) {
-          updateIndicator(activeLink);
-        }
-      };
-
-      // Set initial position
+      const cleanup: (() => void)[] = [];
       links.forEach(link => {
-        const element = link as HTMLElement;
-        if (element.classList.contains('active')) {
-          updateIndicator(element);
-        }
+        const mouseenter = () => updateIndicator(link);
+        const mouseleave = () => {
+          const curr = nav.querySelector('.nav-link.active') as HTMLElement;
+          if (curr) updateIndicator(curr);
+        };
+        const click = () => {
+          links.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+          updateIndicator(link);
+        };
 
-        // Add hover listeners
-        element.addEventListener('mouseenter', handleMouseEnter);
-        element.addEventListener('mouseleave', handleMouseLeave);
+        link.addEventListener('mouseenter', mouseenter);
+        link.addEventListener('mouseleave', mouseleave);
+        link.addEventListener('click', click);
 
-        // Click handler
-        element.addEventListener('click', function(this: HTMLElement, e: Event) {
-          links.forEach(lnk => lnk.classList.remove('active'));
-          this.classList.add('active');
-          updateIndicator(this);
+        cleanup.push(() => {
+          link.removeEventListener('mouseenter', mouseenter);
+          link.removeEventListener('mouseleave', mouseleave);
+          link.removeEventListener('click', click);
         });
       });
 
-      // Set initial active state based on current route
-      const path = this.router.url;
-      links.forEach(link => {
-        const element = link as HTMLElement;
-        const href = element.getAttribute('routerLink');
-        if (href && path.includes(href)) {
-          element.classList.add('active');
-          updateIndicator(element);
-        }
-      });
-
-      // Update on window resize
-      const resizeObserver = new ResizeObserver(() => {
-        const activeLink = nav.querySelector('.nav-link.active') as HTMLElement;
-        if (activeLink) updateIndicator(activeLink);
-      });
-      resizeObserver.observe(nav);
-
-      // Store cleanup function
-      this.cleanupFn = () => {
-        resizeObserver.disconnect();
-        links.forEach(link => {
-          const element = link as HTMLElement;
-          element.removeEventListener('mouseenter', handleMouseEnter);
-          element.removeEventListener('mouseleave', handleMouseLeave);
-        });
-      };
+      this.cleanupFn = () => cleanup.forEach(fn => fn());
     });
   }
 
   ngOnDestroy(): void {
+    this.isComponentActive = false;
     if (this.cleanupFn) {
       this.cleanupFn();
     }
-    if (this.userSub) {
-      this.userSub.unsubscribe();
+    if (this.authStateSubscription) {
+      this.authStateSubscription.unsubscribe();
     }
   }
 
-  obtenerIncidencias() {
-    // Implementación para obtener las incidencias
-  }
-
-  // Métodos para el menú de usuario
+  // User menu functions
   toggleUserMenu(): void {
     this.showUserMenu = !this.showUserMenu;
   }
 
   onLogout(): void {
-    this.auth.signOut().then(() => this.router.navigate(['/']));
+    this.auth.signOut().then(() => {
+      this.router.navigate(['/']);
+    });
   }
 
-  // Métodos para filtros
+  // Filter functions
   aplicarFiltro(event: Event): void {
-    const filtro = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filtro.trim().toLowerCase();
+    this.filterValue = (event.target as HTMLInputElement).value;
+    this.applyFilters();
   }
 
-  aplicarFiltroTipo(event: any): void {
-    this.dataSource.filter = event.value.trim().toLowerCase();
+  aplicarFiltroTipo(event: { value: string }): void {
+    this.tipoFilterValue = event.value;
+    this.applyFilters();
   }
 
-  // Método para mostrar descripción completa
+  private applyFilters(): void {
+    let filter = this.filterValue;
+    
+    if (this.tipoFilterValue) {
+      if (filter) {
+        filter = `${filter} ${this.tipoFilterValue}`;
+      } else {
+        filter = this.tipoFilterValue;
+      }
+    }
+    
+    this.dataSource.filter = filter.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  async obtenerIncidencias() {
+    try {
+      const incidenciasRef = collection(this.firestore, `pueblos/${this.puebloGestionado}/Incidencias`);
+      const querySnapshot = await getDocs(incidenciasRef);
+      
+      const incidencias = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          Titulo: data['Titulo'] || '',
+          Descripcion: data['Descripcion'] || '',
+          Correo: data['Correo'] || '',
+          tipo: data['tipo'] || '',
+          fotoUrl: data['fotoUrl'] ? this.getStorageUrl(data['fotoUrl']) : null
+        } as Incidencia;
+      });
+
+      this.dataSource.data = incidencias;
+      
+      // Ensure paginator and sort are set after data is loaded
+      if (this.paginator) {
+        this.dataSource.paginator = this.paginator;
+      }
+      if (this.sort) {
+        this.dataSource.sort = this.sort;
+      }
+    } catch (error) {
+      console.error('Error al obtener incidencias:', error);
+    }
+  }
+
+  getStorageUrl(fileName: string): string {
+    if (!fileName) return '';
+    
+    // If it's already a full URL, return as is
+    if (fileName.startsWith('https://firebasestorage.googleapis.com')) {
+      return fileName;
+    }
+    
+    // Remove any path prefix if present (e.g., incidencias/)
+    const cleanFileName = fileName.split('/').pop() || fileName;
+    
+    // Construct the Firebase Storage URL with the correct bucket and path
+    return `https://firebasestorage.googleapis.com/v0/b/trabajo-fin-grado-7af82.appspot.com/o/incidencias%2F${encodeURIComponent(cleanFileName)}?alt=media`;
+  }
+
   verDescripcionCompleta(descripcion: string): void {
     this.dialog.open(DialogDescripcionComponent, {
       data: { descripcion },
@@ -220,12 +306,6 @@ export class ListadoIncidenciasComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  // Normalizar URL de imagen
-  normalizeUrl(url: string): string {
-    return url ? url.replace(/\/o\/incidencias%2[fF]/i, '/o/Incidencias%2F') : '';
-  }
-
-  // Eliminar incidencia
   eliminarIncidencia(incidencia: any): void {
     if (confirm(`¿Seguro que quieres eliminar la incidencia "${incidencia.Titulo}"?`)) {
       const incidenciaDoc = doc(
