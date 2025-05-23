@@ -1,3 +1,5 @@
+@import './app/shared/styles/dialog-styles.css';
+
 /* 👉 TailwindCSS Directivas Base */
 @tailwind base;
 @tailwind components;
@@ -22,9 +24,6 @@ html, body {
   color: #ffffff;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
-
-/* Importar estilos personalizados para diálogos */
-@import './app/shared/styles/dialog-styles.css';
 
 body {
   min-height: 100vh;
