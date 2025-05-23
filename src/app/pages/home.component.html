@@ -103,72 +103,32 @@
 <!-- About Section -->
 <section class="about-section">
   <div class="about-content">
-    <h2 class="section-title">¿Quiénes somos?</h2>
-    <p class="about-text">
+    <h2 class="section-title">¿Quiénes somos?</h2>    <p class="about-text" style="color: white !important; font-weight: 400; text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);">
       Somos un equipo dedicado a modernizar la comunicación entre ayuntamientos y ciudadanos,
-      haciendo la gestión municipal más accesible y eficiente para todos.
-    </p>    <!-- Misión y Visión -->
+      haciendo la comunicacion algo facil y accesible para todos.
+    </p><!-- Misión y Visión -->
     <div class="mission-vision-container">
-      <div class="mission-card">
-        <div class="mission-icon">
-          <mat-icon>lightbulb</mat-icon>
+      <div class="mission-card">        <div class="mission-icon">
+          <mat-icon style="color: #4CAF50 !important;">lightbulb</mat-icon>
         </div>
-        <h3 class="mission-title">Nuestra misión</h3>
-        <p class="mission-text">
-          Transformar la comunicación entre ayuntamientos y ciudadanos a través de tecnología innovadora, haciendo que los servicios municipales sean accesibles, transparentes y eficientes para todos, sin importar su ubicación o capacidades digitales.
+        <h3 class="mission-title">Nuestra misión</h3>      <p class="mission-text" style="color: white !important; font-weight: 400; text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);">
+          Transformar la comunicación entre ayuntamientos y ciudadanos a través de tecnología innovadora, 
+          haciendo que los servicios municipales sean accesibles, transparentes y eficientes. 
+          Ademas de crear apps totalmente personalizas y al gusto de los ayuntamientos.
         </p>
       </div>
-      <div class="vision-card">
-        <div class="vision-icon">
-          <mat-icon>visibility</mat-icon>
+      <div class="vision-card">        <div class="vision-icon">
+          <mat-icon style="color: #4CAF50 !important;">visibility</mat-icon>
         </div>
-        <h3 class="vision-title">Nuestra visión</h3>
-        <p class="vision-text">
+        <h3 class="vision-title">Nuestra visión</h3>        <p class="vision-text" style="color: white !important; font-weight: 400; text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);">
           Construir comunidades más conectadas, participativas y resilientes, donde cada ciudadano pueda contribuir activamente a la mejora de su municipio, y donde cada ayuntamiento pueda servir de manera efectiva a sus habitantes en la era digital.
         </p>
       </div>
     </div>
-    
-    <div class="stats-container">
-      <div class="stat-item">
-        <h3>50+</h3>
-        <p>Municipios</p>
-      </div>
-      <div class="stat-item">
-        <h3>10k+</h3>
-        <p>Usuarios</p>
-      </div>
-      <div class="stat-item">
-        <h3>24/7</h3>
-        <p>Disponibilidad</p>
-      </div>
+  
     </div>
-  </div>
 </section>
 
-
-
-
-
-<!-- Mapa Interactivo de Municipios -->
-<section class="map-section">
-  <div class="container">
-    <h2 class="section-title">Municipios Conectados</h2>
-    <p class="section-subtitle">Descubre los pueblos que ya forman parte de nuestra red</p>
-    <div class="map-container">
-      <!-- Aquí iría un mapa interactivo real. Por ahora usamos una imagen placeholder -->
-      <div class="map-placeholder rounded-box">
-        <div class="map-overlay">
-          <h3>Más de 50 municipios conectados</h3>
-          <p>Explora el mapa para descubrir todos los ayuntamientos que ya utilizan nuestra plataforma</p>
-          <button mat-raised-button color="primary" class="pulse-on-click">
-            Explorar municipios
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- FAQ Section -->
 <section class="faq-section">
@@ -192,15 +152,12 @@
 <section class="cta-section">
   <div class="container">
     <div class="cta-content">
-      <h2>¿Listo para transformar la comunicación en tu municipio?</h2>
-      <p>Únete a los más de 50 ayuntamientos que ya están mejorando la vida de sus ciudadanos</p>
-      <div class="cta-buttons">
-        <button mat-raised-button color="primary" class="pulse-on-click button-with-icon">
+      <h2>¿Listo para transformar la comunicación en tu municipio?</h2>      <p>Únete a los más de 50 ayuntamientos que ya están mejorando la vida de sus ciudadanos</p>      <div class="cta-buttons">
+        <button mat-raised-button color="primary" class="pulse-on-click button-with-icon" (click)="openDemoRequestDialog()">
           Solicitar demostración <mat-icon>play_circle</mat-icon>
-        </button>
-        <button mat-stroked-button class="button-with-icon">
-          Contactar con ventas <mat-icon>phone</mat-icon>
-        </button>
+        </button>        <a mat-stroked-button href="mailto:tupuebloconecta@gmail.com?subject=Solicitud%20de%20información%20sobre%20alquiler%20de%20servicios" class="button-with-icon">
+          Alquilar servicios <mat-icon>mail_outline</mat-icon>
+        </a>
       </div>
     </div>
   </div>
@@ -213,21 +170,12 @@
       <h3>Tu Pueblo Conecta</h3>
       <p>Modernizando la comunicación entre ayuntamientos y ciudadanos, facilitando una gestión municipal más accesible y eficiente para todos.</p>
     </div>
-    <div class="footer-section links">
-      <h3>Enlaces Rápidos</h3>
-      <ul>
-        <li><a routerLink="/login">Iniciar Sesión</a></li>
-        <li><a routerLink="/noticias">Noticias</a></li>
-        <li><a routerLink="/deportes">Deportes</a></li>
-        <li><a routerLink="/fiestas">Fiestas</a></li>
-        <li><a routerLink="/empleo">Empleo</a></li>
-      </ul>
-    </div>
+
     <div class="footer-section contact">
       <h3>Contacto</h3>
-      <p><mat-icon>email</mat-icon> info&#64;tupuebloconecta.es</p>
-      <p><mat-icon>phone</mat-icon> +34 900 123 456</p>
-      <p><mat-icon>location_on</mat-icon> Calle Falsa 123, Pueblo Ejemplo, España</p>
+      <p><mat-icon>email</mat-icon> tupuebloconecta&#64;gmail.com</p>
+      <p><mat-icon>phone</mat-icon> +34 684 089 655</p>
+     
     </div>
     <div class="footer-section social">
       <h3>Síguenos</h3>

@@ -1,0 +1,99 @@
+/* Estilos para los diálogos de demostración */
+.demo-dialog-container .mat-dialog-container {
+  padding: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Animación de pulsación para botones */
+.pulse-on-click {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.pulse-on-click:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%, -50%);
+  transform-origin: 50% 50%;
+}
+
+.pulse-on-click:focus:after {
+  animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(20, 20);
+    opacity: 0;
+  }
+}
+
+/* Estilos para el calendario en el diálogo */
+.mat-calendar {
+  font-family: 'Roboto', sans-serif;
+}
+
+.mat-calendar-body-selected {
+  background-color: #4CAF50 !important;
+  color: white !important;
+}
+
+.mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border-color: #4CAF50;
+}
+
+.mat-datepicker-toggle {
+  color: #4CAF50;
+}
+
+.mat-datepicker-content {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.mat-calendar-body-cell:not(.mat-calendar-body-disabled):hover .mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+  background-color: rgba(76, 175, 80, 0.3);
+}
+
+.mat-datepicker-toggle-active {
+  color: #4CAF50;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: #4CAF50;
+}
+
+/* Mejoras de accesibilidad para formularios */
+.mat-form-field-label {
+  font-weight: 500;
+}
+
+.mat-error {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* Fix for vertical lines in Angular Material MDC outlined form fields */
+/* These lines appear as part of the notched outline, next to the label. */
+
+/* Targets the line that can appear on the right side of the leading part of the outline (often to the left of/at the start of the label) */
+::ng-deep .mat-mdc-form-field .mdc-text-field--outlined .mdc-notched-outline__leading {
+    border-right-width: 0px !important;
+}
+
+/* Targets the line that can appear on the left side of the trailing part of the outline (often to the right of the label) */
+::ng-deep .mat-mdc-form-field .mdc-text-field--outlined .mdc-notched-outline__trailing {
+    border-left-width: 0px !important;
+}

@@ -112,13 +112,10 @@
   width: 0;
   height: 6px;
   background: linear-gradient(90deg, #22c55e 60%, #a5d6a7 100%);
-  border-radius: 3px;
-  z-index: 2000;
+  border-radius: 3px;  z-index: 2000;
   transition: left 0.4s cubic-bezier(.4,2,.6,1), width 0.4s cubic-bezier(.4,2,.6,1);
   pointer-events: none;
   display: block;
-}
-  justify-content: center;
 }
 
 .nav-link:hover {

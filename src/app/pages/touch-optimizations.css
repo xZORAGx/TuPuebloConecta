@@ -1,8 +1,7 @@
 /* ===========================
    TOUCH DEVICE OPTIMIZATIONS
 =========================== */
-@media (hover: none) {
-  /* Enhanced touch targets for mobile */
+@media (hover: none) {  /* Enhanced touch targets for mobile */
   .faq-question,
   .login-button,
   .cta-button,
@@ -10,6 +9,7 @@
   .social-link,
   .footer-section ul li a {
     min-height: 44px;
+    min-width: 44px;
   }
   
   /* Disable hover effects that don't work well on touch */

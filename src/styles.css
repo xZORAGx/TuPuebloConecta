@@ -23,6 +23,9 @@ html, body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* Importar estilos personalizados para diálogos */
+@import './app/shared/styles/dialog-styles.css';
+
 body {
   min-height: 100vh;
   line-height: 1.5;
@@ -242,6 +245,26 @@ mat-toolbar .title {
   transform: scale(0, 0);
   opacity: 0.3;
   transition: 0s;
+}
+
+/* Fix for unexpected vertical lines in Angular Material form fields */
+.mat-mdc-form-field-infix::after {
+  display: none !important;
+}
+
+/* Additional attempts to ensure no vertical lines appear */
+.mat-form-field-appearance-outline .mat-form-field-outline-start::after,
+.mat-form-field-appearance-outline .mat-form-field-outline-end::after,
+.mat-form-field-appearance-outline .mat-form-field-outline-gap::after {
+  border: none !important;
+}
+
+.mdc-line-ripple::after {
+    border-bottom-style: none !important;
+}
+
+.mat-mdc-text-field-wrapper .mdc-line-ripple::after {
+    display: none !important;
 }
 
 /* ------------------------------------------ */

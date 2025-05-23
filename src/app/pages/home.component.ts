@@ -13,6 +13,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { DemoRequestDialogComponent } from '../shared/components/demo-request-dialog.component';
+import { DemoConfirmationDialogComponent } from '../shared/components/demo-confirmation-dialog.component';
+import { DemoService } from '../shared/services/demo.service';
 
 // Swiper Imports
 import { register } from 'swiper/element/bundle';
@@ -43,6 +47,54 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Nuevos datos para secciones dinámicas
   faqItems: any[] = [];
+  
+  constructor(
+    private dialog: MatDialog,
+    private demoService: DemoService
+  ) {}
+  // Abrir el formulario de solicitud de demostración
+  openDemoRequestDialog(): void {
+    const dialogRef = this.dialog.open(DemoRequestDialogComponent, {
+      width: '600px',
+      maxWidth: '95vw',
+      panelClass: ['demo-dialog-container', 'mat-typography'],
+      autoFocus: true,
+      disableClose: false
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.processDemoRequest(result);
+      }
+    });
+  }
+
+  // Procesar la solicitud de demostración
+  private processDemoRequest(demoData: any): void {
+    this.demoService.enviarSolicitudDemo(demoData).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.showConfirmationDialog(response.message, demoData);
+        }
+      },
+      error: (error) => {
+        console.error('Error al enviar la solicitud:', error);
+        // Aquí se podría mostrar un mensaje de error
+      }
+    });
+  }
+
+  // Mostrar diálogo de confirmación
+  private showConfirmationDialog(message: string, demoData: any): void {
+    this.dialog.open(DemoConfirmationDialogComponent, {
+      width: '450px',
+      maxWidth: '95vw',
+      data: {
+        message,
+        demoData
+      }
+    });
+  }
 
   ngOnInit(): void {
     // Inicializar FAQs con estado cerrado
