@@ -54,7 +54,7 @@ const DATEPICKER_PROVIDERS = [
               El nombre es obligatorio
             </mat-error>
           </mat-form-field>
-          
+           
           <div class="form-row">
             <mat-form-field appearance="fill">
               <mat-label>Correo electrónico</mat-label>
