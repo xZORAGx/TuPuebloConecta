@@ -46,8 +46,14 @@
 <div class="pantalla-container">
   <!-- FORMULARIO SUBIDA -->
   <mat-card class="card-form">
-    <mat-card-title class="card-title">Nueva Fiesta</mat-card-title>
+    <mat-card-title class="card-title">{{ isEditMode ? 'Editar Fiesta' : 'Nueva Fiesta' }}</mat-card-title>
     <mat-card-content>
+      <!-- Mensaje de éxito -->
+      <div *ngIf="mensajeExito" class="mensaje-exito slide-up">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ mensajeExito }}</span>
+      </div>
+
       <form [formGroup]="form" (ngSubmit)="upload()">
         <mat-form-field appearance="fill" class="full-width">
           <mat-label>Título *</mat-label>
@@ -85,7 +91,13 @@
         <mat-card-actions>
           <button mat-flat-button color="primary" type="submit"
                   [disabled]="uploading || form.invalid">
-            {{ uploading ? 'Subiendo…' : 'Subir Fiesta' }}
+            <span *ngIf="!uploading">
+              {{ isEditMode ? 'Actualizar Fiesta' : 'Subir Fiesta' }}
+            </span>
+            <span *ngIf="uploading" class="spinner-container">
+              <mat-spinner diameter="24" color="accent"></mat-spinner>
+              <span>{{ isEditMode ? 'Actualizando...' : 'Subiendo...' }}</span>
+            </span>
           </button>
         </mat-card-actions>
       </form>

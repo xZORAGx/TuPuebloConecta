@@ -129,11 +129,11 @@
             <mat-expansion-panel-header>
               <mat-panel-title>{{ inst.titulo }}</mat-panel-title>
               <mat-panel-description>
-                <button mat-icon-button (click)="onEdit(inst); $event.stopPropagation()">
+                <button mat-icon-button (click)="editInstalacion(inst); $event.stopPropagation()">
                   <mat-icon>edit</mat-icon>
                 </button>
                 <button mat-icon-button color="warn"
-                        (click)="eliminarInstalacion(inst.id); $event.stopPropagation()">
+                        (click)="deleteInstalacion(inst.id!); $event.stopPropagation()">
                   <mat-icon>delete</mat-icon>
                 </button>
               </mat-panel-description>
@@ -154,4 +154,3 @@
       </mat-card-content>
     </mat-card>
   </div>
-  

@@ -266,3 +266,62 @@ mat-panel-title,
 .nav-toolbar + .pantalla-container {
   padding-top: 140px; /* 64px header + 56px nav + 20px extra */
 }
+
+/* INSTALACIONES COMPONENT */
+.form-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px; /* Espacio entre botones */
+  margin-top: 1rem;
+}
+
+.mensaje-exito {
+  background-color: #28a745; /* Verde éxito */
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Espacio entre el icono y el texto */
+  font-weight: 500; /* Texto un poco más grueso */
+}
+
+.mensaje-exito mat-icon {
+  font-size: 1.5rem; /* Tamaño del icono */
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* Espacio entre el spinner y el texto */
+}
+
+.spinner-container mat-spinner {
+  margin-right: 8px; /* Espacio a la derecha del spinner */
+}
+
+/* Estilos para la tabla de instalaciones */
+/* ...existing code... */

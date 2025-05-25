@@ -23,6 +23,8 @@ import { MatCardModule       } from '@angular/material/card';
 import { MatListModule       } from '@angular/material/list';
 import { MatExpansionModule  } from '@angular/material/expansion';
 import { MatToolbarModule    } from '@angular/material/toolbar';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 interface Instalacion {
   id?: string;
@@ -57,7 +59,8 @@ interface UserWeb {
     MatCardModule,
     MatListModule,
     MatExpansionModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './listado-instalaciones.component.html',
   styleUrls: ['./listado-instalaciones.component.css']
@@ -74,6 +77,7 @@ export class ListadoInstalacionesComponent implements OnInit, AfterViewInit, OnD
   formInstalacion: FormGroup;
   instalaciones: Instalacion[] = [];
   cargando = false;
+  mensajeExito: string | null = null;
 
   isEditing = false;
   selectedId?: string;
@@ -84,7 +88,8 @@ export class ListadoInstalacionesComponent implements OnInit, AfterViewInit, OnD
     private fb: FormBuilder,
     private firestore: Firestore,
     public router: Router,
-    public auth: Auth
+    public auth: Auth,
+    private snackBar: MatSnackBar
   ) {
     this.formInstalacion = this.fb.group({
       titulo: ['', Validators.required],
@@ -169,85 +174,117 @@ export class ListadoInstalacionesComponent implements OnInit, AfterViewInit, OnD
     this.auth.signOut().then(() => this.router.navigate(['/']));
   }
 
-  async publicarInstalacion(): Promise<void> {
-    if (this.formInstalacion.get('titulo')?.invalid) return;
+  publicarInstalacion(): void {
+    if (this.formInstalacion.invalid) {
+      // Optionally, notify the user that the form is invalid if not relying solely on button's disabled state
+      this.snackBar.open('Por favor, complete todos los campos obligatorios.', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
     this.cargando = true;
+    this.mensajeExito = null;
     const v = this.formInstalacion.value;
 
-    // Construir payload
     const payload: any = { Titulo: v.titulo };
 
-    // Invierno mañana
     if (v.inviernoMananaApertura || v.inviernoMananaCierre) {
       payload.HorarioInvierno_Manana_Apertura = v.inviernoMananaApertura;
       payload.HorarioInvierno_Manana_Cierre   = v.inviernoMananaCierre;
-      // clave genérica para Android
       payload.HorarioInvierno_Apertura = v.inviernoMananaApertura;
       payload.HorarioInvierno_Cierre   = v.inviernoMananaCierre;
     }
-    // Invierno tarde
     if (v.inviernoTardeApertura || v.inviernoTardeCierre) {
       payload.HorarioInvierno_Tarde_Apertura = v.inviernoTardeApertura;
       payload.HorarioInvierno_Tarde_Cierre   = v.inviernoTardeCierre;
-      // clave genérica de tarde
       payload.HorarioTarde_Apertura = v.inviernoTardeApertura;
       payload.HorarioTarde_Cierre   = v.inviernoTardeCierre;
     }
-    // Verano mañana
     if (v.veranoMananaApertura || v.veranoMananaCierre) {
       payload.HorarioVerano_Manana_Apertura = v.veranoMananaApertura;
       payload.HorarioVerano_Manana_Cierre   = v.veranoMananaCierre;
-      // clave genérica para Android
-      payload.HorarioVerano_Apertura = v.veranoMananaApertura;
-      payload.HorarioVerano_Cierre   = v.veranoMananaCierre;
+      if (!payload.HorarioInvierno_Apertura && !payload.HorarioInvierno_Cierre) { // Prioritize invierno if both set
+        payload.HorarioVerano_Apertura = v.veranoMananaApertura;
+        payload.HorarioVerano_Cierre   = v.veranoMananaCierre;
+      }
     }
-    // Verano tarde
     if (v.veranoTardeApertura || v.veranoTardeCierre) {
       payload.HorarioVerano_Tarde_Apertura = v.veranoTardeApertura;
       payload.HorarioVerano_Tarde_Cierre   = v.veranoTardeCierre;
-      // genérica tarde (sobrescribe si se desea)
-      payload.HorarioTarde_Apertura = v.veranoTardeApertura;
-      payload.HorarioTarde_Cierre   = v.veranoTardeCierre;
+      if (!payload.HorarioTarde_Apertura && !payload.HorarioTarde_Cierre) { // Prioritize invierno if both set
+        payload.HorarioTarde_Apertura = v.veranoTardeApertura;
+        payload.HorarioTarde_Cierre   = v.veranoTardeCierre;
+      }
     }
 
-    try {
-      if (this.isEditing && this.selectedId) {
-        const docRef = doc(this.firestore, `${this.basePath}/Instalaciones`, this.selectedId);
-        await updateDoc(docRef, payload);
+    const operationPromise = this.isEditing && this.selectedId
+      ? updateDoc(doc(this.firestore, `${this.basePath}/Instalaciones/${this.selectedId}`), payload)
+      : addDoc(collection(this.firestore, `${this.basePath}/Instalaciones`), payload);
+
+    operationPromise.then(() => {
+      this.mensajeExito = this.isEditing ? 'Instalación actualizada con éxito.' : 'Instalación creada con éxito.';
+      this.formInstalacion.reset();
+      Object.keys(this.formInstalacion.controls).forEach(key => { // Mark as pristine and untouched
+        this.formInstalacion.get(key)?.markAsPristine();
+        this.formInstalacion.get(key)?.markAsUntouched();
+      });
+      this.formInstalacion.updateValueAndValidity();
+
+
+      if (this.isEditing) {
         this.isEditing = false;
         this.selectedId = undefined;
-      } else {
-        await addDoc(collection(this.firestore, `${this.basePath}/Instalaciones`), payload);
       }
-      this.formInstalacion.reset();
-    } finally {
+      setTimeout(() => { this.mensajeExito = null; }, 3000);
+    }).catch(error => {
+      console.error(this.isEditing ? "Error al actualizar la instalación: " : "Error al crear la instalación: ", error);
+      this.snackBar.open(this.isEditing ? 'Error al actualizar la instalación.' : 'Error al crear la instalación.', 'Cerrar', { duration: 3000 });
+      this.mensajeExito = null;
+    }).finally(() => {
       this.cargando = false;
-    }
-  }
-
-  onEdit(inst: Instalacion): void {
-    this.isEditing = true;
-    this.selectedId = inst.id;
-    this.formInstalacion.patchValue({
-      titulo: inst.titulo,
-      inviernoMananaApertura: inst.inviernoMananaApertura || '',
-      inviernoMananaCierre:   inst.inviernoMananaCierre   || '',
-      inviernoTardeApertura:  inst.inviernoTardeApertura  || '',
-      inviernoTardeCierre:    inst.inviernoTardeCierre    || '',
-      veranoMananaApertura:   inst.veranoMananaApertura   || '',
-      veranoMananaCierre:     inst.veranoMananaCierre     || '',
-      veranoTardeApertura:    inst.veranoTardeApertura    || '',
-      veranoTardeCierre:      inst.veranoTardeCierre      || ''
     });
   }
 
-  async eliminarInstalacion(id?: string): Promise<void> {
-    if (!id) return;
-    await deleteDoc(doc(this.firestore, `${this.basePath}/Instalaciones`, id));
+  editInstalacion(instalacion: Instalacion): void {
+    this.isEditing = true;
+    this.selectedId = instalacion.id;
+    this.formInstalacion.patchValue({
+      titulo: instalacion.titulo,
+      inviernoMananaApertura: instalacion.inviernoMananaApertura || '',
+      inviernoMananaCierre:   instalacion.inviernoMananaCierre   || '',
+      inviernoTardeApertura:  instalacion.inviernoTardeApertura  || '',
+      inviernoTardeCierre:    instalacion.inviernoTardeCierre    || '',
+      veranoMananaApertura:   instalacion.veranoMananaApertura   || '',
+      veranoMananaCierre:     instalacion.veranoMananaCierre     || '',
+      veranoTardeApertura:    instalacion.veranoTardeApertura    || '',
+      veranoTardeCierre:      instalacion.veranoTardeCierre      || ''
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to form
   }
 
-  verDetalle(id?: string): void {
+  cancelEdit(): void {
+    this.isEditing = false;
+    this.selectedId = undefined;
+    this.formInstalacion.reset();
+    Object.keys(this.formInstalacion.controls).forEach(key => {
+        this.formInstalacion.get(key)?.markAsPristine();
+        this.formInstalacion.get(key)?.markAsUntouched();
+    });
+    this.formInstalacion.updateValueAndValidity();
+  }
+
+  async deleteInstalacion(id: string): Promise<void> {
     if (!id) return;
-    this.router.navigate(['/instalaciones', id]);
+    // Confirmation dialog would be good here
+    this.cargando = true; // Indicate loading for delete operation
+    try {
+      await deleteDoc(doc(this.firestore, `${this.basePath}/Instalaciones/${id}`));
+      this.snackBar.open('Instalación eliminada con éxito.', 'Cerrar', { duration: 3000 });
+      // The list will update automatically due to collectionData subscription
+    } catch (error) {
+      console.error("Error al eliminar la instalación: ", error);
+      this.snackBar.open('Error al eliminar la instalación.', 'Cerrar', { duration: 3000 });
+    } finally {
+      this.cargando = false;
+    }
   }
 }

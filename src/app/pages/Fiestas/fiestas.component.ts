@@ -45,6 +45,7 @@ import { MatCardModule }        from '@angular/material/card';
 import { MatTooltipModule }     from '@angular/material/tooltip';
 import { MatExpansionModule }   from '@angular/material/expansion';
 import { MatToolbarModule }     from '@angular/material/toolbar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Import MatProgressSpinnerModule
 
 import { RouterModule, Router } from '@angular/router';
 import { Auth }                 from '@angular/fire/auth';
@@ -76,7 +77,8 @@ interface UserWeb {
     MatTooltipModule,
     MatExpansionModule,
     MatToolbarModule,
-    RouterModule
+    RouterModule,
+    MatProgressSpinnerModule // Add MatProgressSpinnerModule here
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './fiestas.component.html',
@@ -95,6 +97,8 @@ export class FiestasComponent implements OnInit, AfterViewInit, AfterViewChecked
   previewUrl: string | ArrayBuffer | null = null;
   safePreviewUrl: SafeResourceUrl | null = null;
   uploading = false;
+  mensajeExito: string | null = null; // Property for success message
+  isEditMode = false; // Added for consistency, though not fully implemented for Fiestas edit yet
   private fiestasSub?: Subscription;
   private fsPath = 'pueblos/Figueruelas/Celebraciones';
   private lastActive: HTMLElement | null = null;
@@ -200,6 +204,7 @@ export class FiestasComponent implements OnInit, AfterViewInit, AfterViewChecked
   upload(): void {
     if (this.form.invalid || !this.selectedFile) return;
     this.uploading = true;
+    this.mensajeExito = null; // Clear previous success message
 
     const titulo = this.form.value.titulo.trim();
     const file   = this.selectedFile!;
@@ -228,9 +233,14 @@ export class FiestasComponent implements OnInit, AfterViewInit, AfterViewChecked
           this.form.reset();
           this.selectedFile = null;
           this.previewUrl = null;
+          this.mensajeExito = 'Fiesta publicada correctamente.'; // Set success message
+          setTimeout(() => { // Clear message after 3 seconds
+            this.mensajeExito = null;
+          }, 3000);
         } catch (e) {
           console.error(e);
           alert('Error guardando en Firestore');
+          this.mensajeExito = null; // Ensure no success message on error
         } finally {
           this.uploading = false;
         }

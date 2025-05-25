@@ -17,6 +17,7 @@ import { MatButtonModule }    from '@angular/material/button';
 import { MatToolbarModule }   from '@angular/material/toolbar';
 import { MatIconModule }      from '@angular/material/icon';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { Auth } from '@angular/fire/auth';
 import { Firestore, doc, docData, collection as fsCollection } from '@angular/fire/firestore';
@@ -45,7 +46,8 @@ interface UserWeb {
     MatButtonModule,
     MatToolbarModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './crear-empleo.component.html',
   styleUrls: ['./crear-empleo.component.css']
@@ -57,6 +59,7 @@ export class CrearEmpleoComponent implements OnInit, OnDestroy, AfterViewInit {
   imagenFile: File | null = null;
   imagenPreview: string | ArrayBuffer | null = null;
   cargando = false;
+  mensajeExito: string | null = null;
   empleos: { id: string; titulo: string; timestamp: number }[] = [];
 
   // Nav / user-dropdown state
@@ -164,6 +167,7 @@ export class CrearEmpleoComponent implements OnInit, OnDestroy, AfterViewInit {
   async publicarEmpleo() {
     if (this.formEmpleo.invalid) return;
     this.cargando = true;
+    this.mensajeExito = null;
 
     const { titulo, descripcion } = this.formEmpleo.value;
     const timestamp = Date.now();
@@ -185,9 +189,15 @@ export class CrearEmpleoComponent implements OnInit, OnDestroy, AfterViewInit {
       this.imagenPreview = null;
       this.imagenFile = null;
       this.isEditMode = false;
-      alert('✅ Empleo publicado con éxito');
-    } catch {
+      // alert('✅ Empleo publicado con éxito');
+      this.mensajeExito = 'Oferta de empleo publicada correctamente.';
+      setTimeout(() => {
+        this.mensajeExito = null;
+      }, 3000);
+    } catch (err) {
+      console.error(err);
       alert('❌ Error al publicar el empleo');
+      this.mensajeExito = null;
     } finally {
       this.cargando = false;
     }

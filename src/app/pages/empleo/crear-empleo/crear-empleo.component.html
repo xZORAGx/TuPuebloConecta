@@ -46,6 +46,12 @@
   <div class="crear-empleo-container">
     <h2 class="titulo">{{ isEditMode ? 'Editar empleo' : 'Crear nueva oferta de empleo' }}</h2>
 
+    <!-- Mensaje de éxito -->
+    <div *ngIf="mensajeExito" class="mensaje-exito slide-up">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ mensajeExito }}</span>
+    </div>
+
     <form [formGroup]="formEmpleo" (ngSubmit)="publicarEmpleo()">
       <mat-form-field appearance="fill">
         <mat-label>Título</mat-label>
@@ -70,7 +76,13 @@
       </div>
 
       <button mat-raised-button type="submit" [disabled]="formEmpleo.invalid || cargando">
-        {{ cargando ? (isEditMode ? 'Actualizando...' : 'Publicando...') : (isEditMode ? 'Actualizar Empleo' : 'Publicar Empleo') }}
+        <span *ngIf="!cargando">
+          {{ isEditMode ? 'Actualizar Empleo' : 'Publicar Empleo' }}
+        </span>
+        <span *ngIf="cargando" class="spinner-container">
+          <mat-spinner diameter="24" color="accent"></mat-spinner>
+          <span>{{ isEditMode ? 'Actualizando...' : 'Publicando...' }}</span>
+        </span>
       </button>
     </form>
   </div>

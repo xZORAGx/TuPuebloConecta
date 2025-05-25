@@ -254,3 +254,32 @@ button[color="warn"] {
 button[color="warn"]:hover {
   background: #d32f2f !important;
 }
+
+/* MENSAJE DE ÉXITO */
+.mensaje-exito {
+  background-color: #28a745;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+.mensaje-exito mat-icon {
+  font-size: 1.5rem;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+/* SPINNER */
+.spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.spinner-container mat-spinner {
+  margin-right: 8px;
+}

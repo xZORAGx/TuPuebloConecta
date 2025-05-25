@@ -38,6 +38,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { register } from 'swiper/element/bundle';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
 
@@ -61,7 +62,8 @@ interface UserWeb {
     MatIconModule,
     MatTooltipModule,
     MatDialogModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './crear-noticia.component.html',
   styleUrls: ['./crear-noticia.component.css']
@@ -71,6 +73,7 @@ export class CrearNoticiaComponent implements OnInit, AfterViewInit, OnDestroy {
   imagenFile: File | null = null;
   imagenPreview: string | ArrayBuffer | null = null;
   cargando = false;
+  mensajeExito: string | null = null;
 
   noticias: { id: string; titulo: string; timestamp: number }[] = [];
   puebloGestionado = 'Figueruelas';
@@ -234,6 +237,7 @@ export class CrearNoticiaComponent implements OnInit, AfterViewInit, OnDestroy {
   async publicarNoticia() {
     if (this.formNoticia.invalid) return;
     this.cargando = true;
+    this.mensajeExito = null;
     const { titulo, descripcion } = this.formNoticia.value;
     const timestamp = Date.now();
     let imagenURL = this.imagenURLAntigua;
@@ -250,23 +254,29 @@ export class CrearNoticiaComponent implements OnInit, AfterViewInit, OnDestroy {
           `pueblos/${this.puebloGestionado}/Noticias/${this.noticiaId}`
         );
         await updateDoc(docRef, { titulo, descripcion, imagenURL, timestamp });
-        alert('✏️ Noticia actualizada');
+        this.mensajeExito = 'Noticia actualizada correctamente.';
       } else {
         const coll = fsCollection(
           this.firestore,
           `pueblos/${this.puebloGestionado}/Noticias`
         );
         await addDoc(coll, { titulo, descripcion, imagenURL, timestamp });
-        alert('✅ Noticia publicada');
+        this.mensajeExito = 'Noticia publicada correctamente.';
       }
       this.formNoticia.reset();
       this.imagenPreview = null;
       this.imagenFile = null;
       this.isEditMode = false;
       this.noticiaId = null;
+
+      setTimeout(() => {
+        this.mensajeExito = null;
+      }, 3000);
+
     } catch (err) {
       console.error(err);
       alert('❌ Error al guardar noticia');
+      this.mensajeExito = null;
     } finally {
       this.cargando = false;
     }

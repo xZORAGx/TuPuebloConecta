@@ -18,6 +18,7 @@ import { MatIconModule }      from '@angular/material/icon';
 import { MatToolbarModule }   from '@angular/material/toolbar';
 import { MatSelectModule }    from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import {
   Firestore,
@@ -105,6 +106,10 @@ export class DeportesComponent implements OnInit, AfterViewInit, OnDestroy {
   isEditingPartido = false;
   uploading = false;
   selectedPreview: string | null = null;
+  isEditMode = false;
+  partidoIdToEdit: string | null = null;
+  cargando = false;
+  mensajeExito: string | null = null;
 
   private basePath = 'pueblos/Figueruelas';
 
@@ -113,7 +118,8 @@ export class DeportesComponent implements OnInit, AfterViewInit, OnDestroy {
     public router: Router, // Cambiado a public para acceso en plantilla
     public auth: Auth,
     private firestore: Firestore,
-    private storage: Storage
+    private storage: Storage,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -255,6 +261,79 @@ export class DeportesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.formPartido.patchValue({ resultado: v }, { emitEvent: false });
   }
 
+  publicarPartido(): void {
+    if (this.formPartido.invalid) {
+      this.snackBar.open('Por favor, complete todos los campos obligatorios y asegúrese que los formatos son correctos.', 'Cerrar', { duration: 3000 });
+      return;
+    }
+    this.cargando = true;
+    this.mensajeExito = null;
+
+    const partidoData = this.formPartido.value;
+    // Determine the correct base path, ideally from userData if available and intended
+    // For now, using this.basePath as it's currently defined in the class
+    const partidosCollectionPath = `${this.basePath}/Partidos`;
+
+    let operationPromise: Promise<any>;
+
+    if (this.isEditMode && this.partidoIdToEdit) {
+      const docRef = doc(this.firestore, partidosCollectionPath, this.partidoIdToEdit);
+      operationPromise = updateDoc(docRef, partidoData);
+    } else {
+      const colRef = collection(this.firestore, partidosCollectionPath);
+      operationPromise = addDoc(colRef, partidoData);
+    }
+
+    operationPromise.then(() => {
+      this.mensajeExito = this.isEditMode ? 'Partido actualizado con éxito.' : 'Partido creado con éxito.';
+      this.formPartido.reset();
+      Object.keys(this.formPartido.controls).forEach(key => {
+        this.formPartido.get(key)?.markAsPristine();
+        this.formPartido.get(key)?.markAsUntouched();
+      });
+      this.formPartido.updateValueAndValidity();
+
+      if (this.isEditMode) {
+        this.isEditMode = false;
+        this.partidoIdToEdit = null;
+      }
+      setTimeout(() => { this.mensajeExito = null; }, 3000);
+    }).catch(error => {
+      console.error(this.isEditMode ? "Error al actualizar el partido: " : "Error al crear el partido: ", error);
+      this.snackBar.open(this.isEditMode ? 'Error al actualizar el partido.' : 'Error al crear el partido.', 'Cerrar', { duration: 3000 });
+      this.mensajeExito = null;
+    }).finally(() => {
+      this.cargando = false;
+    });
+  }
+
+  editPartido(partido: Partido): void {
+    this.isEditMode = true;
+    this.partidoIdToEdit = partido.id!;
+    this.formPartido.patchValue({
+      deporte: partido.deporte,
+      categoria: partido.categoria,
+      diaSemana: partido.diaSemana,
+      equipo1: partido.equipo1,
+      equipo2: partido.equipo2,
+      fecha: partido.fecha,
+      resultado: partido.resultado
+    });
+    // Consider scrolling to the form if it's not in view
+    // Example: document.querySelector('.form-container')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  cancelEdit(): void {
+    this.isEditMode = false;
+    this.partidoIdToEdit = null;
+    this.formPartido.reset();
+    Object.keys(this.formPartido.controls).forEach(key => {
+      this.formPartido.get(key)?.markAsPristine();
+      this.formPartido.get(key)?.markAsUntouched();
+    });
+    this.formPartido.updateValueAndValidity();
+  }
+
   // ─── ACTIVIDADES ───
   async onFileSelected(e: any) {
     const file: File = e.target.files[0];
@@ -288,11 +367,12 @@ export class DeportesComponent implements OnInit, AfterViewInit, OnDestroy {
     const snap = await getDoc(docRef);
     if (snap.exists()) {
       const data = snap.data() as Actividad;
-      if (data.storagePath) {
-        await deleteObject(ref(this.storage, data.storagePath));
+      const storagePath = data.storagePath;
+      if (storagePath) {
+        const imgRef = ref(this.storage, storagePath);
+        deleteObject(imgRef).catch(error => console.error('Error al eliminar la imagen del storage:', error));
       }
+      deleteDoc(docRef);
     }
-    await deleteDoc(docRef);
-    this.selectedPreview = null;
   }
 }
