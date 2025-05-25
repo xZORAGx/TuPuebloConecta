@@ -266,6 +266,20 @@ mat-toolbar .title {
     display: none !important;
 }
 
+/* Override text field background and text colors */
+input, textarea, .mat-mdc-text-field-input {
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+/* Placeholder and floating label color */
+input::placeholder, textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+.mat-mdc-form-field .mat-mdc-floating-label {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
 /* ------------------------------------------ */
 /* ✅ Responsive Adjustments */
 /* ------------------------------------------ */
