@@ -24,6 +24,7 @@
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/platform-server": "^19.2.0",
     "@angular/router": "^19.2.0",
+    "@emailjs/browser": "^4.4.1",
     "@tailwindcss/postcss": "^4.0.14",
     "bootstrap": "^5.3.3",
     "firebase": "^11.4.0",

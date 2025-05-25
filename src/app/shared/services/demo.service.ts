@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, of, from } from 'rxjs';
+import { delay, catchError, map } from 'rxjs/operators';
+import emailjs from '@emailjs/browser';
+import moment from 'moment';
 
 export interface DemoRequest {
   nombre: string;
@@ -17,22 +19,64 @@ export interface DemoRequest {
   providedIn: 'root'
 })
 export class DemoService {
+  private readonly EMAIL_SERVICE_ID = 'service_1ck74mj'; 
+  private readonly EMAIL_TEMPLATE_ID = 'template_1zxwe0f'; 
+  private readonly EMAIL_PUBLIC_KEY = 'kON92sICtmYj6iODZ'; 
+  private readonly DESTINO_EMAIL = 'tupuebloconecta@gmail.com';
 
-  constructor() { }
+  constructor() {
+    emailjs.init(this.EMAIL_PUBLIC_KEY);
+  }
 
   /**
    * Envía una solicitud de demostración
    * En un entorno real, esto se conectaría a un backend
    */
   enviarSolicitudDemo(request: DemoRequest): Observable<{success: boolean, message: string}> {
-    // Simular una petición HTTP a un backend
-    console.log('Enviando solicitud de demostración:', request);
-    
-    // Simulación de respuesta exitosa con un delay
-    return of({
-      success: true,
-      message: 'Su solicitud ha sido recibida. Recibirá un correo de confirmación con los detalles de la videollamada.'
-    }).pipe(delay(1000)); // Simulamos 1 segundo de retardo como si fuera una petición real
+    // Ensure 'fecha' is a JavaScript Date object
+    let fechaJs: Date;
+    if (moment.isMoment(request.fecha)) {
+      fechaJs = (request.fecha as moment.Moment).toDate();
+    } else if (request.fecha instanceof Date) {
+      fechaJs = request.fecha;
+    } else if (typeof request.fecha === 'string' || typeof request.fecha === 'number') {
+      fechaJs = moment(request.fecha).toDate();
+    } else {
+      // Fallback or error handling if fecha is not in an expected format
+      console.error('Formato de fecha no reconocido:', request.fecha);
+      // Default to current date or handle as an error
+      fechaJs = new Date(); 
+    }
+
+    const templateParams = {
+      to_email: this.DESTINO_EMAIL,
+      from_name: request.nombre,
+      from_email: request.email,
+      telefono: request.telefono || 'No proporcionado',
+      municipio: request.municipio,
+      cargo: request.cargo || 'No proporcionado',
+      fecha: fechaJs.toLocaleDateString(), // Use the converted JS Date
+      hora: request.hora,
+      comentarios: request.comentarios || 'Sin comentarios adicionales'
+    };
+
+    return from(emailjs.send(
+      this.EMAIL_SERVICE_ID,
+      this.EMAIL_TEMPLATE_ID,
+      templateParams
+    )).pipe(
+      map(() => ({
+        success: true,
+        message: 'Su solicitud ha sido recibida y se ha enviado un correo de confirmación.'
+      })),
+      catchError(error => {
+        console.error('Error al enviar el correo:', error);
+        return of({
+          success: false,
+          message: 'Hubo un error al procesar su solicitud. Por favor, inténtelo de nuevo.'
+        });
+      })
+    );
   }
 
   /**

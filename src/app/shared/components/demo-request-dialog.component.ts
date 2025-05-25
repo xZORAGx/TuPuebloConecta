@@ -40,7 +40,7 @@ const DATEPICKER_PROVIDERS = [
     ...DATEPICKER_PROVIDERS
   ],
   template: `
-    <h2 mat-dialog-title>Solicitar Demostración</h2>
+    <h2 mat-dialog-title>Solicitar Reunión</h2>
     <mat-dialog-content>
       <form [formGroup]="demoForm" class="demo-form">
         <!-- Datos personales -->
@@ -91,9 +91,9 @@ const DATEPICKER_PROVIDERS = [
           </mat-form-field>
         </div>
         
-        <!-- Programación de la demostración -->
+        <!-- Programación de la reunión -->
         <div class="form-section">
-          <h3>Programar videollamada</h3>
+          <h3>Programar Videollamada de Reunión</h3>
             <mat-form-field appearance="fill">
             <mat-label>Fecha</mat-label>
             <input matInput [matDatepicker]="picker" formControlName="fecha" readonly (click)="picker.open()">
@@ -128,7 +128,7 @@ const DATEPICKER_PROVIDERS = [
     <mat-dialog-actions align="end">
       <button mat-button (click)="onCancel()">Cancelar</button>
       <button mat-raised-button color="primary" [disabled]="demoForm.invalid" (click)="onSubmit()">
-        Programar demostración
+        Programar Reunión
       </button>
     </mat-dialog-actions>
   `,
@@ -139,6 +139,24 @@ const DATEPICKER_PROVIDERS = [
       gap: 1rem;
       min-width: 350px;
       max-width: 600px;
+    }
+    
+    /* Estilos para que el texto de los inputs sea negro */
+    :host ::ng-deep .mat-mdc-input-element {
+      color: #000000 !important;
+    }
+
+    :host ::ng-deep .mat-mdc-select-value {
+      color: #000000 !important;
+    }
+    
+    /* Estilos para que el placeholder/label flotante sea negro o un gris oscuro */
+    :host ::ng-deep .mat-mdc-form-field .mat-mdc-floating-label {
+      color: rgba(0, 0, 0, 0.6) !important;
+    }
+
+    :host ::ng-deep .mat-mdc-form-field .mat-mdc-label {
+      color: rgba(0, 0, 0, 0.6) !important;
     }
     
     .form-section {

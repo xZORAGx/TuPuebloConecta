@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import moment from 'moment'; // Added import
 
 @Component({
   selector: 'app-demo-confirmation-dialog',
@@ -25,7 +26,7 @@ import { MatIconModule } from '@angular/material/icon';
         <p class="confirmation-message">{{data.message}}</p>
         
         <div class="demo-details">
-          <h3>Detalles de su demostración:</h3>
+          <h3>Detalles de su reunión:</h3>
           <p><strong>Fecha:</strong> {{formatDate(data.demoData.fecha)}}</p>
           <p><strong>Hora:</strong> {{data.demoData.hora}}</p>
           <p><strong>Contacto:</strong> {{data.demoData.nombre}}</p>
@@ -100,11 +101,47 @@ export class DemoConfirmationDialogComponent {
     }
   ) {}
 
-  formatDate(date: Date): string {
-    if (typeof date === 'string') {
-      date = new Date(date);
+  formatDate(dateInput: any): string { // Changed parameter type from Date to any
+    let jsDate: Date;
+
+    if (moment.isMoment(dateInput)) {
+      jsDate = (dateInput as moment.Moment).toDate();
+    } else if (dateInput instanceof Date) {
+      jsDate = dateInput;
+    } else if (typeof dateInput === 'string') {
+      // Try parsing with moment, which is more flexible for various formats
+      const parsedMoment = moment(dateInput, [
+        moment.ISO_8601, 
+        'L', 'LL', 'LLL', 'LLLL', 
+        'DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'
+      ], 'es', true); // Use 'es' locale and strict parsing
+
+      if (parsedMoment.isValid()) {
+        jsDate = parsedMoment.toDate();
+      } else {
+        // Fallback for other string formats if moment parsing fails
+        const d = new Date(dateInput);
+        if (d instanceof Date && !isNaN(d.getTime())) {
+          jsDate = d;
+        } else {
+          console.error('Invalid date string received in confirmation dialog:', dateInput);
+          return 'Fecha inválida';
+        }
+      }
+    } else if (typeof dateInput === 'number') { // Handle numeric timestamps
+      jsDate = new Date(dateInput);
+    } else {
+      console.error('Unexpected date type in confirmation dialog:', dateInput);
+      return 'Fecha no reconocida';
     }
-    return date.toLocaleDateString('es-ES', {
+
+    // Final check to ensure we have a valid Date object
+    if (!(jsDate instanceof Date) || isNaN(jsDate.getTime())) {
+      console.error('Could not convert to a valid Date object. Original input:', dateInput, 'Attempted conversion:', jsDate);
+      return 'Error al procesar fecha';
+    }
+
+    return jsDate.toLocaleDateString('es-ES', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
