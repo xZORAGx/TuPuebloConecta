@@ -1,5 +1,6 @@
 <!-- HEADER -->
-<mat-toolbar class="header-toolbar">  <button class="home-icon" routerLink="/gestion">
+<mat-toolbar class="header-toolbar">
+  <button class="home-icon" routerLink="/gestion">
     <img class="icon-img" src="/assets/images/casa.png" alt="Volver a gestión">
   </button>
   <h1 class="title">Tu Pueblo Conecta</h1>
@@ -15,7 +16,7 @@
   <button mat-button class="logout-btn" (click)="logout()">Cerrar Sesión</button>
 </div>
 
-<!-- NAVBAR PRINCIPAL -->
+<!-- NAVBAR -->
 <div #navToolbar class="nav-toolbar">
   <button mat-button routerLink="/crear-noticia" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Noticias</span>
@@ -35,122 +36,129 @@
   <div class="indicator"></div>
 </div>
 
+<!-- CONTENIDO PRINCIPAL -->
 <div class="pantalla-container">
-    <!-- FORMULARIO -->
-    <mat-card class="card-form">
-      <mat-card-title class="card-title">
-        {{ isEditing ? 'Editar instalación' : 'Crear nueva instalación' }}
-      </mat-card-title>
-      <mat-card-content>
-        <form [formGroup]="formInstalacion" (ngSubmit)="publicarInstalacion()">
-  
-          <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Título</mat-label>
-            <input matInput formControlName="titulo" />
-            <mat-error *ngIf="formInstalacion.get('titulo')?.invalid">
-              Título obligatorio
-            </mat-error>
-          </mat-form-field>
-  
+  <!-- FORMULARIO -->
+  <mat-card class="card-form">
+    <mat-card-title class="card-title">
+      {{ isEditing ? 'Editar instalación' : 'Crear nueva instalación' }}
+    </mat-card-title>
+    <mat-card-content>
+      <div *ngIf="mensajeExito" class="mensaje-exito slide-up">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ mensajeExito }}</span>
+      </div>
+      
+      <form [formGroup]="formInstalacion" (ngSubmit)="publicarInstalacion()">        
+        <div class="custom-form-field">
+          <label class="custom-label">Título</label>
+          <input class="custom-input" type="text" formControlName="titulo" placeholder="Introduce el título de la instalación">
+          <div *ngIf="formInstalacion.get('titulo')?.invalid && formInstalacion.get('titulo')?.touched" class="error-message">
+            El título es obligatorio
+          </div>
+        </div>
+
+        <div class="custom-form-field">
+          <label class="custom-label">Descripción <span class="optional-label">(opcional)</span></label>
+          <textarea class="custom-textarea" formControlName="descripcion" rows="4" placeholder="Describe la instalación"></textarea>
+        </div>
+        
+        <div class="file-upload-section">
+          <label class="file-upload-label">Imagen de la instalación <span class="optional-label">(opcional)</span></label>
+          <div class="file-input-container">
+            <input
+              type="file"
+              accept="image/*"
+              (change)="onFileSelected($event)"
+              class="file-input-hidden"
+              id="file-input"
+            />
+            <label for="file-input" class="file-input-button">
+              <mat-icon>add_photo_alternate</mat-icon>
+              Seleccionar imagen
+            </label>
+          </div>
+          
+          <div *ngIf="selectedFileName" class="file-selected-info">
+            <span class="file-name">{{ selectedFileName }}</span>
+            <button class="remove-file-btn" (click)="removeImage()" type="button">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          
+          <div *ngIf="imagePreview" class="image-preview-container">
+            <label class="preview-label">Vista previa</label>
+            <img [src]="imagePreview" alt="Vista previa" class="image-preview" />
+          </div>
+        </div>
+
+        <div class="horarios-section">
+          <label class="custom-label">Horarios <span class="optional-label">(opcional)</span></label>
           <div class="grid-temporadas">
-            <!-- Invierno -->
-            <div class="season-section">
-              <h3>Invierno</h3>
-              <div class="bloque-horario">
-                <h4>Mañana</h4>
-                <mat-form-field appearance="fill">
-                  <mat-label>Apertura</mat-label>
-                  <input matInput type="time" formControlName="inviernoMananaApertura" />
-                </mat-form-field>
-                <mat-form-field appearance="fill">
-                  <mat-label>Cierre</mat-label>
-                  <input matInput type="time" formControlName="inviernoMananaCierre" />
-                </mat-form-field>
-              </div>
-              <div class="bloque-horario">
-                <h4>Tarde</h4>
-                <mat-form-field appearance="fill">
-                  <mat-label>Apertura</mat-label>
-                  <input matInput type="time" formControlName="inviernoTardeApertura" />
-                </mat-form-field>
-                <mat-form-field appearance="fill">
-                  <mat-label>Cierre</mat-label>
-                  <input matInput type="time" formControlName="inviernoTardeCierre" />
-                </mat-form-field>
-              </div>
-            </div>
-  
-            <!-- Verano -->
-            <div class="season-section">
-              <h3>Verano</h3>
-              <div class="bloque-horario">
-                <h4>Mañana</h4>
-                <mat-form-field appearance="fill">
-                  <mat-label>Apertura</mat-label>
-                  <input matInput type="time" formControlName="veranoMananaApertura" />
-                </mat-form-field>
-                <mat-form-field appearance="fill">
-                  <mat-label>Cierre</mat-label>
-                  <input matInput type="time" formControlName="veranoMananaCierre" />
-                </mat-form-field>
-              </div>
-              <div class="bloque-horario">
-                <h4>Tarde</h4>
-                <mat-form-field appearance="fill">
-                  <mat-label>Apertura</mat-label>
-                  <input matInput type="time" formControlName="veranoTardeApertura" />
-                </mat-form-field>
-                <mat-form-field appearance="fill">
-                  <mat-label>Cierre</mat-label>
-                  <input matInput type="time" formControlName="veranoTardeCierre" />
-                </mat-form-field>
+            <div class="season-section" *ngFor="let dia of ['lunes','martes','miércoles','jueves','viernes','sábado','domingo']">
+              <h3 class="day-title">{{ dia | titlecase }}</h3>
+              <div class="horario-container">
+                <div class="horario-field">
+                  <label class="horario-label">Apertura</label>
+                  <input class="horario-input" type="time" [formControlName]="'apertura_' + dia" />
+                </div>
+                <div class="horario-field">
+                  <label class="horario-label">Cierre</label>
+                  <input class="horario-input" type="time" [formControlName]="'cierre_' + dia" />
+                </div>
               </div>
             </div>
           </div>
-  
-          <mat-card-actions>
-            <button mat-flat-button color="primary" class="btn-guardar"
-                    [disabled]="formInstalacion.get('titulo')?.invalid || cargando">
-              {{ cargando
-                 ? (isEditing ? 'Actualizando…' : 'Guardando…')
-                 : (isEditing ? 'Actualizar Instalación' : 'Crear Instalación') }}
-            </button>
-          </mat-card-actions>
-        </form>
-      </mat-card-content>
-    </mat-card>
-  
-    <!-- LISTADO COMO ACCORDION -->
-    <mat-card class="card-listado">
-      <mat-card-title class="card-title">Instalaciones registradas</mat-card-title>
-      <mat-card-content>
-        <mat-accordion>
-          <mat-expansion-panel *ngFor="let inst of instalaciones">
-            <mat-expansion-panel-header>
-              <mat-panel-title>{{ inst.titulo }}</mat-panel-title>
-              <mat-panel-description>
-                <button mat-icon-button (click)="editInstalacion(inst); $event.stopPropagation()">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button color="warn"
-                        (click)="deleteInstalacion(inst.id!); $event.stopPropagation()">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </mat-panel-description>
-            </mat-expansion-panel-header>
-  
-            <div class="detalle-horarios">
-              <div *ngIf="inst.inviernoMananaApertura || inst.inviernoTardeApertura">
-                <p><strong>Invierno – Mañana:</strong> {{ inst.inviernoMananaApertura }} – {{ inst.inviernoMananaCierre }}</p>
-                <p><strong>Invierno – Tarde:</strong>  {{ inst.inviernoTardeApertura }} – {{ inst.inviernoTardeCierre }}</p>
-              </div>
-              <div *ngIf="inst.veranoMananaApertura || inst.veranoTardeApertura">
-                <p><strong>Verano – Mañana:</strong>  {{ inst.veranoMananaApertura }} – {{ inst.veranoMananaCierre }}</p>
-                <p><strong>Verano – Tarde:</strong>   {{ inst.veranoTardeApertura }} – {{ inst.veranoTardeCierre }}</p>
-              </div>
-            </div>
-          </mat-expansion-panel>
-        </mat-accordion>
-      </mat-card-content>
-    </mat-card>
-  </div>
+        </div>
+        
+        <mat-card-actions>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!formInstalacion.get('titulo')?.value || cargando">
+            <span *ngIf="!cargando">
+              {{ isEditing ? 'Actualizar Instalación' : 'Crear Instalación' }}
+            </span>
+            <span *ngIf="cargando" class="spinner-container">
+              <mat-spinner diameter="24" color="accent"></mat-spinner>
+              <span>{{ isEditing ? 'Actualizando...' : 'Creando...' }}</span>
+            </span>
+          </button>
+          <button mat-button color="warn" type="button" (click)="cancelEdit()" *ngIf="isEditing">Cancelar Edición</button>
+        </mat-card-actions>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- LISTADO -->
+  <mat-card class="card-listado">
+    <mat-card-title class="card-title">Instalaciones registradas</mat-card-title>
+    <mat-card-content>
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let inst of instalaciones">
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ inst.titulo }}</mat-panel-title>
+            <mat-panel-description>
+              <button mat-icon-button (click)="editInstalacion(inst)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteInstalacion(inst.id!)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <img *ngIf="inst.imagenUrl" [src]="inst.imagenUrl" class="img-preview" />
+          <p class="descripcion-instalacion">{{ inst.descripcion }}</p>
+
+          <div class="detalle-horarios">
+            <p *ngFor="let dia of ['lunes','martes','miércoles','jueves','viernes','sábado','domingo']">
+              <strong>{{ dia | titlecase }}:</strong>
+              <span *ngIf="inst.horarios?.[dia]; else cerrado">
+                {{ inst.horarios?.[dia]?.apertura }} - {{ inst.horarios?.[dia]?.cierre }}
+              </span>
+              <ng-template #cerrado>Cerrado</ng-template>
+            </p>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card-content>
+  </mat-card>
+</div>

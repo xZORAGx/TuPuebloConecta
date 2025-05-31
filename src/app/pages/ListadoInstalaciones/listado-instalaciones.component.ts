@@ -1,48 +1,62 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
 import {
-  Firestore,
-  collection,
-  collectionData,
+  Component,
+  OnInit,
+  AfterViewInit,
+  OnDestroy,
+  CUSTOM_ELEMENTS_SCHEMA
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  deleteObject,
+  Storage
+} from '@angular/fire/storage';
+import {
   addDoc,
+  collection as fsCollection,
+  query,
+  orderBy,
+  onSnapshot,
   deleteDoc,
   doc,
+  getDoc,
   updateDoc,
-  docData
+  Unsubscribe,
+  Firestore
 } from '@angular/fire/firestore';
+import { v4 as uuidv4 } from 'uuid';
 import { Auth } from '@angular/fire/auth';
-import { Observable, Subscription } from 'rxjs';
-
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule      } from '@angular/material/input';
-import { MatButtonModule     } from '@angular/material/button';
-import { MatIconModule       } from '@angular/material/icon';
-import { MatCardModule       } from '@angular/material/card';
-import { MatListModule       } from '@angular/material/list';
-import { MatExpansionModule  } from '@angular/material/expansion';
-import { MatToolbarModule    } from '@angular/material/toolbar';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+interface UserWeb {
+  correo: string;
+  pueblo_gestionado: string;
+}
+
+interface Horario {
+  apertura: string;
+  cierre: string;
+}
 
 interface Instalacion {
   id?: string;
   titulo: string;
-  inviernoMananaApertura?: string;
-  inviernoMananaCierre?:   string;
-  inviernoTardeApertura?:  string;
-  inviernoTardeCierre?:    string;
-  veranoMananaApertura?:   string;
-  veranoMananaCierre?:     string;
-  veranoTardeApertura?:    string;
-  veranoTardeCierre?:      string;
-}
-
-// Para los datos del dropdown de usuario
-interface UserWeb {
-  correo: string;
-  pueblo_gestionado: string;
+  descripcion?: string;
+  imagenUrl?: string;
+  horarios?: {
+    [key: string]: Horario | undefined;
+  };
+  timestamp?: number;
+  [key: string]: any; // Para permitir campos dinámicos para Firestore
 }
 
 @Component({
@@ -52,95 +66,105 @@ interface UserWeb {
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    MatListModule,
-    MatExpansionModule,
     MatToolbarModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatExpansionModule,
     MatProgressSpinnerModule
   ],
   templateUrl: './listado-instalaciones.component.html',
   styleUrls: ['./listado-instalaciones.component.css']
 })
 export class ListadoInstalacionesComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('navToolbar') navToolbar!: ElementRef;
-
-  // ─── Menú Usuario ───
-  showDropdown = false;
-  userData: UserWeb | null = null;
-  private userSub?: Subscription;
-
-  // ─── Datos y estado ───
+  // Formulario para la instalación
   formInstalacion: FormGroup;
-  instalaciones: Instalacion[] = [];
+
+  // Estado de la interfaz
   cargando = false;
   mensajeExito: string | null = null;
-
+  showDropdown = false;
   isEditing = false;
-  selectedId?: string;
 
-  private basePath = '';
+  // Datos
+  instalaciones: Instalacion[] = [];
+  userData: UserWeb | null = null;
+  puebloGestionado = 'Figueruelas';  // Valor predeterminado
+  basePath = '';
+  
+  // Gestión de imagen
+  selectedFile: File | null = null;
+  selectedFileName: string | null = null;
+  imagePreview: string | null = null;
+  currentImageUrl: string | null = null;
+  currentInstalacionId: string | null = null;
+
+  // Observables
+  private userUnsub?: Unsubscribe;
 
   constructor(
     private fb: FormBuilder,
     private firestore: Firestore,
-    public router: Router,
+    private storage: Storage,
     public auth: Auth,
-    private snackBar: MatSnackBar
+    public router: Router
   ) {
+    // Inicializar el formulario
     this.formInstalacion = this.fb.group({
       titulo: ['', Validators.required],
-      inviernoMananaApertura: [''],
-      inviernoMananaCierre:   [''],
-      inviernoTardeApertura:  [''],
-      inviernoTardeCierre:    [''],
-      veranoMananaApertura:   [''],
-      veranoMananaCierre:     [''],
-      veranoTardeApertura:    [''],
-      veranoTardeCierre:      ['']
+      descripcion: [''],
+      // Inicializar campos de horario para cada día
+      apertura_lunes: [''],
+      cierre_lunes: [''],
+      apertura_martes: [''],
+      cierre_martes: [''],
+      apertura_miércoles: [''],
+      cierre_miércoles: [''],
+      apertura_jueves: [''],
+      cierre_jueves: [''],
+      apertura_viernes: [''],
+      cierre_viernes: [''],
+      apertura_sábado: [''],
+      cierre_sábado: [''],
+      apertura_domingo: [''],
+      cierre_domingo: [''],
     });
   }
 
   ngOnInit(): void {
-    // ─── Cargar datos usuario ───
+    // Inicializar basePath con el valor predeterminado
+    this.basePath = `pueblos/${this.puebloGestionado}`;
+    
+    // Obtener datos del usuario autenticado
     const uid = this.auth.currentUser?.uid;
     if (uid) {
       const userDoc = doc(this.firestore, 'usuarios_web', uid);
-      this.userSub = docData(userDoc).subscribe(data => {
-        this.userData = data as UserWeb;
-        this.basePath = `pueblos/${this.userData.pueblo_gestionado}`;
-        
-        // Una vez tenemos el pueblo, cargar instalaciones
-        const colRef = collection(this.firestore, `${this.basePath}/Instalaciones`);
-        collectionData(colRef, { idField: 'id' })
-          .subscribe((docs: any[]) => {
-            this.instalaciones = docs.map(d => ({
-              id: d.id,
-              titulo: d.Titulo,
-              inviernoMananaApertura: d.HorarioInvierno_Manana_Apertura,
-              inviernoMananaCierre:   d.HorarioInvierno_Manana_Cierre,
-              inviernoTardeApertura:  d.HorarioInvierno_Tarde_Apertura,
-              inviernoTardeCierre:    d.HorarioInvierno_Tarde_Cierre,
-              veranoMananaApertura:   d.HorarioVerano_Manana_Apertura,
-              veranoMananaCierre:     d.HorarioVerano_Manana_Cierre,
-              veranoTardeApertura:    d.HorarioVerano_Tarde_Apertura,
-              veranoTardeCierre:      d.HorarioVerano_Tarde_Cierre
-            }));
-          });
+      this.userUnsub = onSnapshot(userDoc, snap => {
+        if (snap.exists()) {
+          this.userData = snap.data() as UserWeb;
+          if (this.userData?.pueblo_gestionado) {
+            this.puebloGestionado = this.userData.pueblo_gestionado;
+            this.basePath = `pueblos/${this.puebloGestionado}`;
+            // Cargar instalaciones después de tener el pueblo
+            this.loadInstalaciones();
+          }
+        }
       });
+    } else {
+      // Usar valor por defecto si no hay usuario
+      this.loadInstalaciones();
     }
   }
 
   ngAfterViewInit(): void {
     // Indicador deslizante en la navbar
     setTimeout(() => {
-      const nav = this.navToolbar.nativeElement;
+      const nav = document.querySelector('.nav-toolbar') as HTMLElement;
+      if (!nav) return;
+      
       const links = Array.from(nav.querySelectorAll('.nav-link')) as HTMLElement[];
       const indicator = nav.querySelector('.indicator') as HTMLElement;
-      if (!nav || !links.length || !indicator) return;
+      if (!links.length || !indicator) return;
       
       const updateIndicator = (el: HTMLElement) => {
         const r = el.getBoundingClientRect(),
@@ -148,143 +172,299 @@ export class ListadoInstalacionesComponent implements OnInit, AfterViewInit, OnD
         indicator.style.width = `${r.width}px`;
         indicator.style.left = `${r.left - nr.left}px`;
       };
-
+      
       const active = nav.querySelector('.nav-link.active') as HTMLElement;
       if (active) updateIndicator(active);
-
+      
       links.forEach(link => {
         link.addEventListener('mouseenter', () => updateIndicator(link));
         link.addEventListener('mouseleave', () => {
           const curr = nav.querySelector('.nav-link.active') as HTMLElement;
           if (curr) updateIndicator(curr);
         });
+        link.addEventListener('click', () => {
+          links.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+          updateIndicator(link);
+        });
       });
-    });
+    }, 0);
   }
 
   ngOnDestroy(): void {
-    this.userSub?.unsubscribe();
+    if (this.userUnsub) {
+      this.userUnsub();
+    }
   }
 
+  // Cargar instalaciones desde Firestore
+  private loadInstalaciones(): void {
+    const instalacionesRef = fsCollection(
+      this.firestore,
+      `${this.basePath}/Instalaciones`
+    );
+    
+    const q = query(instalacionesRef, orderBy('timestamp', 'desc'));
+    
+    onSnapshot(q, snapshot => {
+      this.instalaciones = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          titulo: data['titulo'],
+          descripcion: data['descripcion'],
+          imagenUrl: data['imagenUrl'],
+          horarios: data['horarios'],
+          timestamp: data['timestamp']
+        };
+      });
+    }, error => {
+      console.error('Error cargando instalaciones:', error);
+    });
+  }
+
+  // Gestionar la selección de archivos
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      this.selectedFileName = file.name;
+      
+      // Mostrar vista previa
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+  
+  // Eliminar la imagen seleccionada
+  removeImage(): void {
+    this.selectedFile = null;
+    this.selectedFileName = null;
+    this.imagePreview = null;
+  }
+
+  // Subir imagen a Firebase Storage
+  private async uploadImage(file: File): Promise<string> {
+    try {
+      // Usar UUID para generar un nombre de archivo único
+      const ruta = `pueblos/${this.puebloGestionado}/Instalaciones/${uuidv4()}`;
+      const storageRef = ref(this.storage, ruta);
+      
+      console.log('Subiendo imagen a:', ruta);
+      
+      // Subir archivo a Firebase Storage
+      await uploadBytes(storageRef, file);
+      
+      // Obtener URL de descarga
+      const downloadURL = await getDownloadURL(storageRef);
+      console.log('Imagen subida correctamente, URL:', downloadURL);
+      
+      return downloadURL;
+    } catch (error) {
+      console.error('Error al subir imagen:', error);
+      throw error;
+    }
+  }
+  
+  // Eliminar imagen de Firebase Storage
+  private async deleteImageFromStorage(imageUrl: string): Promise<void> {
+    try {
+      if (!imageUrl) return;
+      
+      // Extraer la ruta del storage de la URL
+      const start = imageUrl.indexOf('/o/') + 3;
+      const end = imageUrl.indexOf('?');
+      
+      if (start > 0 && end > start) {
+        const path = decodeURIComponent(imageUrl.substring(start, end));
+        const storageRef = ref(this.storage, path);
+        
+        console.log('Eliminando imagen de:', path);
+        await deleteObject(storageRef);
+        console.log('Imagen eliminada correctamente');
+      }
+    } catch (error) {
+      console.error('Error al eliminar imagen:', error);
+      throw error;
+    }
+  }
+
+  // Procesar el formulario para crear o actualizar una instalación
+  async publicarInstalacion(): Promise<void> {
+    if (this.formInstalacion.invalid) {
+      console.log('Formulario inválido');
+      return;
+    }
+    this.cargando = true;
+    this.mensajeExito = null;
+    try {
+      const formData = this.formInstalacion.value;
+      // Construir horarios solo con días que tengan datos y claves sin tildes
+      const dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+      const horarios: { [key: string]: Horario } = {};
+      dias.forEach(dia => {
+        const horario = this.getHorarioDia(dia, formData);
+        if (horario) {
+          // Quitar tildes para la clave
+          const key = dia.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // CORREGIR: debe ser /[\u0300-\u036f]/g
+          horarios[key] = horario;
+        }
+      });
+      const instalacion: Instalacion = {
+        titulo: formData.titulo,
+        descripcion: formData.descripcion || '',
+        timestamp: Date.now(),
+        horarios: horarios
+      };
+      // Gestionar la imagen si hay una nueva
+      if (this.selectedFile) {
+        // Si estamos editando y hay una imagen anterior, eliminarla
+        if (this.isEditing && this.currentImageUrl) {
+          await this.deleteImageFromStorage(this.currentImageUrl);
+        }
+        
+        // Subir la nueva imagen
+        instalacion.imagenUrl = await this.uploadImage(this.selectedFile);
+      } else if (this.isEditing && this.currentImageUrl) {
+        // Mantener la URL de la imagen existente si estamos editando
+        instalacion.imagenUrl = this.currentImageUrl;
+      }
+      
+      // Guardar en Firestore
+      if (this.isEditing && this.currentInstalacionId) {
+        // Actualizar instalación existente
+        const docRef = doc(
+          this.firestore,
+          `${this.basePath}/Instalaciones/${this.currentInstalacionId}`
+        );
+        
+        await updateDoc(docRef, instalacion);
+        this.mensajeExito = 'Instalación actualizada correctamente.';
+      } else {
+        // Crear nueva instalación
+        const instalacionesRef = fsCollection(
+          this.firestore,
+          `${this.basePath}/Instalaciones`
+        );
+        
+        await addDoc(instalacionesRef, instalacion);
+        this.mensajeExito = 'Instalación creada correctamente.';
+      }
+      
+      // Resetear formulario y estado
+      this.resetForm();
+      
+      // Ocultar mensaje después de 3 segundos
+      setTimeout(() => {
+        this.mensajeExito = null;
+      }, 3000);
+    } catch (error) {
+      console.error('Error al guardar instalación:', error);
+      alert('❌ Error al guardar la instalación');
+    } finally {
+      this.cargando = false;
+    }
+  }
+
+  // Obtener horario formateado para un día específico
+  private getHorarioDia(dia: string, formData: any): Horario | undefined {
+    const apertura = formData[`apertura_${dia}`];
+    const cierre = formData[`cierre_${dia}`];
+    
+    if (apertura || cierre) {
+      return {
+        apertura: apertura || '',
+        cierre: cierre || ''
+      };
+    }
+    
+    return undefined;
+  }
+
+  // Resetear formulario y estados
+  private resetForm(): void {
+    this.formInstalacion.reset();
+    this.isEditing = false;
+    this.currentInstalacionId = null;
+    this.currentImageUrl = null;
+    this.selectedFile = null;
+    this.selectedFileName = null;
+    this.imagePreview = null;
+  }
+  // Cargar datos de una instalación para editarla
+  editInstalacion(instalacion: Instalacion): void {
+    this.isEditing = true;
+    this.currentInstalacionId = instalacion.id || null;
+    this.currentImageUrl = instalacion.imagenUrl || null;
+    this.imagePreview = instalacion.imagenUrl || null;
+    
+    // Actualizar valores del formulario
+    this.formInstalacion.patchValue({
+      titulo: instalacion.titulo,
+      descripcion: instalacion.descripcion || ''
+    });
+    
+    // Cargar horarios
+    const dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+    dias.forEach(dia => {
+      const horario = instalacion.horarios?.[dia as keyof typeof instalacion.horarios];
+      if (horario) {
+        this.formInstalacion.patchValue({
+          [`apertura_${dia}`]: horario.apertura || '',
+          [`cierre_${dia}`]: horario.cierre || ''
+        });
+      } else {
+        this.formInstalacion.patchValue({
+          [`apertura_${dia}`]: '',
+          [`cierre_${dia}`]: ''
+        });
+      }
+    });
+  }
+
+  // Cancelar la edición
+  cancelEdit(): void {
+    this.resetForm();
+  }
+
+  // Eliminar una instalación
+  async deleteInstalacion(id: string): Promise<void> {
+    if (!confirm('¿Está seguro de que desea eliminar esta instalación?')) {
+      return;
+    }
+    
+    try {
+      const docRef = doc(this.firestore, `${this.basePath}/Instalaciones/${id}`);
+      
+      // Obtener datos de la instalación para eliminar la imagen
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        const data = snap.data();
+        if (data['imagenUrl']) {
+          await this.deleteImageFromStorage(data['imagenUrl']);
+        }
+      }
+      
+      // Eliminar documento
+      await deleteDoc(docRef);
+      alert('🗑️ Instalación eliminada');
+    } catch (error) {
+      console.error('Error al eliminar instalación:', error);
+      alert('❌ Error al eliminar la instalación');
+    }
+  }
+
+  // Toggle dropdown de usuario
   toggleDropdown(): void {
     this.showDropdown = !this.showDropdown;
   }
 
+  // Cerrar sesión
   logout(): void {
-    this.auth.signOut().then(() => this.router.navigate(['/']));
-  }
-
-  publicarInstalacion(): void {
-    if (this.formInstalacion.invalid) {
-      // Optionally, notify the user that the form is invalid if not relying solely on button's disabled state
-      this.snackBar.open('Por favor, complete todos los campos obligatorios.', 'Cerrar', { duration: 3000 });
-      return;
-    }
-
-    this.cargando = true;
-    this.mensajeExito = null;
-    const v = this.formInstalacion.value;
-
-    const payload: any = { Titulo: v.titulo };
-
-    if (v.inviernoMananaApertura || v.inviernoMananaCierre) {
-      payload.HorarioInvierno_Manana_Apertura = v.inviernoMananaApertura;
-      payload.HorarioInvierno_Manana_Cierre   = v.inviernoMananaCierre;
-      payload.HorarioInvierno_Apertura = v.inviernoMananaApertura;
-      payload.HorarioInvierno_Cierre   = v.inviernoMananaCierre;
-    }
-    if (v.inviernoTardeApertura || v.inviernoTardeCierre) {
-      payload.HorarioInvierno_Tarde_Apertura = v.inviernoTardeApertura;
-      payload.HorarioInvierno_Tarde_Cierre   = v.inviernoTardeCierre;
-      payload.HorarioTarde_Apertura = v.inviernoTardeApertura;
-      payload.HorarioTarde_Cierre   = v.inviernoTardeCierre;
-    }
-    if (v.veranoMananaApertura || v.veranoMananaCierre) {
-      payload.HorarioVerano_Manana_Apertura = v.veranoMananaApertura;
-      payload.HorarioVerano_Manana_Cierre   = v.veranoMananaCierre;
-      if (!payload.HorarioInvierno_Apertura && !payload.HorarioInvierno_Cierre) { // Prioritize invierno if both set
-        payload.HorarioVerano_Apertura = v.veranoMananaApertura;
-        payload.HorarioVerano_Cierre   = v.veranoMananaCierre;
-      }
-    }
-    if (v.veranoTardeApertura || v.veranoTardeCierre) {
-      payload.HorarioVerano_Tarde_Apertura = v.veranoTardeApertura;
-      payload.HorarioVerano_Tarde_Cierre   = v.veranoTardeCierre;
-      if (!payload.HorarioTarde_Apertura && !payload.HorarioTarde_Cierre) { // Prioritize invierno if both set
-        payload.HorarioTarde_Apertura = v.veranoTardeApertura;
-        payload.HorarioTarde_Cierre   = v.veranoTardeCierre;
-      }
-    }
-
-    const operationPromise = this.isEditing && this.selectedId
-      ? updateDoc(doc(this.firestore, `${this.basePath}/Instalaciones/${this.selectedId}`), payload)
-      : addDoc(collection(this.firestore, `${this.basePath}/Instalaciones`), payload);
-
-    operationPromise.then(() => {
-      this.mensajeExito = this.isEditing ? 'Instalación actualizada con éxito.' : 'Instalación creada con éxito.';
-      this.formInstalacion.reset();
-      Object.keys(this.formInstalacion.controls).forEach(key => { // Mark as pristine and untouched
-        this.formInstalacion.get(key)?.markAsPristine();
-        this.formInstalacion.get(key)?.markAsUntouched();
-      });
-      this.formInstalacion.updateValueAndValidity();
-
-
-      if (this.isEditing) {
-        this.isEditing = false;
-        this.selectedId = undefined;
-      }
-      setTimeout(() => { this.mensajeExito = null; }, 3000);
-    }).catch(error => {
-      console.error(this.isEditing ? "Error al actualizar la instalación: " : "Error al crear la instalación: ", error);
-      this.snackBar.open(this.isEditing ? 'Error al actualizar la instalación.' : 'Error al crear la instalación.', 'Cerrar', { duration: 3000 });
-      this.mensajeExito = null;
-    }).finally(() => {
-      this.cargando = false;
-    });
-  }
-
-  editInstalacion(instalacion: Instalacion): void {
-    this.isEditing = true;
-    this.selectedId = instalacion.id;
-    this.formInstalacion.patchValue({
-      titulo: instalacion.titulo,
-      inviernoMananaApertura: instalacion.inviernoMananaApertura || '',
-      inviernoMananaCierre:   instalacion.inviernoMananaCierre   || '',
-      inviernoTardeApertura:  instalacion.inviernoTardeApertura  || '',
-      inviernoTardeCierre:    instalacion.inviernoTardeCierre    || '',
-      veranoMananaApertura:   instalacion.veranoMananaApertura   || '',
-      veranoMananaCierre:     instalacion.veranoMananaCierre     || '',
-      veranoTardeApertura:    instalacion.veranoTardeApertura    || '',
-      veranoTardeCierre:      instalacion.veranoTardeCierre      || ''
-    });
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to form
-  }
-
-  cancelEdit(): void {
-    this.isEditing = false;
-    this.selectedId = undefined;
-    this.formInstalacion.reset();
-    Object.keys(this.formInstalacion.controls).forEach(key => {
-        this.formInstalacion.get(key)?.markAsPristine();
-        this.formInstalacion.get(key)?.markAsUntouched();
-    });
-    this.formInstalacion.updateValueAndValidity();
-  }
-
-  async deleteInstalacion(id: string): Promise<void> {
-    if (!id) return;
-    // Confirmation dialog would be good here
-    this.cargando = true; // Indicate loading for delete operation
-    try {
-      await deleteDoc(doc(this.firestore, `${this.basePath}/Instalaciones/${id}`));
-      this.snackBar.open('Instalación eliminada con éxito.', 'Cerrar', { duration: 3000 });
-      // The list will update automatically due to collectionData subscription
-    } catch (error) {
-      console.error("Error al eliminar la instalación: ", error);
-      this.snackBar.open('Error al eliminar la instalación.', 'Cerrar', { duration: 3000 });
-    } finally {
-      this.cargando = false;
-    }
+    this.auth.signOut();
+    this.router.navigate(['/login']);
   }
 }

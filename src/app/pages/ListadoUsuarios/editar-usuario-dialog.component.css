@@ -1,0 +1,104 @@
+/* Forzar color oscuro específicamente para el diálogo de edición de usuario 
+   Sobrescribir los estilos globales que fuerzan texto blanco */
+
+/* Combatir el color blanco global aplicado en styles.css */
+.cdk-dialog-container,
+.cdk-dialog-container *,
+.mat-mdc-dialog-container,
+.mat-mdc-dialog-container * {
+  color: #333333 !important;
+}
+
+/* Sobrescribir específicamente para todos los elementos de formulario */
+.cdk-dialog-container .mat-mdc-form-field,
+.cdk-dialog-container .mat-mdc-form-field *,
+.cdk-dialog-container .mat-mdc-text-field-wrapper,
+.cdk-dialog-container .mat-mdc-text-field-wrapper * {
+  color: #333333 !important;
+}
+
+/* Forzar color en labels flotantes y fijos */
+.cdk-dialog-container .mat-mdc-floating-label,
+.cdk-dialog-container .mat-mdc-form-field-label,
+.cdk-dialog-container .mdc-floating-label,
+.cdk-dialog-container label {
+  color: #666666 !important;
+}
+
+/* Sobrescribir el color blanco forzado en inputs del styles.css global */
+.cdk-dialog-container input,
+.cdk-dialog-container textarea,
+.cdk-dialog-container .mat-mdc-text-field-input,
+.cdk-dialog-container .mat-mdc-input-element {
+  color: #333333 !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  -webkit-text-fill-color: #333333 !important;
+}
+
+/* Para mat-select y sus opciones */
+.cdk-dialog-container .mat-mdc-select,
+.cdk-dialog-container .mat-mdc-select-value,
+.cdk-dialog-container .mat-mdc-select-trigger,
+.cdk-dialog-container .mat-mdc-select-value-text {
+  color: #333333 !important;
+}
+
+/* Títulos y contenido del diálogo */
+.cdk-dialog-container .mat-mdc-dialog-title,
+.cdk-dialog-container .mat-mdc-dialog-content,
+.cdk-dialog-container .mat-mdc-dialog-actions {
+  color: #333333 !important;
+}
+
+/* Elementos específicos como span, p, div dentro del diálogo */
+.cdk-dialog-container span,
+.cdk-dialog-container p,
+.cdk-dialog-container div,
+.cdk-dialog-container h1,
+.cdk-dialog-container h2,
+.cdk-dialog-container h3,
+.cdk-dialog-container h4,
+.cdk-dialog-container h5,
+.cdk-dialog-container h6 {
+  color: #333333 !important;
+}
+
+/* Placeholders */
+.cdk-dialog-container input::placeholder,
+.cdk-dialog-container textarea::placeholder {
+  color: #666666 !important;
+}
+
+/* Autofill de Chrome */
+.cdk-dialog-container input:-webkit-autofill,
+.cdk-dialog-container textarea:-webkit-autofill,
+.cdk-dialog-container select:-webkit-autofill {
+  -webkit-text-fill-color: #333333 !important;  box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.95) inset !important;
+}
+
+/* Estados deshabilitados */
+.cdk-dialog-container input:disabled,
+.cdk-dialog-container textarea:disabled,
+.cdk-dialog-container select:disabled {
+  color: #666666 !important;
+  background: rgba(240, 240, 240, 0.95) !important;
+  opacity: 1 !important;
+}
+
+/* Fondo del diálogo */
+.cdk-dialog-container .mat-mdc-dialog-surface,
+.cdk-dialog-container .mat-mdc-dialog-container {
+  background-color: #ffffff !important;
+  color: #333333 !important;
+}
+
+/* Para asegurar que nada herede el color blanco del body */
+.cdk-dialog-container {
+  color: #333333 !important;
+}
+
+/* Específico para Angular Material MDC components en el diálogo */
+.cdk-dialog-container .mdc-text-field--filled .mdc-line-ripple::before,
+.cdk-dialog-container .mdc-text-field--filled .mdc-line-ripple::after {
+  border-bottom-color: #333333 !important;
+}

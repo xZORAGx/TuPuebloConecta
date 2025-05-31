@@ -1,4 +1,4 @@
-import { Component, Inject, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Inject, AfterViewInit, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -23,7 +23,8 @@ import { MatOptionModule } from '@angular/material/core';
     MatOptionModule
   ],
   templateUrl: './editar-usuario-dialog.component.html',
-  styleUrls: ['./editar-usuario-dialog.component.css']
+  styleUrls: ['./editar-usuario-dialog.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class EditarUsuarioDialog implements AfterViewInit {
 

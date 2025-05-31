@@ -1,12 +1,4 @@
-/* ── GLOBAL ── */
-:host, html, body {
-  margin: 0; padding: 0;
-  background: #121212; color: #eee;
-  min-height: 100vh;
-  height: 100%;
-}
-
-/* HEADER & NAV */
+/* Estilos del header */
 .header-toolbar {
   position: fixed;
   top: 0;
@@ -21,57 +13,74 @@
   align-items: center;
   justify-content: center;
 }
+
 .header-toolbar .home-icon,
 .header-toolbar .user-icon-btn {
   position: absolute; top:0; bottom:0; margin:auto 0;
   width:56px; height:56px; background:none; border:none; cursor:pointer;
 }
+
 .header-toolbar .home-icon { left:1rem; }
 .header-toolbar .user-icon-btn { right:1rem; }
-.header-toolbar .icon-img {
-  width: 40px; /* Adjusted size to match other components */
-  height: 40px;
+
+.icon-img {
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
-.header-toolbar .title {
-  color:#81c784; font-size:1.9rem; letter-spacing:1px;
-  text-shadow:0 0 8px rgba(129,199,132,0.7);
+
+.title {
+  color: #81c784;
+  font-size: 1.9rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px rgba(129,199,132,0.7);
 }
 
-/* DROPDOWN USUARIO */
+/* Dropdown usuario */
 .user-dropdown {
   position: absolute;
   top: 64px;
   right: 1rem;
-  background: #000000 !important;
-  border: 1px solid #111111 !important;
+  background: #000 !important;
+  border: 1px solid #111 !important;
   border-radius: 8px;
   padding: .75rem 1rem;
   min-width: 200px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.95);
-  z-index: 9999 !important;
-  color: #ffffff !important;
+  z-index: 3000 !important;
+  color: #fff !important;
   backdrop-filter: none !important;
 }
+
 .user-dropdown p {
   background: transparent !important;
   color: #fff !important;
   margin: .25rem 0;
   font-size: .9rem;
 }
-.user-dropdown .user-pueblo { font-weight: 500; }
-.user-dropdown .logout-btn {
+
+.user-email, .user-pueblo {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.user-dropdown .user-pueblo {
+  font-weight: 500;
+}
+
+.logout-btn {
   width: 100%;
   margin-top: .5rem;
   background: #22c55e !important;
   color: #121212 !important;
   border-radius: 20px;
 }
-.user-dropdown .logout-btn:hover {
+
+.logout-btn:hover {
   background: #16a34a !important;
 }
 
-/* NAVBAR */
+/* Navbar */
 .nav-toolbar {
   position: fixed;
   top: 64px;
@@ -86,242 +95,524 @@
   align-items: center;
   justify-content: center;
 }
-.nav-toolbar .nav-link {
+
+.nav-link {
   margin: 0 8px;
   padding: 0 16px;
   font-size: 1rem;
   font-weight: 500;
-  transition: color .3s ease;
+  transition: color 0.3s ease;
+  background: none;
+  border: none;
+  text-decoration: none;
 }
-.nav-toolbar .nav-link .nav-text {
+
+.nav-text {
   color: #ffffff;
 }
-.nav-toolbar .nav-link:hover .nav-text {
+
+.nav-link:hover .nav-text {
   color: #81c784;
   text-shadow: 0 0 6px rgba(129,199,132,0.7);
 }
-.nav-toolbar .nav-link.active .nav-text {
-  color: #22c55e;
-  text-shadow: 0 0 6px rgba(34,197,94,0.7);
-}
-.nav-toolbar .indicator {
+
+.indicator {
   position: absolute;
   bottom: 0;
-  left: 0;
-  width: 0;
-  height: 6px;
-  background: linear-gradient(90deg, #22c55e 60%, #a5d6a7 100%);
-  border-radius: 3px;
-  z-index: 2000;
-  transition: left 0.4s cubic-bezier(.4,2,.6,1), width 0.4s cubic-bezier(.4,2,.6,1);
-  pointer-events: none;
+  height: 3px;
+  background: #81c784;
+  box-shadow: 0 0 8px rgba(129,199,132,0.8);
+  transition: all 0.3s ease;
+  border-radius: 2px 2px 0 0;
 }
 
-/* PADDING PARA EL CONTENIDO */
+/* Estilos generales */
 .pantalla-container {
-  padding-top: 120px !important; /* 64px header + 56px nav */
-  margin-top: 0 !important;
-}
-
-/* Evita que nada sobresalga por debajo de las barras fijas */
-main, .pantalla-container, .container, .content {
-  box-sizing: border-box;
-}
-
-.pantalla-container {
-    display: flex;
-    gap: 2rem;
-    padding: 1.5rem;
-    background: #1e1e1e;
-    min-height: 100vh;
-  }
-  
-  .card-form,
-  .card-listado {
-    flex: 1;
-    background: #2c2c2c;
-    color: #eee;
-  }
-  
-  .card-title {
-    font-size: 1.5rem;
-    color: #4caf50;
-    margin-bottom: 0.5rem;
-  }
-  
-  .full-width {
-    width: 100%;
-  }
-  
-  .grid-temporadas {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    margin: 1rem 0;
-  }
-  
-  .season-section h3 {
-    margin-bottom: 0.5rem;
-    color: #a5d6a7;
-  }
-  
-  .bloque-horario h4 {
-    margin: 0 0 0.5rem;
-    color: #81c784;
-  }
-  
-  mat-card-actions {
-    display: flex;
-    justify-content: flex-start;
-    padding-top: 0.5rem;
-  }
-  
-  .btn-guardar {
-    background-color: #4caf50;
-    color: #000;
-  }
-  
-  .detalle-horarios p {
-    margin: 0.25rem 0;
-  }
-  
-  mat-expansion-panel {
-    background: #383838;
-    margin-bottom: 0.5rem;
-  }
-  
-  mat-panel-description button {
-    margin-left: 0.5rem;
-  }
-  .detalle-horarios p {
-    margin: 0.25rem 0;
-    color: #ffffff; /* Texto blanco */
-  }
-  /* Panel title en verde */
-mat-panel-title,
-.mat-expansion-panel-header .mat-expansion-panel-header-title {
-  color: #4caf50 !important;
-}
-
-/* HEADER & NAV */
-.header-toolbar,
-.nav-toolbar {
-  position: fixed;
-  left: 0;
-  width: 100%;
-  overflow: visible !important;
-  z-index: 1000;
-}
-
-/* NAVBAR */
-.nav-toolbar {
-  position: fixed;
-  top: 64px;
-  left: 0;
-  width: 100vw;
-  background: rgba(47,50,54,0.95) !important;
-  z-index: 1001 !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  box-sizing: border-box;
-  height: 56px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 2rem;
+  padding: 1.5rem;
+  padding-top: calc(64px + 56px + 1.5rem); /* Header + Navbar + padding */
+  background: #1e1e1e;
+  min-height: 100vh;
 }
 
-.nav-toolbar .nav-link {
-  margin: 0 8px;
-  padding: 0 16px;
-  color: #91d6a6;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: color .3s ease;
-}
-
-.nav-toolbar .nav-link:hover .nav-text,
-.nav-toolbar .nav-link.active .nav-text {
-  color: #fff;
-  text-shadow: 0 0 6px rgba(255,255,255,0.7);
-}
-
-.nav-toolbar .nav-link.active .nav-text {
-  color: #22c55e;
-  text-shadow: 0 0 6px rgba(34,197,94,0.7);
-}
-
-.nav-toolbar .indicator {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 6px;
-  background: linear-gradient(90deg, #22c55e 60%, #a5d6a7 100%);
-  border-radius: 3px;
-  z-index: 2000;
-  transition: left 0.4s cubic-bezier(.4,2,.6,1), width 0.4s cubic-bezier(.4,2,.6,1);
-  pointer-events: none;
-}
-
-/* PADDING PARA EL CONTENIDO */
-.nav-toolbar + .pantalla-container {
-  padding-top: 140px; /* 64px header + 56px nav + 20px extra */
-}
-
-/* INSTALACIONES COMPONENT */
-.form-container {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: #fff;
+.card-form, .card-listado {
+  flex: 1;
+  background: #2c2c2c;
+  color: #eee;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  padding: 16px;
+  border: 1px solid rgba(76, 175, 80, 0.2);
 }
 
-.form-container h2 {
+.card-title {
+  font-size: 1.8rem;
+  color: #4caf50;
+  margin-bottom: 2rem;
   text-align: center;
-  color: #333;
-  margin-bottom: 1.5rem;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+  font-weight: 500;
+  border-bottom: 2px solid rgba(76, 175, 80, 0.3);
+  padding-bottom: 0.75rem;
 }
 
 .full-width {
   width: 100%;
+  margin-bottom: 1.5rem;
+  display: block;
 }
 
-.button-row {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px; /* Espacio entre botones */
-  margin-top: 1rem;
+/* Estilo específico para los campos de texto principales */
+mat-form-field.full-width input,
+mat-form-field.full-width textarea {
+  font-size: 1rem;
+  padding: 10px 0;
+  width: 100%;
 }
 
+/* Estilos del formulario */
+.grid-temporadas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.season-section {
+  background: rgba(76, 175, 80, 0.08);
+  border-radius: 10px;
+  padding: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.season-section:hover {
+  background: rgba(76, 175, 80, 0.12);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.season-section .day-title {
+  margin-bottom: 0.5rem;
+  color: #4caf50;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+/* Mensaje de éxito */
 .mensaje-exito {
-  background-color: #28a745; /* Verde éxito */
+  background-color: #28a745;
   color: white;
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.5rem; /* Espacio entre el icono y el texto */
-  font-weight: 500; /* Texto un poco más grueso */
+  gap: 0.5rem;
+  font-weight: 500;
+  animation: slideUp 0.3s ease-out;
 }
 
 .mensaje-exito mat-icon {
-  font-size: 1.5rem; /* Tamaño del icono */
+  font-size: 1.5rem;
   height: 1.5rem;
   width: 1.5rem;
 }
 
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Botones */
+mat-card-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  padding-top: 1.5rem;
+}
+
+/* Spinner en botón */
 .spinner-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem; /* Espacio entre el spinner y el texto */
+  gap: 0.5rem;
 }
 
 .spinner-container mat-spinner {
-  margin-right: 8px; /* Espacio a la derecha del spinner */
+  margin-right: 8px;
 }
 
-/* Estilos para la tabla de instalaciones */
-/* ...existing code... */
+/* Estilos del listado */
+.detalle-horarios {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid #4caf50;
+}
+
+.detalle-horarios p {
+  margin: 0.25rem 0;
+  color: #ffffff;
+  font-size: 0.9rem;
+}
+
+mat-expansion-panel {
+  background: #383838;
+  margin-bottom: 0.5rem;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+mat-expansion-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+mat-panel-description {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+mat-panel-description button {
+  margin-left: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+mat-panel-description button:hover {
+  transform: scale(1.1);
+}
+
+mat-panel-title,
+.mat-expansion-panel-header .mat-expansion-panel-header-title {
+  color: #4caf50 !important;
+  font-weight: 500;
+}
+
+.img-preview {
+  width: 100%;
+  max-height: 200px;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para campos del formulario */
+::ng-deep .mat-mdc-form-field {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+::ng-deep .mat-mdc-form-field .mat-mdc-text-field-wrapper {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+}
+
+/* Estilo para campos outline */
+::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline .mdc-notched-outline__notch,
+::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline .mdc-notched-outline__trailing {
+  border-color: rgba(76, 175, 80, 0.5) !important;
+  border-width: 2px !important;
+}
+
+::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline:hover .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline:hover .mdc-notched-outline__notch,
+::ng-deep .mat-mdc-form-field.mat-form-field-appearance-outline:hover .mdc-notched-outline__trailing {
+  border-color: #4caf50 !important;
+}
+
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: #4caf50 !important;
+  border-width: 2px !important;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
+  padding: 12px 0;
+}
+
+::ng-deep .mat-mdc-form-field .mat-mdc-floating-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-floating-label {
+  color: #4caf50 !important;
+}
+
+/* Para inputs y textareas */
+::ng-deep .mat-mdc-form-field input.mat-mdc-input-element,
+::ng-deep .mat-mdc-form-field textarea.mat-mdc-input-element {
+  color: white;
+  caret-color: #4caf50;
+  padding: 5px;
+}
+
+/* Estilos para subida de archivos */
+.file-upload-section {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 2px dashed #4caf50;
+  border-radius: 8px;
+  background-color: rgba(76, 175, 80, 0.1);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.file-upload-section:hover {
+  border-color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.2);
+}
+
+.file-upload-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+.file-input-container {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+.file-input-hidden {
+  position: absolute;
+  left: -9999px;
+}
+
+.file-input-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #4caf50, #388e3c);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.file-input-button:hover {
+  background: linear-gradient(135deg, #388e3c, #2e7d32);
+  transform: translateY(-1px);
+}
+
+.file-selected-info {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background-color: rgba(76, 175, 80, 0.2);
+  border: 1px solid #4caf50;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.file-name {
+  color: #ffffff;
+  font-weight: 500;
+  flex: 1;
+  word-break: break-word;
+}
+
+.remove-file-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.3s ease;
+}
+
+.remove-file-btn:hover {
+  background: #c0392b;
+}
+
+.image-preview-container {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.image-preview {
+  max-width: 200px;
+  max-height: 200px;
+  width: auto;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border: 2px solid #4caf50;
+}
+
+.preview-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+/* Estilos específicos para controles de tiempo personalizados */
+.horario-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.horario-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.horario-label {
+  color: #ffffff;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.horario-input {
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(76, 175, 80, 0.3);
+  border-radius: 6px;
+  color: white;
+  padding: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  height: 42px;
+}
+
+.horario-input:hover {
+  border-color: rgba(76, 175, 80, 0.6);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.horario-input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .pantalla-container {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .grid-temporadas {
+    grid-template-columns: 1fr;
+  }
+  
+  .nav-link {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Estilos para campos de formulario personalizados */
+.custom-form-field {
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.custom-label {
+  display: block;
+  color: #ffffff;
+  font-size: 1rem;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.custom-input,
+.custom-textarea {
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(76, 175, 80, 0.3);
+  border-radius: 8px;
+  color: white;
+  padding: 12px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.custom-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.custom-input:hover,
+.custom-textarea:hover {
+  border-color: rgba(76, 175, 80, 0.6);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.custom-input:focus,
+.custom-textarea:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 0.85rem;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* Estilo para etiquetas opcionales */
+.optional-label {
+  color: #757575;
+  font-weight: 400;
+  font-size: 12px;
+  font-style: italic;
+}
+
+/* Contenedor de horarios */
+.horarios-section {
+  margin-bottom: 1.5rem;
+}
+
+/* Eliminamos los estilos de Material que no necesitamos */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  display: none !important;
+}
+
+/* Descripción de la instalación en blanco */
+.card-listado .mat-expansion-panel .mat-expansion-panel-content p {
+  color: #fff;
+}
+
+/* Si usas una clase específica para la descripción, por ejemplo: */
+.descripcion-instalacion {
+  color: #fff !important;
+}
