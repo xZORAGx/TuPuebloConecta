@@ -44,9 +44,7 @@ export class GestionPuebloComponent implements OnInit, AfterViewInit, OnDestroy 
 
   showUserMenu = false;
   userData: UserWeb | null = null;
-  private sub?: Subscription;
-
-  gestionItems = [
+  private sub?: Subscription;  gestionItems = [
     { titulo: 'Noticias',     accion1: 'Crear noticias',           accion2: 'Editar noticias',           accion3: 'Eliminar noticias' },
     { titulo: 'Deportes',     accion1: 'Crear eventos deportivos', accion2: 'Editar eventos deportivos', accion3: 'Eliminar eventos deportivos' },
     { titulo: 'Instalaciones', accion1: 'Añadir instalaciones',      accion2: 'Editar instalaciones',      accion3: 'Eliminar instalaciones' },
@@ -76,19 +74,21 @@ export class GestionPuebloComponent implements OnInit, AfterViewInit, OnDestroy 
   toggleUserMenu() {
     this.showUserMenu = !this.showUserMenu;
   }
-
   irAListadoUsuarios(): void {
     const pueblo = this.userData?.pueblo_gestionado;
     if (!pueblo) return;
     this.router.navigate(['/usuarios', pueblo]);
   }
+  
   verIncidencias(): void {
     const pueblo = this.userData?.pueblo_gestionado;
     if (!pueblo) return;
     this.router.navigate([`/incidencias/${pueblo}`]);
   }
-
-  entrar(titulo: string): void {
+  
+  anadirTelefonos(): void {
+    this.router.navigate(['/telefonos']);
+  }  entrar(titulo: string): void {
     switch (titulo) {
       case 'Noticias':      this.router.navigate(['/crear-noticia']);  break;
       case 'Deportes':      this.router.navigate(['/deportes']);       break;

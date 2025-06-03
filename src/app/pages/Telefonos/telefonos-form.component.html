@@ -1,7 +1,7 @@
 <!-- telefonos-form.component.html -->
 <!-- HEADER (HOME + TÍTULO + USUARIO) -->
 <mat-toolbar class="header-toolbar">
-  <button mat-icon-button class="home-icon" routerLink="/gestion">
+  <button mat-icon-button class="home-icon" (click)="irAGestion()">
     <img src="assets/images/casa.png" alt="Home" class="icon-img" />
   </button>
   <span class="title">Tu Pueblo Conecta</span>
@@ -19,44 +19,66 @@
 
 <!-- NAVBAR PRINCIPAL -->
 <div #navToolbar class="nav-toolbar">
-  <button mat-button routerLink="/crear-noticia" routerLinkActive="active" class="nav-link">
+  <button mat-button (click)="navegarA('Noticias')" [class.active]="rutaActual === '/crear-noticia'" class="nav-link">
     <span class="nav-text">Noticias</span>
   </button>
-  <button mat-button routerLink="/deportes" routerLinkActive="active" class="nav-link">
+  <button mat-button (click)="navegarA('Deportes')" [class.active]="rutaActual === '/deportes'" class="nav-link">
     <span class="nav-text">Deportes</span>
   </button>
-  <button mat-button routerLink="/fiestas" routerLinkActive="active" class="nav-link">
+  <button mat-button (click)="navegarA('Fiestas')" [class.active]="rutaActual === '/fiestas'" class="nav-link">
     <span class="nav-text">Fiestas</span>
   </button>
-  <button mat-button routerLink="/instalaciones" routerLinkActive="active" class="nav-link">
+  <button mat-button (click)="navegarA('Instalaciones')" [class.active]="rutaActual === '/instalaciones'" class="nav-link">
     <span class="nav-text">Instalaciones</span>
   </button>
-  <button mat-button routerLink="/empleo" routerLinkActive="active" class="nav-link">
+  <button mat-button (click)="navegarA('Empleo')" [class.active]="rutaActual === '/empleo'" class="nav-link">
     <span class="nav-text">Empleo</span>
+  </button>
+  <button mat-button (click)="navegarA('Telefonos')" [class.active]="rutaActual === '/telefonos'" class="nav-link">
+    <span class="nav-text">Teléfonos</span>
   </button>
   <div class="indicator"></div>
 </div>
 
-<!-- CONTENIDO -->
-<div class="container pantalla-container">
-  <!-- panel teléfonos -->
-  <mat-card class="p-4 max-w-xl mx-auto mt-10">
-    <h2 class="text-xl font-bold mb-4">📞 Gestión de Teléfonos</h2>
+<!-- CONTENIDO PRINCIPAL: FORMULARIO Y LISTADO JUNTOS -->
+<div class="pantalla-container">
+  <!-- Panel para crear/editar teléfonos -->
+  <div class="form-container">
+    <h2 class="titulo">{{ editandoId ? 'Editar teléfono' : 'Añadir nuevo teléfono' }}</h2>
+    
+    <!-- Mensaje de éxito -->
+    <div *ngIf="mensajeExito" class="mensaje-exito slide-up">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ mensajeExito }}</span>
+    </div>
 
     <form [formGroup]="form" (ngSubmit)="guardarTelefono()">
-      <mat-form-field appearance="fill" class="w-full mb-4">
+      <mat-form-field appearance="fill" class="w-full">
         <mat-label>Nombre del lugar</mat-label>
-        <input matInput formControlName="nombre" />
+        <input matInput formControlName="nombre" placeholder="Ej: Ayuntamiento" />
+        <mat-error *ngIf="form.get('nombre')?.invalid">Nombre obligatorio</mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="fill" class="w-full mb-4">
+      <mat-form-field appearance="fill" class="w-full">
         <mat-label>Número de teléfono</mat-label>
-        <input matInput formControlName="numero" />
+        <input matInput formControlName="numero" placeholder="9 dígitos (ej: 976123456)" />
+        <mat-error *ngIf="form.get('numero')?.hasError('required')">Número obligatorio</mat-error>
+        <mat-error *ngIf="form.get('numero')?.hasError('pattern')">Debe ser un número de 9 dígitos</mat-error>
       </mat-form-field>
 
       <div class="flex gap-2">
-        <button mat-raised-button color="primary" type="submit">
-          {{ editandoId ? 'Guardar Cambios' : 'Añadir Teléfono' }}
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit" 
+          [disabled]="form.invalid || cargando">
+          <span *ngIf="!cargando">
+            {{ editandoId ? 'Guardar Cambios' : 'Añadir Teléfono' }}
+          </span>
+          <span *ngIf="cargando" class="spinner-container">
+            <mat-spinner diameter="24" color="accent"></mat-spinner>
+            <span>{{ editandoId ? 'Actualizando...' : 'Guardando...' }}</span>
+          </span>
         </button>
         <button
           *ngIf="editandoId"
@@ -69,31 +91,43 @@
         </button>
       </div>
     </form>
+  </div>
 
-    <hr class="my-6" />
-
+  <!-- Panel para listar teléfonos -->
+  <div class="listado-telefonos">
+    <h3 class="titulo-listado">Teléfonos Registrados</h3>
+    
     <div *ngIf="telefonos$ | async as telefonos; else vacio">
       <div
         *ngFor="let tel of telefonos"
-        class="mb-4 border-b pb-2 telefono-item"
+        class="telefono-item"
+        [class.highlight]="tel.id === editandoId"
       >
-        <p class="font-semibold">{{ tel.nombre }}</p>
-        <p>{{ tel.numero }}</p>
-        <button mat-icon-button color="primary" (click)="editarTelefono(tel)">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button
-          mat-icon-button
-          color="warn"
-          (click)="eliminarTelefono(tel.id)"
-        >
-          <mat-icon>delete</mat-icon>
-        </button>
+        <div class="telefono-info">
+          <p class="font-semibold">{{ tel.nombre }}</p>
+          <p><mat-icon class="phone-icon">phone</mat-icon> {{ tel.numero }}</p>
+        </div>
+        <div class="telefono-actions">
+          <button mat-icon-button color="primary" (click)="editarTelefono(tel)" matTooltip="Editar teléfono">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="eliminarTelefono(tel.id)"
+            matTooltip="Eliminar teléfono"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
 
     <ng-template #vacio>
-      <p>No hay teléfonos guardados aún.</p>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">phone_missed</mat-icon>
+        <p class="empty-message">No hay teléfonos guardados aún.</p>
+      </div>
     </ng-template>
-  </mat-card>
+  </div>
 </div>

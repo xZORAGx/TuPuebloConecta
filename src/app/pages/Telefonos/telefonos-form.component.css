@@ -121,9 +121,59 @@
 }
 
 .pantalla-container {
-  padding-top: 140px; /* 64px header + 56px nav + 20px padding */
-  background: #121212;
-  min-height: calc(100vh - 140px);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding: 140px 1rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (min-width: 992px) {
+  .pantalla-container {
+    grid-template-columns: 1fr 1fr;
+    padding: 140px 2rem 2rem;
+  }
+}
+
+.telefono-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.phone-icon {
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  color: #81c784;
+}
+
+.highlight {
+  border: 2px solid #22c55e;
+  background-color: rgba(34, 197, 94, 0.15) !important;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  height: 3rem;
+  width: 3rem;
+  color: #555;
+  margin-bottom: 1rem;
 }
 
 /* CARDS */
@@ -141,74 +191,121 @@ h2 {
   text-align: center;
   margin-bottom: 1.5rem;
 }
-  
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 1rem;
-  }
-  
-  .mat-form-field-appearance-fill .mat-form-field-flex {
-    background-color: transparent;
-    border-radius: 8px;
-  }
-  
-  .mat-form-field-appearance-fill .mat-form-field-underline {
-    display: none;
-  }
-  
-  .mat-form-field-appearance-fill .mat-form-field-flex:hover {
-    background-color: #1e1e1e;
-  }
-  
-  .mat-form-field-appearance-fill.mat-focused .mat-form-field-flex {
-    background-color: #1e1e1e;
-  }
-  
-  .mat-form-field-label {
-    color: #00ff00 !important;
-  }
-  
-  input.mat-input-element {
-    color: #ffffff !important;
-  }
-  
-  input.mat-input-element::placeholder {
-    color: #ffffff !important;
-    opacity: 0.5;
-  }
-  
-  button {
-    margin-top: 1rem;
-  }
-  
-  hr {
-    margin: 2rem 0;
-    border: none;
-    border-top: 1px solid #444;
-  }
-  
-  .telefono-item {
-    padding: 1rem 0;
-    border-bottom: 1px solid #333;
-  }
-  
-  .telefono-item p {
-    margin: 0.2rem 0;
-  }
-  
-  button mat-icon {
-    vertical-align: middle;
-  }
-  
-  .flex {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .gap-2 {
-    gap: 0.5rem;
-  }
-  
-  .mt-10 {
-    margin-top: 2rem;
-  }
+  /* FORM CONTAINER */
+.form-container {
+  padding: 1.5rem;
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.titulo {
+  color: #81c784;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 500;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: #2e2e2e !important;
+  border-radius: 8px;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-underline {
+  display: none;
+}
+
+/* TELEFONOS LIST */
+.listado-telefonos {
+  padding: 1.5rem;
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.titulo-listado {
+  color: #81c784;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+.telefono-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #2a2a2a;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.phone-icon {
+  font-size: 1.1rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  color: #81c784;
+}
+
+.highlight {
+  border: 2px solid #22c55e;
+  background-color: rgba(34, 197, 94, 0.15) !important;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  height: 3rem;
+  width: 3rem;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+/* SPINNER */
+.spinner-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+mat-spinner {
+  display: inline-block;
+}
+
+/* UTILITY CLASSES */
+.w-full {
+  width: 100%;
+}
+
+.flex {
+  display: flex;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.font-semibold {
+  font-weight: 500;
+}
