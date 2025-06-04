@@ -34,29 +34,55 @@
   <button mat-button routerLink="/empleo" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Empleo</span>
   </button>
+  <button mat-button routerLink="/telefonos" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Teléfonos</span>
+  </button>
   <div class="indicator"></div>
 </div>
 
-<!-- CONTENIDO -->
-<div class="container pantalla-container">
-  <!-- panel teléfonos -->
-  <mat-card class="p-4 max-w-xl mx-auto mt-10">
-    <h2 class="text-xl font-bold mb-4">📞 Gestión de Teléfonos</h2>
+<!-- CONTENIDO PRINCIPAL: FORMULARIO Y LISTADO JUNTOS -->
+<div class="pantalla-container">
+  <!-- Panel para crear/editar teléfonos -->
+  <div class="form-container">
+    <h2 class="titulo">{{ editandoId ? 'Editar teléfono' : 'Añadir nuevo teléfono' }}</h2>
+    
+    <!-- Mensaje de éxito -->
+    <div *ngIf="mensajeExito" class="mensaje-exito slide-up">
+      <mat-icon>check_circle</mat-icon>
+      {{ mensajeExito }}
+    </div>
 
     <form [formGroup]="form" (ngSubmit)="guardarTelefono()">
-      <mat-form-field appearance="fill" class="w-full mb-4">
-        <mat-label>Nombre del lugar</mat-label>
-        <input matInput formControlName="nombre" />
-      </mat-form-field>
+      <div class="form-field">
+        <label class="custom-label">Nombre del lugar</label>
+        <input class="custom-input" formControlName="nombre" placeholder="Ej: Ayuntamiento, Centro de Salud, etc." />
+        <div *ngIf="form.get('nombre')?.invalid && form.get('nombre')?.touched" class="error-message">
+          El nombre es requerido
+        </div>
+      </div>
 
-      <mat-form-field appearance="fill" class="w-full mb-4">
-        <mat-label>Número de teléfono</mat-label>
-        <input matInput formControlName="numero" />
-      </mat-form-field>
+      <div class="form-field">
+        <label class="custom-label">Número de teléfono</label>
+        <input class="custom-input" formControlName="numero" placeholder="Ej: 976123456" maxlength="9" />
+        <div *ngIf="form.get('numero')?.invalid && form.get('numero')?.touched" class="error-message">
+          <span *ngIf="form.get('numero')?.errors?.['required']">El número es requerido</span>
+          <span *ngIf="form.get('numero')?.errors?.['pattern']">Debe contener exactamente 9 dígitos</span>
+        </div>
+      </div>
 
       <div class="flex gap-2">
-        <button mat-raised-button color="primary" type="submit">
-          {{ editandoId ? 'Guardar Cambios' : 'Añadir Teléfono' }}
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit" 
+          [disabled]="form.invalid || cargando">
+          <span *ngIf="!cargando">
+            {{ editandoId ? 'Guardar Cambios' : 'Añadir Teléfono' }}
+          </span>
+          <span *ngIf="cargando" class="spinner-container">
+            <mat-spinner diameter="24" color="accent"></mat-spinner>
+            <span>{{ editandoId ? 'Actualizando...' : 'Guardando...' }}</span>
+          </span>
         </button>
         <button
           *ngIf="editandoId"
@@ -69,31 +95,35 @@
         </button>
       </div>
     </form>
+  </div>
 
-    <hr class="my-6" />
-
-    <div *ngIf="telefonos$ | async as telefonos; else vacio">
-      <div
-        *ngFor="let tel of telefonos"
-        class="mb-4 border-b pb-2 telefono-item"
-      >
-        <p class="font-semibold">{{ tel.nombre }}</p>
-        <p>{{ tel.numero }}</p>
-        <button mat-icon-button color="primary" (click)="editarTelefono(tel)">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button
-          mat-icon-button
-          color="warn"
-          (click)="eliminarTelefono(tel.id)"
-        >
-          <mat-icon>delete</mat-icon>
-        </button>
+  <!-- Panel para listar teléfonos -->
+  <div class="listado-telefonos">
+    <h2 class="titulo">Teléfonos registrados</h2>
+    
+    <div *ngIf="telefonos$ | async as telefonos; else noTelefonos" class="telefonos-grid">
+      <div *ngFor="let tel of telefonos" class="telefono-card">
+        <div class="telefono-info">
+          <h3 class="telefono-nombre">{{ tel.nombre }}</h3>
+          <p class="telefono-numero">📞 {{ tel.numero }}</p>
+        </div>
+        <div class="telefono-acciones">
+          <button mat-icon-button color="primary" (click)="editarTelefono(tel)" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="eliminarTelefono(tel.id)" matTooltip="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
 
-    <ng-template #vacio>
-      <p>No hay teléfonos guardados aún.</p>
+    <ng-template #noTelefonos>
+      <div class="no-data">
+        <mat-icon>phone_disabled</mat-icon>
+        <p>No hay teléfonos registrados aún</p>
+        <p class="no-data-subtitle">Añade el primer teléfono usando el formulario</p>
+      </div>
     </ng-template>
-  </mat-card>
+  </div>
 </div>
