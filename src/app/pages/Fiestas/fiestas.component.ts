@@ -27,7 +27,9 @@ import {
   addDoc,
   deleteDoc,
   DocumentReference,
-  Query
+  Query,
+  orderBy,
+  query
 } from '@angular/fire/firestore';
 import {
   Storage,
@@ -54,8 +56,9 @@ interface Fiesta {
   id?: string;
   titulo: string;
   pdfUrl: string;
-  storagePath: string;
+  timestamp: number;
   mimeType: string;
+  storagePath: string;
 }
 
 interface UserWeb {
@@ -100,7 +103,7 @@ export class FiestasComponent implements OnInit, AfterViewInit, AfterViewChecked
   mensajeExito: string | null = null; // Property for success message
   isEditMode = false; // Added for consistency, though not fully implemented for Fiestas edit yet
   private fiestasSub?: Subscription;
-  private fsPath = 'pueblos/Figueruelas/Celebraciones';
+  private fsPath = ''; // Se actualizará basado en el pueblo
   private lastActive: HTMLElement | null = null;
 
   constructor(
@@ -118,17 +121,53 @@ export class FiestasComponent implements OnInit, AfterViewInit, AfterViewChecked
   }
 
   ngOnInit(): void {
-    // 1) Cargar datos de usuario
+    // 1) Cargar datos de usuario y configurar fsPath
     const uid = this.auth.currentUser?.uid;
     if (uid) {
-      const userDoc = doc(this.firestore, 'usuarios_web', uid) as DocumentReference<UserWeb>;
-      this.userSub = docData<UserWeb>(userDoc).subscribe(d => this.userData = d ?? null);
+      const userDoc = doc(this.firestore, 'usuarios_web', uid);
+      this.userSub = docData(userDoc).subscribe(userData => {
+        if (userData) {
+          this.userData = {
+            correo: userData['correo'] as string,
+            pueblo_gestionado: userData['pueblo_gestionado'] as string
+          };
+          
+          const pueblo = userData['pueblo_gestionado'] as string;
+          if (pueblo) {
+            this.fsPath = `pueblos/${pueblo}/Celebraciones`;
+            this.loadFiestas();
+          }
+        }
+      });
+    } else {
+      this.fsPath = `pueblos/Figueruelas/Celebraciones`;
+      this.loadFiestas();
     }
+  }
 
-    // 2) Cargar listado de fiestas
-    const colRef = collection(this.firestore, this.fsPath) as unknown as Query<Fiesta>;
-    this.fiestasSub = collectionData<Fiesta>(colRef, { idField: 'id' })
-      .subscribe(list => this.fiestas = list);
+  private loadFiestas(): void {
+    const colRef = collection(this.firestore, this.fsPath);
+    const q = query(colRef, orderBy('timestamp', 'desc'));
+    
+    this.fiestasSub = collectionData(q, { idField: 'id' })
+      .subscribe(fiestas => {
+        this.fiestas = fiestas.map(fiesta => ({
+          id: fiesta['id'] as string,
+          titulo: fiesta['titulo'] as string,
+          pdfUrl: fiesta['pdfUrl'] as string,
+          timestamp: fiesta['timestamp'] as number,
+          mimeType: fiesta['mimeType'] as string || this.determinarMimeType(fiesta['pdfUrl'] as string),
+          storagePath: fiesta['storagePath'] as string
+        }));
+      });
+  }
+
+  private determinarMimeType(url: string): string {
+    // Determinar el tipo MIME basado en la extensión del archivo
+    const extension = url.split('.').pop()?.toLowerCase();
+    if (extension === 'pdf') return 'application/pdf';
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension || '')) return 'image/' + extension;
+    return 'application/octet-stream';
   }
 
   ngAfterViewInit(): void {
@@ -202,60 +241,82 @@ export class FiestasComponent implements OnInit, AfterViewInit, AfterViewChecked
   }
 
   upload(): void {
-    if (this.form.invalid || !this.selectedFile) return;
+    if (this.form.invalid || !this.selectedFile) {
+      alert('Por favor, completa el título y selecciona un archivo');
+      return;
+    }
+
     this.uploading = true;
-    this.mensajeExito = null; // Clear previous success message
+    this.mensajeExito = null;
 
     const titulo = this.form.value.titulo.trim();
-    const file   = this.selectedFile!;
-    const ts     = Date.now();
-    const path   = `celebraciones/Figueruelas/${ts}_${file.name}`;
-    const storageRef = ref(this.storage, path);
-    const task = uploadBytesResumable(storageRef, file);
+    const file = this.selectedFile;
+    const timestamp = Date.now();
+    const storagePath = `celebraciones/${this.userData?.pueblo_gestionado || 'Figueruelas'}/${titulo}_${timestamp}${file.name.substring(file.name.lastIndexOf('.'))}`;
+    const storageRef = ref(this.storage, storagePath);
 
-    task.on('state_changed',
-      undefined,
-      (err: any) => {
-        console.error(err);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+      },
+      (error) => {
+        console.error('Error al subir:', error);
         this.uploading = false;
         alert('Error al subir el archivo');
       },
-      async () => {
-        try {
-          const pdfUrl = await getDownloadURL(storageRef);
-          // Aquí usamos addDoc en lugar de .add()
-          await addDoc(collection(this.firestore, this.fsPath), {
-            titulo,
-            pdfUrl,
-            storagePath: path,
-            mimeType: file.type
-          });
-          this.form.reset();
-          this.selectedFile = null;
-          this.previewUrl = null;
-          this.mensajeExito = 'Fiesta publicada correctamente.'; // Set success message
-          setTimeout(() => { // Clear message after 3 seconds
-            this.mensajeExito = null;
-          }, 3000);
-        } catch (e) {
-          console.error(e);
-          alert('Error guardando en Firestore');
-          this.mensajeExito = null; // Ensure no success message on error
-        } finally {
-          this.uploading = false;
-        }
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          this.guardarEnFirestore(titulo, downloadURL, file.type, storagePath);
+        });
       }
     );
   }
 
+  private guardarEnFirestore(titulo: string, pdfUrl: string, mimeType: string, storagePath: string): void {
+    const data: Fiesta = {
+      titulo,
+      pdfUrl,
+      mimeType,
+      storagePath,
+      timestamp: Date.now()
+    };
+
+    const colRef = collection(this.firestore, this.fsPath);
+    addDoc(colRef, data)
+      .then(() => {
+        this.form.reset();
+        this.selectedFile = null;
+        this.previewUrl = null;
+        this.mensajeExito = 'Fiesta publicada correctamente.';
+        this.uploading = false;
+        setTimeout(() => this.mensajeExito = null, 3000);
+      })
+      .catch(error => {
+        console.error('Error al guardar en Firestore:', error);
+        this.uploading = false;
+        alert('Error al guardar en la base de datos');
+      });
+  }
+
   delete(f: Fiesta): void {
-    if (!f.id || !confirm(`¿Eliminar “${f.titulo}”?`)) return;
-    // deleteDoc importado
+    if (!f.id || !confirm(`¿Eliminar "${f.titulo}"?`)) return;
+
+    // Primero eliminamos el documento de Firestore
     deleteDoc(doc(this.firestore, this.fsPath, f.id))
-      .then(() => deleteObject(ref(this.storage, f.storagePath)))
-      .catch((err: any) => {
-        console.error(err);
-        alert('Error al eliminar');
+      .then(() => {
+        // Si se elimina correctamente de Firestore, eliminamos el archivo
+        const storageRef = ref(this.storage, f.pdfUrl);
+        return deleteObject(storageRef);
+      })
+      .then(() => {
+        console.log('Fiesta eliminada completamente');
+      })
+      .catch((error) => {
+        console.error('Error al eliminar:', error);
+        alert('Error al eliminar la fiesta');
       });
   }
 

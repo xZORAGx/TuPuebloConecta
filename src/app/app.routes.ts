@@ -86,12 +86,6 @@ export const routes: Routes = [
       import('./pages/deportes/deportes/deportes.component')
         .then(m => m.DeportesComponent)
   },
-    {
-    path: 'telefonos',
-    loadComponent: () =>
-      import('./pages/Telefonos/telefonos-form.component')
-        .then(m => m.TelefonosFormComponent)
-  },
 
   // CUALQUIER OTRA RUTA
   { path: '**', redirectTo: '' }

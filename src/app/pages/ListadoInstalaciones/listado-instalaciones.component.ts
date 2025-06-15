@@ -246,225 +246,242 @@ export class ListadoInstalacionesComponent implements OnInit, AfterViewInit, OnD
     this.imagePreview = null;
   }
 
-  // Subir imagen a Firebase Storage
-  private async uploadImage(file: File): Promise<string> {
-    try {
-      // Usar UUID para generar un nombre de archivo único
-      const ruta = `pueblos/${this.puebloGestionado}/Instalaciones/${uuidv4()}`;
-      const storageRef = ref(this.storage, ruta);
+  // Método auxiliar para comprimir imagen
+private async compressImage(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
       
-      console.log('Subiendo imagen a:', ruta);
-      
-      // Subir archivo a Firebase Storage
-      await uploadBytes(storageRef, file);
-      
-      // Obtener URL de descarga
-      const downloadURL = await getDownloadURL(storageRef);
-      console.log('Imagen subida correctamente, URL:', downloadURL);
-      
-      return downloadURL;
-    } catch (error) {
-      console.error('Error al subir imagen:', error);
-      throw error;
-    }
-  }
-  
-  // Eliminar imagen de Firebase Storage
-  private async deleteImageFromStorage(imageUrl: string): Promise<void> {
-    try {
-      if (!imageUrl) return;
-      
-      // Extraer la ruta del storage de la URL
-      const start = imageUrl.indexOf('/o/') + 3;
-      const end = imageUrl.indexOf('?');
-      
-      if (start > 0 && end > start) {
-        const path = decodeURIComponent(imageUrl.substring(start, end));
-        const storageRef = ref(this.storage, path);
-        
-        console.log('Eliminando imagen de:', path);
-        await deleteObject(storageRef);
-        console.log('Imagen eliminada correctamente');
-      }
-    } catch (error) {
-      console.error('Error al eliminar imagen:', error);
-      throw error;
-    }
-  }
-
-  // Procesar el formulario para crear o actualizar una instalación
-  async publicarInstalacion(): Promise<void> {
-    if (this.formInstalacion.invalid) {
-      console.log('Formulario inválido');
-      return;
-    }
-    this.cargando = true;
-    this.mensajeExito = null;
-    try {
-      const formData = this.formInstalacion.value;
-      // Construir horarios solo con días que tengan datos y claves sin tildes
-      const dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
-      const horarios: { [key: string]: Horario } = {};
-      dias.forEach(dia => {
-        const horario = this.getHorarioDia(dia, formData);
-        if (horario) {
-          // Quitar tildes para la clave
-          const key = dia.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // CORREGIR: debe ser /[\u0300-\u036f]/g
-          horarios[key] = horario;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('No se pudo obtener el contexto del canvas'));
+          return;
         }
-      });
-      const instalacion: Instalacion = {
-        titulo: formData.titulo,
-        descripcion: formData.descripcion || '',
-        timestamp: Date.now(),
-        horarios: horarios
-      };
-      // Gestionar la imagen si hay una nueva
-      if (this.selectedFile) {
-        // Si estamos editando y hay una imagen anterior, eliminarla
-        if (this.isEditing && this.currentImageUrl) {
-          await this.deleteImageFromStorage(this.currentImageUrl);
+
+        // Mantener la relación de aspecto pero reducir el tamaño si es necesario
+        let width = img.width;
+        let height = img.height;
+        const MAX_SIZE = 1200;
+
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height = Math.round(height * (MAX_SIZE / width));
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width = Math.round(width * (MAX_SIZE / height));
+            height = MAX_SIZE;
+          }
         }
-        
-        // Subir la nueva imagen
-        instalacion.imagenUrl = await this.uploadImage(this.selectedFile);
-      } else if (this.isEditing && this.currentImageUrl) {
-        // Mantener la URL de la imagen existente si estamos editando
-        instalacion.imagenUrl = this.currentImageUrl;
-      }
-      
-      // Guardar en Firestore
-      if (this.isEditing && this.currentInstalacionId) {
-        // Actualizar instalación existente
-        const docRef = doc(
-          this.firestore,
-          `${this.basePath}/Instalaciones/${this.currentInstalacionId}`
-        );
-        
-        await updateDoc(docRef, instalacion);
-        this.mensajeExito = 'Instalación actualizada correctamente.';
-      } else {
-        // Crear nueva instalación
-        const instalacionesRef = fsCollection(
-          this.firestore,
-          `${this.basePath}/Instalaciones`
-        );
-        
-        await addDoc(instalacionesRef, instalacion);
-        this.mensajeExito = 'Instalación creada correctamente.';
-      }
-      
-      // Resetear formulario y estado
-      this.resetForm();
-      
-      // Ocultar mensaje después de 3 segundos
-      setTimeout(() => {
-        this.mensajeExito = null;
-      }, 3000);
-    } catch (error) {
-      console.error('Error al guardar instalación:', error);
-      alert('❌ Error al guardar la instalación');
-    } finally {
-      this.cargando = false;
-    }
-  }
 
-  // Obtener horario formateado para un día específico
-  private getHorarioDia(dia: string, formData: any): Horario | undefined {
-    const apertura = formData[`apertura_${dia}`];
-    const cierre = formData[`cierre_${dia}`];
-    
-    if (apertura || cierre) {
-      return {
-        apertura: apertura || '',
-        cierre: cierre || ''
+        canvas.width = width;
+        canvas.height = height;
+        
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Error al comprimir la imagen'));
+            }
+          },
+          'image/jpeg',
+          0.5  // Calidad JPEG al 50% como en Android
+        );
       };
-    }
+      
+      img.onerror = () => reject(new Error('Error al cargar la imagen'));
+    };
     
-    return undefined;
+    reader.onerror = () => reject(new Error('Error al leer el archivo'));
+  });
+}
+
+private async uploadImage(file: File): Promise<string> {
+  try {
+    // Generar nombre único para la imagen
+    const nombreImagen = `${uuidv4()}.jpg`;
+    const storageRef = ref(this.storage, `instalaciones/${nombreImagen}`);
+
+    // Comprimir la imagen
+    const compressedImageBlob = await this.compressImage(file);
+    
+    // Subir imagen comprimida
+    await uploadBytes(storageRef, compressedImageBlob);
+    
+    // Obtener y retornar la URL de descarga
+    return await getDownloadURL(storageRef);
+  } catch (error) {
+    console.error('Error al subir imagen:', error);
+    throw error;
+  }
+}
+
+private async deleteImageFromStorage(imageUrl: string): Promise<void> {
+  try {
+    // Extraer el nombre del archivo de la URL
+    const storageRef = ref(this.storage, imageUrl);
+    await deleteObject(storageRef);
+  } catch (error) {
+    console.error('Error al eliminar imagen:', error);
+    throw error;
+  }
+}
+
+private resetForm(): void {
+  this.formInstalacion.reset();
+  this.selectedFile = null;
+  this.selectedFileName = null;
+  this.imagePreview = null;
+  this.isEditing = false;
+  this.currentInstalacionId = null;
+  this.currentImageUrl = null;
+}
+
+async publicarInstalacion(): Promise<void> {
+  if (this.formInstalacion.invalid) {
+    alert('Por favor, completa todos los campos requeridos');
+    return;
   }
 
-  // Resetear formulario y estados
-  private resetForm(): void {
-    this.formInstalacion.reset();
-    this.isEditing = false;
-    this.currentInstalacionId = null;
-    this.currentImageUrl = null;
-    this.selectedFile = null;
-    this.selectedFileName = null;
-    this.imagePreview = null;
+  if (!this.selectedFile) {
+    alert('Por favor, selecciona una imagen');
+    return;
   }
-  // Cargar datos de una instalación para editarla
-  editInstalacion(instalacion: Instalacion): void {
-    this.isEditing = true;
-    this.currentInstalacionId = instalacion.id || null;
-    this.currentImageUrl = instalacion.imagenUrl || null;
-    this.imagePreview = instalacion.imagenUrl || null;
-    
-    // Actualizar valores del formulario
-    this.formInstalacion.patchValue({
-      titulo: instalacion.titulo,
-      descripcion: instalacion.descripcion || ''
-    });
-    
-    // Cargar horarios
-    const dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+
+  this.cargando = true;
+  this.mensajeExito = null;
+
+  try {
+    const formData = this.formInstalacion.value;
+    // Subir imagen primero
+    const imagenUrl = await this.uploadImage(this.selectedFile);
+
+    // Crear objeto de datos
+    const instalacion: Instalacion = {
+      titulo: formData.titulo,
+      descripcion: formData.descripcion || '',
+      imagenUrl: imagenUrl,
+      timestamp: Date.now(),
+      horarios: {}
+    };
+
+    // Procesar horarios
+    const dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
     dias.forEach(dia => {
-      const horario = instalacion.horarios?.[dia as keyof typeof instalacion.horarios];
+      const apertura = formData[`apertura_${dia}`];
+      const cierre = formData[`cierre_${dia}`];
+      if (apertura && cierre) {
+        // Normalizar el día (quitar tildes)
+        const diaNormalizado = dia.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        instalacion.horarios![diaNormalizado] = {
+          apertura: apertura,
+          cierre: cierre
+        };
+      }
+    });
+
+    // Guardar en Firestore
+    const instalacionesRef = fsCollection(this.firestore, `pueblos/${this.puebloGestionado}/Instalaciones`);
+    
+    if (this.isEditing && this.currentInstalacionId) {
+      await updateDoc(doc(this.firestore, `pueblos/${this.puebloGestionado}/Instalaciones/${this.currentInstalacionId}`), instalacion);
+      this.mensajeExito = 'Instalación actualizada correctamente.';
+    } else {
+      await addDoc(instalacionesRef, instalacion);
+      this.mensajeExito = 'Instalación creada correctamente.';
+    }
+
+    this.resetForm();
+    setTimeout(() => this.mensajeExito = null, 3000);
+
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error al guardar la instalación: ' + error);
+  } finally {
+    this.cargando = false;
+  }
+}
+
+async deleteInstalacion(id: string): Promise<void> {
+  if (!confirm('¿Está seguro de que desea eliminar esta instalación?')) return;
+  
+  try {
+    // Obtener la referencia del documento
+    const instalacionRef = doc(this.firestore, `pueblos/${this.puebloGestionado}/Instalaciones/${id}`);
+    
+    // Obtener los datos de la instalación
+    const instalacionDoc = await getDoc(instalacionRef);
+    const instalacion = instalacionDoc.data();
+
+    if (instalacion && instalacion['imagenUrl']) {
+      // Eliminar la imagen del storage primero
+      await this.deleteImageFromStorage(instalacion['imagenUrl']);
+    }
+
+    // Eliminar el documento de Firestore
+    await deleteDoc(instalacionRef);
+
+  } catch (error) {
+    console.error('Error al eliminar:', error);
+    alert('Error al eliminar la instalación');
+  }
+}
+
+// Cancelar edición
+cancelEdit(): void {
+  this.resetForm();
+}
+
+// Editar instalación
+editInstalacion(instalacion: Instalacion): void {
+  this.isEditing = true;
+  this.currentInstalacionId = instalacion.id || null;
+  this.currentImageUrl = instalacion['imagenUrl'] || null;
+
+  // Rellenar el formulario con los datos existentes
+  this.formInstalacion.patchValue({
+    titulo: instalacion['titulo'],
+    descripcion: instalacion['descripcion'] || '',
+  });
+
+  // Rellenar los horarios si existen
+  const dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+  if (instalacion['horarios']) {
+    dias.forEach(dia => {
+      const diaNormalizado = dia.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const horario = instalacion['horarios']?.[diaNormalizado];
       if (horario) {
         this.formInstalacion.patchValue({
-          [`apertura_${dia}`]: horario.apertura || '',
-          [`cierre_${dia}`]: horario.cierre || ''
-        });
-      } else {
-        this.formInstalacion.patchValue({
-          [`apertura_${dia}`]: '',
-          [`cierre_${dia}`]: ''
+          [`apertura_${dia}`]: horario.apertura,
+          [`cierre_${dia}`]: horario.cierre
         });
       }
     });
   }
 
-  // Cancelar la edición
-  cancelEdit(): void {
-    this.resetForm();
-  }
+  // Hacer scroll al formulario
+  const formElement = document.querySelector('.card-form');
+  formElement?.scrollIntoView({ behavior: 'smooth' });
+}
 
-  // Eliminar una instalación
-  async deleteInstalacion(id: string): Promise<void> {
-    if (!confirm('¿Está seguro de que desea eliminar esta instalación?')) {
-      return;
-    }
-    
-    try {
-      const docRef = doc(this.firestore, `${this.basePath}/Instalaciones/${id}`);
-      
-      // Obtener datos de la instalación para eliminar la imagen
-      const snap = await getDoc(docRef);
-      if (snap.exists()) {
-        const data = snap.data();
-        if (data['imagenUrl']) {
-          await this.deleteImageFromStorage(data['imagenUrl']);
-        }
-      }
-      
-      // Eliminar documento
-      await deleteDoc(docRef);
-      alert('🗑️ Instalación eliminada');
-    } catch (error) {
-      console.error('Error al eliminar instalación:', error);
-      alert('❌ Error al eliminar la instalación');
-    }
-  }
+// Toggle dropdown de usuario
+toggleDropdown(): void {
+  this.showDropdown = !this.showDropdown;
+}
 
-  // Toggle dropdown de usuario
-  toggleDropdown(): void {
-    this.showDropdown = !this.showDropdown;
-  }
-
-  // Cerrar sesión
-  logout(): void {
-    this.auth.signOut();
-    this.router.navigate(['/login']);
-  }
+// Cerrar sesión
+logout(): void {
+  this.auth.signOut();
+  this.router.navigate(['/login']);
+}
 }
