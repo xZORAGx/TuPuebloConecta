@@ -55,3 +55,12 @@
     border-radius: 8px;
   }
   
+  .fecha-expiracion {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    display: inline-block;
+  }

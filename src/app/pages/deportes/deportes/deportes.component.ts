@@ -53,8 +53,15 @@ interface Partido  {
   equipo2: string;
   fecha: string;
   resultado: string;
+  fechaExpiracion: Date;
 }
-interface Actividad { id?: string; titulo: string; imageUrl: string; storagePath?: string; }
+interface Actividad { 
+  id?: string; 
+  titulo: string; 
+  imageUrl: string; 
+  storagePath?: string;
+  fechaExpiracion: Date;
+}
 
 // Para los datos del dropdown de usuario
 interface UserWeb {
@@ -260,7 +267,6 @@ export class DeportesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (v.length > 1) v = v[0]+' - '+v[1];
     this.formPartido.patchValue({ resultado: v }, { emitEvent: false });
   }
-
   publicarPartido(): void {
     if (this.formPartido.invalid) {
       this.snackBar.open('Por favor, complete todos los campos obligatorios y asegúrese que los formatos son correctos.', 'Cerrar', { duration: 3000 });
@@ -270,10 +276,13 @@ export class DeportesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.mensajeExito = null;
 
     const partidoData = this.formPartido.value;
-    // Determine the correct base path, ideally from userData if available and intended
-    // For now, using this.basePath as it's currently defined in the class
+    
+    // Añadir fecha de expiración (1 mes)
+    const fechaExpiracion = new Date();
+    fechaExpiracion.setMonth(fechaExpiracion.getMonth() + 1);
+    partidoData.fechaExpiracion = fechaExpiracion;
+    
     const partidosCollectionPath = `${this.basePath}/Partidos`;
-
     let operationPromise: Promise<any>;
 
     if (this.isEditMode && this.partidoIdToEdit) {
@@ -352,10 +361,16 @@ export class DeportesComponent implements OnInit, AfterViewInit, OnDestroy {
     const url = await getDownloadURL(storageRefObj);
     this.formActividad.patchValue({ imageUrl: url, storagePath: path });
     this.uploading = false;
-  }
-  onSubmitActividad() {
+  }  onSubmitActividad() {
     if (this.formActividad.invalid) return;
-    addDoc(collection(this.firestore, `${this.basePath}/Actividades`), this.formActividad.value)
+    
+    // Añadir fecha de expiración (3 meses)
+    const actividadData = this.formActividad.value;
+    const fechaExpiracion = new Date();
+    fechaExpiracion.setMonth(fechaExpiracion.getMonth() + 3);
+    actividadData.fechaExpiracion = fechaExpiracion;
+    
+    addDoc(collection(this.firestore, `${this.basePath}/Actividades`), actividadData)
       .then(() => {
         this.formActividad.reset();
         this.selectedPreview = null;

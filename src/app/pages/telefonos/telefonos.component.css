@@ -1,0 +1,441 @@
+/* ── GLOBAL ── */
+:host, html, body {
+  margin: 0; padding: 0;
+  background: #121212; color: #eee;
+  min-height: 100vh;
+  height: 100%;
+}
+
+/* HEADER & NAV */
+.header-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  background: linear-gradient(135deg,#2a2a2a,#111111) !important;
+  z-index: 1002;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header-toolbar .home-icon,
+.header-toolbar .user-icon-btn {
+  position: absolute; top:0; bottom:0; margin:auto 0;
+  width:56px; height:56px; background:none; border:none; cursor:pointer;
+}
+.header-toolbar .home-icon { left:1rem; }
+.header-toolbar .user-icon-btn { right:1rem; }
+.header-toolbar .icon-img { width:100%; height:100%; object-fit:contain; }
+.header-toolbar .title {
+  color:#81c784; font-size:1.9rem; letter-spacing:1px;
+  text-shadow:0 0 8px rgba(129,199,132,0.7);
+}
+
+/* DROPDOWN USUARIO */
+.user-dropdown {
+  position: absolute;
+  top: 64px;
+  right: 1rem;
+  background: #000 !important;
+  border: 1px solid #111 !important;
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  min-width: 200px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.95);
+  z-index: 3000 !important;
+  color: #fff !important;
+  backdrop-filter: none !important;
+}
+.user-dropdown p {
+  background: transparent !important;
+  color: #fff !important;
+  margin: .25rem 0;
+  font-size: .9rem;
+}
+.user-dropdown .user-pueblo { font-weight: 500; }
+.user-dropdown .logout-btn {
+  width: 100%;
+  margin-top: .5rem;
+  background: #22c55e !important;
+  color: #121212 !important;
+  border-radius: 20px;
+}
+.user-dropdown .logout-btn:hover {
+  background: #16a34a !important;
+}
+
+/* NAVBAR */
+.nav-toolbar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  width: 100vw;
+  background: rgba(47,50,54,0.95) !important;
+  z-index: 1001 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  box-sizing: border-box;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+header .nav-toolbar {
+  background: #000 !important;
+}
+.nav-toolbar .nav-link {
+  margin: 0 8px;
+  padding: 0 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color .3s ease;
+}
+.nav-toolbar .nav-link .nav-text {
+  color: #ffffff;
+}
+.nav-toolbar .nav-link:hover .nav-text {
+  color: #81c784;
+  text-shadow: 0 0 6px rgba(129,199,132,0.7);
+}
+.nav-toolbar .nav-link.active .nav-text {
+  color: #22c55e;
+  text-shadow: 0 0 6px rgba(34,197,94,0.7);
+}
+.nav-toolbar .mat-toolbar-row {
+  position: relative !important;
+}
+.nav-toolbar .indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #22c55e 60%, #a5d6a7 100%);
+  border-radius: 3px;
+  z-index: 2000;
+  transition: left 0.4s cubic-bezier(.4,2,.6,1), width 0.4s cubic-bezier(.4,2,.6,1);
+  pointer-events: none;
+}
+
+/* ========== CONTENIDO PRINCIPAL ========== */
+.pantalla-container {
+  padding-top: 140px !important; /* 64px header + 56px nav + padding */
+  background: #121212;
+  min-height: 100vh;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.telefonos-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ========== SECCIÓN CREAR TELÉFONO ========== */
+.crear-telefono-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.crear-card {
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  border: 1px solid #333;
+  height: fit-content;
+}
+
+.section-title {
+  text-align: center;
+  color: #22c55e;
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+/* Formulario */
+.full-width {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Estilos para Material Form Fields */
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+  background: #fff !important;
+  color: #000 !important;
+  border-radius: 8px !important;
+  border: none !important;
+}
+
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-infix {
+  border-top: none !important;
+  padding: 0.75em 0 !important;
+}
+
+::ng-deep .mat-form-field-label {
+  color: #22c55e !important;
+  font-weight: 600 !important;
+}
+
+::ng-deep .mat-input-element {
+  color: #000 !important;
+  font-weight: 500 !important;
+}
+
+::ng-deep .mat-form-field-underline {
+  display: none !important;
+}
+
+::ng-deep .mat-form-field-ripple {
+  display: none !important;
+}
+
+::ng-deep .mat-form-field-subscript-wrapper {
+  display: none !important;
+}
+
+::ng-deep .mat-form-field-appearance-fill:not(.mat-form-field-disabled) .mat-form-field-flex:hover ~ .mat-form-field-underline .mat-form-field-ripple {
+  display: none !important;
+}
+
+::ng-deep .mat-form-field-appearance-fill.mat-focused .mat-form-field-flex {
+  border: 2px solid #22c55e !important;
+}
+
+::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}
+
+::ng-deep .mat-form-field-flex {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 1rem;
+  background: #22c55e !important;
+  color: #fff !important;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 14px;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: #16a34a !important;
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+}
+
+.form-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cancel-btn {
+  width: 100%;
+  background: #6b7280 !important;
+  color: #fff !important;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.cancel-btn:hover {
+  background: #4b5563 !important;
+}
+
+.btn-spinner {
+  margin-right: 8px;
+}
+
+/* Mensaje de éxito */
+.mensaje-exito {
+  background-color: #22c55e;
+  color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.mensaje-exito mat-icon {
+  font-size: 1.5rem;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+/* ========== SECCIÓN LISTA TELÉFONOS ========== */
+.lista-telefonos-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.lista-card {
+  background: #1e1e1e;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  border: 1px solid #333;
+}
+
+.telefonos-grid {
+  display: grid;
+  gap: 16px;
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.telefonos-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.telefonos-grid::-webkit-scrollbar-track {
+  background: #333;
+  border-radius: 3px;
+}
+
+.telefonos-grid::-webkit-scrollbar-thumb {
+  background: #22c55e;
+  border-radius: 3px;
+}
+
+.telefono-item {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.telefono-item:hover {
+  border-color: #22c55e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.15);
+}
+
+.telefono-info {
+  flex: 1;
+}
+
+.telefono-nombre {
+  color: #ffffff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.telefono-numero {
+  color: #81c784;
+  font-size: 1rem;
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  font-weight: 500;
+}
+
+.telefono-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-btn {
+  width: 40px;
+  height: 40px;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+}
+
+.edit-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.delete-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+/* Sin teléfonos */
+.no-telefonos {
+  text-align: center;
+  padding: 60px 20px;
+  color: #81c784;
+}
+
+.no-data-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  opacity: 0.7;
+  color: #81c784;
+}
+
+.no-telefonos p {
+  font-size: 1.2rem;
+  margin: 0;
+  color: #ffffff;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .telefonos-content {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .crear-card, .lista-card {
+    padding: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.4rem;
+  }
+  
+  .telefono-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .telefono-actions {
+    align-self: flex-end;
+  }
+  
+  .nav-link {
+    padding: 0 12px;
+    font-size: 14px;
+  }
+  
+  .pantalla-container {
+    padding-top: 130px !important;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}

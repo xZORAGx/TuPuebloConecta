@@ -59,6 +59,7 @@ interface Fiesta {
   timestamp: number;
   mimeType: string;
   storagePath: string;
+  fechaExpiracion: Date;
 }
 
 interface UserWeb {
@@ -156,8 +157,8 @@ export class FiestasComponent implements OnInit, AfterViewInit, AfterViewChecked
           titulo: fiesta['titulo'] as string,
           pdfUrl: fiesta['pdfUrl'] as string,
           timestamp: fiesta['timestamp'] as number,
-          mimeType: fiesta['mimeType'] as string || this.determinarMimeType(fiesta['pdfUrl'] as string),
-          storagePath: fiesta['storagePath'] as string
+          mimeType: fiesta['mimeType'] as string || this.determinarMimeType(fiesta['pdfUrl'] as string),          storagePath: fiesta['storagePath'] as string,
+          fechaExpiracion: fiesta['fechaExpiracion'] as Date
         }));
       });
   }
@@ -218,13 +219,15 @@ export class FiestasComponent implements OnInit, AfterViewInit, AfterViewChecked
   toggleUserMenu(): void {
     this.showUserMenu = !this.showUserMenu;
   }
-
   onFileChange(event: Event): void {
     const inp = event.target as HTMLInputElement;
     if (!inp.files?.length) return;
     const file = inp.files[0];
-    if (!file.type.startsWith('image/') && file.type !== 'application/pdf') {
-      alert('Solo PDF o imágenes permitidos.');
+    
+    // Verificar si es una imagen JPG/JPEG o PDF
+    const isJpg = file.type === 'image/jpeg' || file.type === 'image/jpg';
+    if (!isJpg && file.type !== 'application/pdf') {
+      alert('Solo se permiten archivos JPG/JPEG.');
       inp.value = '';
       return;
     }
@@ -274,14 +277,18 @@ export class FiestasComponent implements OnInit, AfterViewInit, AfterViewChecked
       }
     );
   }
-
   private guardarEnFirestore(titulo: string, pdfUrl: string, mimeType: string, storagePath: string): void {
+    // Calcular fecha de expiración (3 meses)
+    const fechaExpiracion = new Date();
+    fechaExpiracion.setMonth(fechaExpiracion.getMonth() + 3);
+
     const data: Fiesta = {
       titulo,
       pdfUrl,
       mimeType,
       storagePath,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      fechaExpiracion
     };
 
     const colRef = collection(this.firestore, this.fsPath);

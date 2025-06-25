@@ -253,14 +253,83 @@ export class CrearNoticiaComponent implements OnInit, AfterViewInit, OnDestroy {
           this.firestore,
           `pueblos/${this.puebloGestionado}/Noticias/${this.noticiaId}`
         );
-        await updateDoc(docRef, { titulo, descripcion, imagenURL, timestamp });
+        // Al editar, mantenemos la fecha de expiración existente o creamos una nueva
+        const docSnap = await getDoc(docRef);
+        let fechaExpiracion;
+        if (docSnap.exists() && docSnap.data()['fechaExpiracion']) {
+          fechaExpiracion = docSnap.data()['fechaExpiracion'];
+        } else {
+          // Si no existe, creamos una nueva fecha de caducidad
+          fechaExpiracion = new Date();
+          fechaExpiracion.setMonth(fechaExpiracion.getMonth() + 3);
+        }
+        await updateDoc(docRef, { titulo, descripcion, imagenURL, timestamp, fechaExpiracion });
+        this.mensajeExito = 'Noticia actualizada correctamente.';
+      } else {        // Calcular fecha de caducidad (3 meses desde la creación)
+        const fechaExpiracion = new Date();
+        fechaExpiracion.setMonth(fechaExpiracion.getMonth() + 3);
+        
+        const coll = fsCollection(
+          this.firestore,
+          `pueblos/${this.puebloGestionado}/Noticias`
+        );
+        await addDoc(coll, { 
+          titulo, 
+          descripcion, 
+          imagenURL, 
+          timestamp,
+          fechaExpiracion  // Añadimos la fecha de caducidad
+        });
+        this.mensajeExito = 'Noticia publicada correctamente.';
+      }
+      this.formNoticia.reset();
+      this.imagenPreview = null;
+      this.imagenFile = null;
+      this.isEditMode = false;
+      this.noticiaId = null;
+
+      setTimeout(() => {
+        this.mensajeExito = null;
+      }, 3000);
+
+    } catch (err) {
+      console.error(err);
+      alert('❌ Error al guardar noticia');
+      this.mensajeExito = null;
+    } finally {
+      this.cargando = false;
+    }
+  }
+
+  private async guardarNoticiaEnFirestore(titulo: string, descripcion: string, imageUrl: string = '') {
+    const timestamp = Date.now();
+    
+    // Calcular fecha de caducidad (3 meses desde la creación)
+    const fechaExpiracion = new Date();
+    fechaExpiracion.setMonth(fechaExpiracion.getMonth() + 3);
+
+    const noticia = {
+      titulo,
+      descripcion,
+      imagenURL: imageUrl,
+      timestamp,
+      fechaExpiracion  // Nueva propiedad
+    };
+
+    try {
+      if (this.isEditMode && this.noticiaId) {
+        const docRef = doc(
+          this.firestore,
+          `pueblos/${this.puebloGestionado}/Noticias/${this.noticiaId}`
+        );
+        await updateDoc(docRef, noticia);
         this.mensajeExito = 'Noticia actualizada correctamente.';
       } else {
         const coll = fsCollection(
           this.firestore,
           `pueblos/${this.puebloGestionado}/Noticias`
         );
-        await addDoc(coll, { titulo, descripcion, imagenURL, timestamp });
+        await addDoc(coll, noticia);
         this.mensajeExito = 'Noticia publicada correctamente.';
       }
       this.formNoticia.reset();

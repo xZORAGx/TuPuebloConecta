@@ -1,0 +1,154 @@
+<!-- HEADER (HOME + TÍTULO + USUARIO) -->
+<mat-toolbar class="header-toolbar">
+  <!-- ICONO HOME -->
+  <button mat-icon-button class="home-icon" routerLink="/gestion">
+    <img src="assets/images/casa.png" alt="Home" class="icon-img" />
+  </button>
+
+  <span class="title">Tu Pueblo Conecta</span>
+
+  <!-- ICONO USER -->
+  <button mat-icon-button class="user-icon-btn" (click)="toggleUserMenu()">
+    <img src="assets/images/SimboloUser.png" alt="Usuario" class="icon-img" />
+  </button>
+
+  <!-- DROPDOWN USUARIO -->
+  <div class="user-dropdown" *ngIf="showUserMenu">
+    <p class="user-email">{{ userData?.correo || 'usuario@ejemplo.com' }}</p>
+    <p class="user-pueblo">Pueblo: {{ userData?.pueblo_gestionado || '—' }}</p>
+    <button mat-button class="logout-btn" (click)="onLogout()">
+      Cerrar sesión
+    </button>
+  </div>
+</mat-toolbar>
+
+<!-- NAVBAR PRINCIPAL -->
+<div #navToolbar class="nav-toolbar">
+  <button mat-button routerLink="/crear-noticia" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Noticias</span>
+  </button>
+  <button mat-button routerLink="/deportes" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Deportes</span>
+  </button>
+  <button mat-button routerLink="/fiestas" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Fiestas</span>
+  </button>
+  <button mat-button routerLink="/servicios" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Servicios</span>
+  </button>
+  <button mat-button routerLink="/empleo" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Empleo</span>
+  </button>
+  <button mat-button routerLink="/telefonos" routerLinkActive="active" class="nav-link active">
+    <span class="nav-text">Teléfonos</span>
+  </button>
+  <div class="indicator"></div>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="pantalla-container telefonos-content">
+  
+  <!-- SECCIÓN IZQUIERDA: CREAR/EDITAR TELÉFONO -->
+  <div class="crear-telefono-section">
+    <div class="crear-card">
+      <h2 class="section-title">{{ editandoId ? 'Editar Teléfono' : 'Agregar Teléfono' }}</h2>
+      
+      <form [formGroup]="formTelefono" (ngSubmit)="guardarTelefono()">
+        <!-- NOMBRE/LUGAR -->
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Nombre o Lugar</mat-label>
+          <input matInput formControlName="nombre" placeholder="Ej: Ayuntamiento, Consultorio..." />
+          <mat-error *ngIf="formTelefono.get('nombre')?.hasError('required')">
+            El nombre es obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <!-- NÚMERO -->
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Número de Teléfono</mat-label>
+          <input matInput formControlName="numero" placeholder="Ej: 976507945" type="tel" />
+          <mat-error *ngIf="formTelefono.get('numero')?.hasError('required')">
+            El número es obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <!-- BOTONES -->
+        <div class="form-buttons">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            type="submit" 
+            class="submit-btn"
+            [disabled]="formTelefono.invalid || cargando">
+            <mat-spinner *ngIf="cargando" diameter="20" class="btn-spinner"></mat-spinner>
+            {{ cargando ? 'Guardando...' : (editandoId ? 'Actualizar Teléfono' : 'Agregar Teléfono') }}
+          </button>
+          
+          <button 
+            *ngIf="editandoId"
+            mat-button 
+            type="button" 
+            class="cancel-btn"
+            (click)="cancelarEdicion()">
+            Cancelar
+          </button>
+        </div>
+      </form>
+
+      <!-- MENSAJE DE ÉXITO -->
+      <div *ngIf="mensajeExito" class="mensaje-exito">
+        <mat-icon>check_circle</mat-icon>
+        {{ mensajeExito }}
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN DERECHA: LISTA DE TELÉFONOS -->
+  <div class="lista-telefonos-section">
+    <div class="lista-card">
+      <h2 class="section-title">Teléfonos Registrados</h2>
+      
+      <div class="telefonos-grid" *ngIf="telefonos.length > 0; else noTelefonos">
+        <div 
+          *ngFor="let telefono of telefonos" 
+          class="telefono-item"
+        >
+          <div class="telefono-info">
+            <h3 class="telefono-nombre">{{ telefono.nombre }}</h3>
+            <p class="telefono-numero">{{ telefono.numero }}</p>
+          </div>
+          
+          <div class="telefono-actions">
+            <button 
+              mat-mini-fab 
+              color="accent" 
+              class="action-btn edit-btn"
+              (click)="editarTelefono(telefono)"
+              title="Editar"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            
+            <button 
+              mat-mini-fab 
+              color="warn" 
+              class="action-btn delete-btn"
+              (click)="eliminarTelefono(telefono.id, telefono.nombre)"
+              title="Eliminar"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noTelefonos>
+        <div class="no-telefonos">
+          <mat-icon class="no-data-icon">phone_disabled</mat-icon>
+          <p>No hay teléfonos registrados</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+</div>

@@ -84,6 +84,15 @@ export const routes: Routes = [
       import('./pages/deportes/deportes/deportes.component')
         .then(m => m.DeportesComponent)
   },
+
+  // TELÉFONOS
+  {
+    path: 'telefonos',
+    loadComponent: () =>
+      import('./pages/telefonos/telefonos.component')
+        .then(m => m.TelefonosComponent)
+  },
+
   // CUALQUIER OTRA RUTA
   { path: '**', redirectTo: '' }
 ];

@@ -24,7 +24,7 @@ import { Firestore, doc, docData, collection as fsCollection } from '@angular/fi
 import { Storage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from '@angular/fire/storage';
 import { Subscription } from 'rxjs';
 
-import { addDoc, query, orderBy, onSnapshot, deleteDoc, getDoc } from 'firebase/firestore';
+import { addDoc, query, orderBy, onSnapshot, deleteDoc, getDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
@@ -101,14 +101,30 @@ export class CrearEmpleoComponent implements OnInit, OnDestroy, AfterViewInit {
       this.firestore,
       `pueblos/${this.puebloGestionado}/Empleo`
     );
-    const q = query(refEmpleos, orderBy('timestamp', 'desc'));
-    onSnapshot(q, snap =>
-      this.empleos = snap.docs.map(d => ({
-        id: d.id,
-        titulo: d.data()['titulo'],
-        timestamp: d.data()['timestamp']
-      }))
-    );
+    // No usar orderBy para evitar problemas con campos que pueden no existir
+    onSnapshot(refEmpleos, snap => {
+      this.empleos = snap.docs.map(d => {
+        const data = d.data();
+        // Obtener timestamp de diferentes campos posibles
+        let timestamp = 0;
+        if (data['timestamp']) {
+          timestamp = data['timestamp'];
+        } else if (data['fechaCreacion']) {
+          // Si fechaCreacion es un Timestamp de Firebase
+          if (data['fechaCreacion'].seconds) {
+            timestamp = data['fechaCreacion'].seconds * 1000;
+          } else if (data['fechaCreacion'] instanceof Date) {
+            timestamp = data['fechaCreacion'].getTime();
+          }
+        }
+        
+        return {
+          id: d.id,
+          titulo: data['titulo'] || 'Sin título',
+          timestamp: timestamp
+        };
+      }).sort((a, b) => b.timestamp - a.timestamp); // Ordenar por timestamp descendente
+    });
   }
   ngAfterViewInit(): void {
     // Indicador deslizante en la navbar
@@ -170,8 +186,11 @@ export class CrearEmpleoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mensajeExito = null;
 
     const { titulo, descripcion } = this.formEmpleo.value;
-    const timestamp = Date.now();
     let imagenURL = '';
+
+    // Crear fecha de expiración (3 meses desde ahora) como en el código Java
+    const fechaExpiracion = new Date();
+    fechaExpiracion.setMonth(fechaExpiracion.getMonth() + 3);
 
     try {
       if (this.imagenFile) {
@@ -184,7 +203,21 @@ export class CrearEmpleoComponent implements OnInit, OnDestroy, AfterViewInit {
         this.firestore,
         `pueblos/${this.puebloGestionado}/Empleo`
       );
-      await addDoc(refEmpleos, { titulo, descripcion, imagenURL, timestamp });
+      
+      // Crear el objeto empleo como en Java
+      const empleoData: any = {
+        titulo,
+        descripcion,
+        fechaCreacion: serverTimestamp(), // Equivalente a FieldValue.serverTimestamp()
+        fechaExpiracion: Timestamp.fromDate(fechaExpiracion) // Equivalente a new Timestamp(cal.getTime())
+      };
+      
+      // Solo agregar imagenUrl si existe (como en Java)
+      if (imagenURL && imagenURL.trim() !== '') {
+        empleoData.imagenUrl = imagenURL;
+      }
+      
+      await addDoc(refEmpleos, empleoData);
       this.formEmpleo.reset();
       this.imagenPreview = null;
       this.imagenFile = null;
@@ -207,7 +240,8 @@ export class CrearEmpleoComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['/empleo', id]);
   }
 
-  async eliminarEmpleo(id: string) {    const refDialog = this.dialog.open<ConfirmDialogComponent>(ConfirmDialogComponent, {
+  async eliminarEmpleo(id: string) {    
+    const refDialog = this.dialog.open<ConfirmDialogComponent>(ConfirmDialogComponent, {
       data: { mensaje: '¿Eliminar esta oferta de empleo?' },
       viewContainerRef: undefined
     });
@@ -221,7 +255,9 @@ export class CrearEmpleoComponent implements OnInit, OnDestroy, AfterViewInit {
       );
       const snap = await getDoc(docRef);
       if (snap.exists()) {
-        const url = snap.data()['imagenURL'];
+        const data = snap.data();
+        // Buscar la URL de imagen en diferentes campos posibles
+        const url = data['imagenUrl'] || data['imagenURL'] || data['imageUrl'];
         if (url) {
           const start = url.indexOf('/o/') + 3;
           const end   = url.indexOf('?');
