@@ -49,7 +49,7 @@ export class GestionPuebloComponent implements OnInit, AfterViewInit, OnDestroy 
   gestionItems = [
     { titulo: 'Noticias',     accion1: 'Crear noticias',           accion2: 'Editar noticias',           accion3: 'Eliminar noticias' },
     { titulo: 'Deportes',     accion1: 'Crear eventos deportivos', accion2: 'Editar eventos deportivos', accion3: 'Eliminar eventos deportivos' },
-    { titulo: 'Instalaciones', accion1: 'Añadir instalaciones',      accion2: 'Editar instalaciones',      accion3: 'Eliminar instalaciones' },
+    { titulo: 'Servicios', accion1: 'Añadir servicios',      accion2: 'Editar servicios',      accion3: 'Eliminar servicios' },
     { titulo: 'Fiestas',      accion1: 'Publicar fiestas',           accion2: 'Editar fiestas',            accion3: 'Eliminar fiestas' },
     { titulo: 'Empleo',       accion1: 'Publicar ofertas de empleo', accion2: 'Editar ofertas de empleo',  accion3: 'Eliminar ofertas de empleo' }
   ];
@@ -95,7 +95,7 @@ export class GestionPuebloComponent implements OnInit, AfterViewInit, OnDestroy 
     switch (titulo) {
       case 'Noticias':      this.router.navigate(['/crear-noticia']);  break;
       case 'Deportes':      this.router.navigate(['/deportes']);       break;
-      case 'Instalaciones': this.router.navigate(['/instalaciones']);  break;
+      case 'Servicios': this.router.navigate(['/servicios']);  break;
       case 'Fiestas':       this.router.navigate(['/fiestas']);       break;
       case 'Empleo':        this.router.navigate(['/empleo']);        break;
     }

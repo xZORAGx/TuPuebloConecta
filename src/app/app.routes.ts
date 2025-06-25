@@ -17,13 +17,11 @@ export const routes: Routes = [
       import('./pages/ListadoIncidencias/listado-incidencias.component')
         .then(m => m.ListadoIncidenciasComponent)
   },
-
-  // INSTALACIONES
+  // SERVICIOS Y AUTOBUSES
   {
-    path: 'instalaciones',
-    loadComponent: () =>
-      import('./pages/ListadoInstalaciones/listado-instalaciones.component')
-        .then(m => m.ListadoInstalacionesComponent)
+    path: 'servicios',
+    loadComponent: () =>      import('./pages/ListadoInstalaciones/listado-servicios.component')
+        .then(m => m.ListadoServiciosComponent)
   },
 
   // USUARIOS
@@ -86,7 +84,6 @@ export const routes: Routes = [
       import('./pages/deportes/deportes/deportes.component')
         .then(m => m.DeportesComponent)
   },
-
   // CUALQUIER OTRA RUTA
   { path: '**', redirectTo: '' }
 ];

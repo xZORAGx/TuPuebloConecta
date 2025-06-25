@@ -26,9 +26,8 @@
   </button>
   <button mat-button routerLink="/fiestas" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Fiestas</span>
-  </button>
-  <button mat-button routerLink="/instalaciones" routerLinkActive="active" class="nav-link">
-    <span class="nav-text">Instalaciones</span>
+  </button>  <button mat-button routerLink="/servicios" routerLinkActive="active" class="nav-link">
+    <span class="nav-text">Servicios</span>
   </button>
   <button mat-button routerLink="/empleo" routerLinkActive="active" class="nav-link">
     <span class="nav-text">Empleo</span>
@@ -148,10 +147,9 @@
         </div>
 
         <div class="direccion-container">
-          <label class="custom-label">Dirección</label>
-          <mat-radio-group formControlName="direccion" class="direccion-options">
-            <mat-radio-button value="Ida">Ida</mat-radio-button>
-            <mat-radio-button value="Vuelta">Vuelta</mat-radio-button>
+          <label class="custom-label">Dirección</label>          <mat-radio-group formControlName="direccion" class="direccion-options">
+            <mat-radio-button value="Figueruelas -> Zaragoza">Figueruelas → Zaragoza</mat-radio-button>
+            <mat-radio-button value="Zaragoza -> Figueruelas">Zaragoza → Figueruelas</mat-radio-button>
           </mat-radio-group>
         </div>
 
@@ -194,14 +192,8 @@
                   <mat-icon>delete</mat-icon>
                 </button>
               </mat-panel-description>
-            </mat-expansion-panel-header>
-
-            <ng-container *ngIf="servicio.archivo">
-              <img *ngIf="servicio.archivo.tipo === 'imagen'" [src]="servicio.archivo.url" class="img-preview" />
-              <a *ngIf="servicio.archivo.tipo === 'pdf'" [href]="servicio.archivo.url" target="_blank" class="pdf-link">
-                <mat-icon>picture_as_pdf</mat-icon>
-                Ver PDF
-              </a>
+            </mat-expansion-panel-header>            <ng-container *ngIf="servicio.imagenUrl">
+              <img [src]="servicio.imagenUrl" class="img-preview" />
             </ng-container>
             
             <p class="descripcion-servicio">{{ servicio.descripcion }}</p>
@@ -209,8 +201,8 @@
             <div class="detalle-horarios" *ngIf="servicio.horarios">
               <p *ngFor="let dia of ['lunes','martes','miércoles','jueves','viernes','sábado','domingo']">
                 <strong>{{ dia | titlecase }}:</strong>
-                <span *ngIf="servicio.horarios[dia]; else cerrado">
-                  {{ servicio.horarios[dia].apertura }} - {{ servicio.horarios[dia].cierre }}
+                <span *ngIf="servicio.horarios[normalizeDay(dia)]; else cerrado">
+                  {{ servicio.horarios[normalizeDay(dia)].apertura }} - {{ servicio.horarios[normalizeDay(dia)].cierre }}
                 </span>
                 <ng-template #cerrado>Cerrado</ng-template>
               </p>

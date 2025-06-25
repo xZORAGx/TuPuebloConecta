@@ -653,32 +653,35 @@ mat-panel-title,
   margin: 1.5rem 0;
 }
 
+.direccion-container .custom-label {
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
 .direccion-options {
   display: flex;
   gap: 2rem;
-  margin-top: 0.5rem;
 }
 
-.mat-radio-button {
-  font-size: 1rem;
-  color: white;
+/* Estilo para los radio buttons de dirección */
+.mat-mdc-radio-button {
+  --mdc-radio-disabled-selected-icon-color: #ffffff;
+  --mdc-radio-disabled-unselected-icon-color: #ffffff;
+  --mdc-radio-unselected-icon-color: #ffffff;
+  --mdc-radio-selected-icon-color: #81c784;
 }
 
-.direccion-badge {
-  background: #4caf50;
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  margin-right: 1rem;
+/* Asegurarse de que el texto del radio button sea blanco */
+::ng-deep .mat-mdc-radio-button .mdc-form-field,
+::ng-deep .mat-mdc-radio-button .mdc-radio__label,
+::ng-deep .mat-mdc-radio-button .mdc-label,
+::ng-deep .mat-mdc-radio-button label {
+  color: #ffffff !important;
 }
 
-.horarios-linea {
-  background: rgba(76, 175, 80, 0.1);
-  padding: 1rem;
-  border-radius: 8px;
-  margin-top: 1rem;
-  white-space: pre-line;
+.mat-mdc-radio-button .mdc-radio {
+  padding: 0;
 }
 
 /* Estilos para archivos PDF */
@@ -704,4 +707,118 @@ mat-panel-title,
   font-size: 1.5rem;
   width: 1.5rem;
   height: 1.5rem;
+}
+
+/* Estilos para los paneles de líneas de bus */
+.mat-expansion-panel-header-title {
+  color: #ffffff !important;
+}
+
+.mat-expansion-panel-header-description {
+  color: #ffffff !important;
+}
+
+mat-expansion-panel.mat-expansion-panel {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+::ng-deep .mat-expansion-panel .mat-expansion-panel-header .mat-content {
+  color: #ffffff;
+}
+
+::ng-deep .mat-expansion-panel .mat-expansion-panel-header:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+::ng-deep .mat-expansion-panel-header.mat-expanded {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.nombreLinea {
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+/* Estilos actualizados para el selector de tipo */
+.tipo-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tipo-selector button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  color: #ffffff !important;
+}
+
+.tipo-selector button.active {
+  background-color: #81c784 !important;
+  color: #ffffff !important;
+  font-weight: 500;
+  box-shadow: 0 0 10px rgba(129, 199, 132, 0.5);
+}
+
+.tipo-selector button:not(.active) {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.tipo-selector button:hover {
+  opacity: 0.9;
+}
+
+/* Forzar color blanco para el texto */
+::ng-deep .tipo-selector button .mat-button-wrapper {
+  color: #ffffff !important;
+}
+
+::ng-deep .tipo-selector button.mat-raised-button.mat-button-base {
+  color: #ffffff !important;
+}
+
+::ng-deep .tipo-selector button.mat-raised-button.mat-button-base.active {
+  color: #ffffff !important;
+}
+
+/* Estilos para los iconos de editar y borrar */
+.mat-expansion-panel-header .mat-icon-button {
+  color: #ffffff !important;
+}
+
+.mat-expansion-panel-header .mat-icon-button .mat-icon {
+  color: #ffffff !important;
+}
+
+/* Hover effect para los botones */
+.mat-expansion-panel-header .mat-icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Color específico para el botón de borrar */
+.mat-expansion-panel-header .mat-icon-button[color="warn"] .mat-icon {
+  color: #ffffff !important;
+}
+
+/* Estilos para los iconos en los paneles de servicios */
+::ng-deep .mat-expansion-panel mat-expansion-panel-header mat-panel-description button mat-icon {
+  color: #ffffff !important;
+}
+
+::ng-deep .mat-expansion-panel mat-expansion-panel-header mat-panel-description button.mat-icon-button {
+  color: #ffffff !important;
+}
+
+::ng-deep .mat-expansion-panel-header .mat-expansion-panel-header-description button mat-icon {
+  color: #ffffff !important;
+}
+
+/* Asegurar que los iconos permanezcan blancos incluso con el atributo color="warn" */
+::ng-deep .mat-expansion-panel-header button[color="warn"] mat-icon {
+  color: #ffffff !important;
+}
+
+/* Efecto hover para mejor feedback visual */
+::ng-deep .mat-expansion-panel-header button.mat-icon-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }

@@ -90,6 +90,7 @@ export class ListadoServiciosComponent implements OnInit, AfterViewInit, OnDestr
 
   // Observables
   private userUnsub?: Unsubscribe;
+  private unsubscribeServicios?: Unsubscribe;
 
   constructor(
     private fb: FormBuilder,
@@ -105,14 +106,14 @@ export class ListadoServiciosComponent implements OnInit, AfterViewInit, OnDestr
       cierre_lunes: [''],
       apertura_martes: [''],
       cierre_martes: [''],
-      apertura_miercoles: [''],
-      cierre_miercoles: [''],
+      apertura_miércoles: [''],
+      cierre_miércoles: [''],
       apertura_jueves: [''],
       cierre_jueves: [''],
       apertura_viernes: [''],
       cierre_viernes: [''],
-      apertura_sabado: [''],
-      cierre_sabado: [''],
+      apertura_sábado: [''],
+      cierre_sábado: [''],
       apertura_domingo: [''],
       cierre_domingo: ['']
     });
@@ -184,19 +185,39 @@ export class ListadoServiciosComponent implements OnInit, AfterViewInit, OnDestr
     if (this.userUnsub) {
       this.userUnsub();
     }
+    if (this.unsubscribeServicios) {
+      this.unsubscribeServicios();
+    }
   }
+
+  // Cargar servicios desde Firestore
   loadServicios(): void {
-    const instalacionesRef = collection(this.firestore, `pueblos/${this.puebloGestionado}/Instalaciones`);
-    const q = query(instalacionesRef, orderBy('timestamp', 'desc'));
-    
-    onSnapshot(q, snapshot => {
-      this.servicios = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Servicio[];
-    }, error => {
-      console.error('Error cargando servicios:', error);
-    });
+    try {
+      console.log('Cargando servicios para pueblo:', this.puebloGestionado);
+      const instalacionesRef = collection(this.firestore, `pueblos/${this.puebloGestionado}/Instalaciones`);
+      const q = query(instalacionesRef, orderBy('timestamp', 'desc'));
+      
+      // Cancelar suscripción anterior si existe
+      if (this.unsubscribeServicios) {
+        this.unsubscribeServicios();
+      }
+
+      this.unsubscribeServicios = onSnapshot(q, snapshot => {
+        this.servicios = snapshot.docs.map(doc => {
+          const data = doc.data();
+          console.log('Servicio cargado:', { id: doc.id, ...data });
+          return {
+            id: doc.id,
+            ...data
+          } as Servicio;
+        });
+        console.log('Total servicios cargados:', this.servicios.length);
+      }, error => {
+        console.error('Error en snapshot de servicios:', error);
+      });
+    } catch (error) {
+      console.error('Error en loadServicios:', error);
+    }
   }
 
   loadLineasBus(): void {
@@ -285,58 +306,17 @@ export class ListadoServiciosComponent implements OnInit, AfterViewInit, OnDestr
     }
   }
 
-  editServicio(servicio: Servicio): void {
-    this.isEditing = true;    this.currentServicioId = servicio.id ?? null;
-    this.currentFileUrl = servicio.imagenUrl ?? null;
-
-    this.formServicio.patchValue({
-      titulo: servicio.titulo,
-      descripcion: servicio.descripcion || '',
-    });
-
-    if (servicio.horarios) {
-      Object.entries(servicio.horarios).forEach(([dia, horario]) => {
-        if (horario) {
-          this.formServicio.patchValue({
-            [`apertura_${dia}`]: horario.apertura,
-            [`cierre_${dia}`]: horario.cierre
-          });
-        }
-      });
-    }
-
-    const formElement = document.querySelector('.card-form');
-    formElement?.scrollIntoView({ behavior: 'smooth' });
-  }
-
-  toggleDropdown(): void {
-    this.showDropdown = !this.showDropdown;
-  }
-
-  logout(): void {
-    this.auth.signOut();
-    this.router.navigate(['/login']);
-  }
-
-  toggleFormularioLineaBus(): void {
-    this.mostrarFormularioLineaBus = !this.mostrarFormularioLineaBus;
-    if (this.mostrarFormularioLineaBus) {
-      this.formLineaBus.reset();
-    }
-  }
-
   private async subirArchivoYGuardar(file: File): Promise<string> {
     const fileName = `${uuidv4()}.${this.getFileExtension(file)}`;
     const storageRef = ref(this.storage, `instalaciones/${fileName}`);
 
     try {
       if (file.type.startsWith('image/')) {
-        // Comprimir imagen
         const compressedImage = await this.compressImage(file);
         await uploadBytes(storageRef, compressedImage);
       } else {
-        // Subir PDF directamente
-        await uploadBytes(storageRef, file);
+        // No subimos PDFs en esta versión para mantener compatibilidad con Android
+        throw new Error('Solo se permiten imágenes');
       }
 
       return await getDownloadURL(storageRef);
@@ -377,6 +357,9 @@ export class ListadoServiciosComponent implements OnInit, AfterViewInit, OnDestr
     const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
     return validTypes.includes(file.type);
   }
+  public normalizeDay(dia: string): string {
+    return dia.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
 
   async guardarServicio(): Promise<void> {
     if (!this.formServicio.valid) {
@@ -387,7 +370,8 @@ export class ListadoServiciosComponent implements OnInit, AfterViewInit, OnDestr
     this.cargando = true;
 
     try {
-      const formData = this.formServicio.value;      let imagenUrl: string | undefined = undefined;
+      const formData = this.formServicio.value;
+      let imagenUrl: string | undefined = undefined;
 
       if (this.selectedFile) {
         imagenUrl = await this.subirArchivoYGuardar(this.selectedFile);
@@ -401,13 +385,13 @@ export class ListadoServiciosComponent implements OnInit, AfterViewInit, OnDestr
         horarios: {}
       };
 
-      // Procesar horarios
-      const dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+      // Procesar horarios usando los nombres con acentos
+      const dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
       dias.forEach(dia => {
         const apertura = formData[`apertura_${dia}`];
         const cierre = formData[`cierre_${dia}`];
         if (apertura && cierre) {
-          const diaNormalizado = dia.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          const diaNormalizado = this.normalizeDay(dia);
           servicio.horarios![diaNormalizado] = { apertura, cierre };
         }
       });
@@ -430,6 +414,88 @@ export class ListadoServiciosComponent implements OnInit, AfterViewInit, OnDestr
       this.cargando = false;
     }
   }
+
+  editServicio(servicio: Servicio): void {
+    this.isEditing = true;
+    this.currentServicioId = servicio.id ?? null;
+    this.currentFileUrl = servicio.imagenUrl ?? null;
+
+    this.formServicio.patchValue({
+      titulo: servicio.titulo,
+      descripcion: servicio.descripcion || '',
+    });
+
+    if (servicio.horarios) {
+      const dias = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
+      dias.forEach(dia => {
+        const diaNormalizado = this.normalizeDay(dia);
+        const horario = servicio.horarios?.[diaNormalizado];
+        if (horario) {
+          this.formServicio.patchValue({
+            [`apertura_${dia}`]: horario.apertura,
+            [`cierre_${dia}`]: horario.cierre
+          });
+        }
+      });
+    }
+
+    const formElement = document.querySelector('.card-form');
+    formElement?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  toggleDropdown(): void {
+    this.showDropdown = !this.showDropdown;
+  }
+
+  logout(): void {
+    this.auth.signOut();
+    this.router.navigate(['/login']);
+  }
+  toggleFormularioLineaBus(): void {
+    this.mostrarFormularioLineaBus = !this.mostrarFormularioLineaBus;
+    if (this.mostrarFormularioLineaBus) {
+      this.formLineaBus.reset();
+      this.loadLineasBus(); // Cargar líneas de bus al cambiar a esa vista
+    } else {
+      this.loadServicios(); // Recargar servicios cuando volvemos a esa vista
+      this.formServicio.reset();
+    }
+  }
+
+  async deleteServicio(id: string): Promise<void> {
+    if (!confirm('¿Está seguro de que desea eliminar este servicio?')) return;
+    
+    try {
+      const servicioRef = doc(this.firestore, `pueblos/${this.puebloGestionado}/Instalaciones/${id}`);
+      const servicioDoc = await getDoc(servicioRef);
+      const servicio = servicioDoc.data() as Servicio;
+
+      if (servicio?.imagenUrl) {
+        // Eliminar la imagen del storage
+        const fileRef = ref(this.storage, servicio.imagenUrl);
+        await deleteObject(fileRef);
+      }
+
+      // Eliminar el documento de Firestore
+      await deleteDoc(servicioRef);
+
+    } catch (error) {
+      console.error('Error al eliminar:', error);
+      alert('Error al eliminar el servicio');
+    }
+  }
+
+  async deleteLineaBus(id: string): Promise<void> {
+    if (!confirm('¿Está seguro de que desea eliminar esta línea de autobús?')) return;
+    
+    try {
+      await deleteDoc(doc(this.firestore, `${this.basePath}/Autobuses/${id}`));
+    } catch (error) {
+      console.error('Error al eliminar:', error);
+      alert('Error al eliminar la línea de autobús');
+    }
+  }
+
   removeImage(): void {
     this.selectedFile = null;
     this.selectedFileName = null;
@@ -459,7 +525,7 @@ export class ListadoServiciosComponent implements OnInit, AfterViewInit, OnDestr
         timestamp: Date.now()
       };
 
-      await addDoc(collection(this.firestore, `${this.basePath}/Autobuses`), lineaBus as DocumentData);
+      await addDoc(collection(this.firestore, `pueblos/${this.puebloGestionado}/Autobuses`), lineaBus as DocumentData);
       this.mensajeExito = 'Línea de autobús guardada correctamente.';
       this.formLineaBus.reset();
       setTimeout(() => this.mensajeExito = null, 3000);
@@ -469,38 +535,6 @@ export class ListadoServiciosComponent implements OnInit, AfterViewInit, OnDestr
       alert('Error al guardar la línea de autobús: ' + error);
     } finally {
       this.cargando = false;
-    }
-  }
-
-  async deleteServicio(id: string): Promise<void> {
-    if (!confirm('¿Está seguro de que desea eliminar este servicio?')) return;
-    
-    try {
-      const servicioRef = doc(this.firestore, `${this.basePath}/Servicios/${id}`);
-      const servicioDoc = await getDoc(servicioRef);
-      const servicio = servicioDoc.data() as Servicio;      if (servicio?.imagenUrl) {
-        // Eliminar la imagen del storage
-        const fileRef = ref(this.storage, servicio.imagenUrl);
-        await deleteObject(fileRef);
-      }
-
-      // Eliminar el documento de Firestore
-      await deleteDoc(servicioRef);
-
-    } catch (error) {
-      console.error('Error al eliminar:', error);
-      alert('Error al eliminar el servicio');
-    }
-  }
-
-  async deleteLineaBus(id: string): Promise<void> {
-    if (!confirm('¿Está seguro de que desea eliminar esta línea de autobús?')) return;
-    
-    try {
-      await deleteDoc(doc(this.firestore, `${this.basePath}/Autobuses/${id}`));
-    } catch (error) {
-      console.error('Error al eliminar:', error);
-      alert('Error al eliminar la línea de autobús');
     }
   }
 }
